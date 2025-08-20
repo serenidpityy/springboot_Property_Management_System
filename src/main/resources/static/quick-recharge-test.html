@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>快速充值测试</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 600px;
+            margin: 50px auto;
+            padding: 20px;
+            background: #f5f5f5;
+        }
+        .container {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        .btn {
+            background: #007bff;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            margin: 5px;
+        }
+        .btn:hover {
+            background: #0056b3;
+        }
+        .success {
+            background: #28a745;
+        }
+        .warning {
+            background: #ffc107;
+            color: #212529;
+        }
+        .danger {
+            background: #dc3545;
+        }
+        .info {
+            background: #17a2b8;
+        }
+        .log {
+            background: #f8f9fa;
+            border: 1px solid #dee2e6;
+            padding: 15px;
+            border-radius: 5px;
+            max-height: 300px;
+            overflow-y: auto;
+            font-family: monospace;
+            font-size: 12px;
+            margin-top: 15px;
+        }
+        .form-group {
+            margin-bottom: 15px;
+        }
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+        input {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            box-sizing: border-box;
+        }
+        .balance {
+            font-size: 24px;
+            font-weight: bold;
+            color: #28a745;
+            text-align: center;
+            margin: 20px 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>🚀 快速充值测试工具</h2>
+        
+        <div id="userStatus" class="log">
+            请先登录业主账户...
+        </div>
+        
+        <div class="balance" id="balanceDisplay">
+            余额: ¥0.00
+        </div>
+        
+        <div class="form-group">
+            <label for="testAmount">充值金额：</label>
+            <input type="number" id="testAmount" value="100" min="0.01" step="0.01">
+        </div>
+        
+        <div style="text-align: center;">
+            <button class="btn" onclick="loadUser()">🔄 检查登录状态</button>
+            <button class="btn success" onclick="quickRecharge()">💰 快速充值</button>
+            <button class="btn info" onclick="checkBalance()">📊 刷新余额</button>
+            <button class="btn warning" onclick="clearLog()">🧹 清空日志</button>
+        </div>
+        
+        <div style="text-align: center; margin-top: 15px;">
+            <button class="btn" onclick="testAmount(50)">充值 ¥50</button>
+            <button class="btn" onclick="testAmount(100)">充值 ¥100</button>
+            <button class="btn" onclick="testAmount(200)">充值 ¥200</button>
+            <button class="btn danger" onclick="testAmount(1000)">充值 ¥1000</button>
+        </div>
+        
+        <p style="text-align: center; margin-top: 20px;">
+            <a href="html/login.html">🔐 去登录</a> | 
+            <a href="html/owner.html">👤 业主页面</a> |
+            <a href="test-recharge.html">🧪 详细测试</a>
+        </p>
+        
+        <div class="log" id="logArea">
+            [系统] 快速充值测试工具已准备就绪
+        </div>
+    </div>
+
+    <script>
+        let currentUser = null;
+        
+        function log(message, type = 'info') {
+            const logArea = document.getElementById('logArea');
+            const timestamp = new Date().toLocaleTimeString();
+            const prefix = type === 'error' ? '❌' : type === 'success' ? '✅' : 'ℹ️';
+            logArea.innerHTML += `\n[${timestamp}] ${prefix} ${message}`;
+            logArea.scrollTop = logArea.scrollHeight;
+            console.log(`[${type.toUpperCase()}] ${message}`);
+        }
+        
+        function clearLog() {
+            document.getElementById('logArea').innerHTML = '[系统] 日志已清空';
+        }
+        
+        function loadUser() {
+            log('正在检查用户登录状态...');
+            const userData = localStorage.getItem('currentUser');
+            
+            if (userData) {
+                try {
+                    currentUser = JSON.parse(userData);
+                    const userInfo = `用户: ${currentUser.username} | 姓名: ${currentUser.name || '未设置'} | 类型: ${currentUser.userType} | 余额: ¥${(currentUser.accountBalance || 0).toFixed(2)}`;
+                    
+                    document.getElementById('userStatus').innerHTML = userInfo;
+                    document.getElementById('balanceDisplay').textContent = `余额: ¥${(currentUser.accountBalance || 0).toFixed(2)}`;
+                    
+                    log(`用户已登录: ${currentUser.username}`, 'success');
+                    log(`当前余额: ¥${(currentUser.accountBalance || 0).toFixed(2)}`);
+                    
+                    if (currentUser.userType !== 'OWNER') {
+                        log('警告: 当前用户不是业主类型', 'error');
+                    }
+                } catch (e) {
+                    log(`用户数据解析失败: ${e.message}`, 'error');
+                    currentUser = null;
+                }
+            } else {
+                log('未找到用户登录信息', 'error');
+                document.getElementById('userStatus').innerHTML = '未登录 - 请先登录业主账户';
+                currentUser = null;
+            }
+        }
+        
+        function testAmount(amount) {
+            document.getElementById('testAmount').value = amount;
+            quickRecharge();
+        }
+        
+        async function quickRecharge() {
+            if (!currentUser) {
+                alert('请先登录业主账户！');
+                return;
+            }
+            
+            const amount = parseFloat(document.getElementById('testAmount').value);
+            if (!amount || amount <= 0) {
+                alert('请输入有效的充值金额');
+                return;
+            }
+            
+            log(`开始充值: ¥${amount.toFixed(2)}`);
+            
+            try {
+                const oldBalance = currentUser.accountBalance || 0;
+                const newBalance = oldBalance + amount;
+                
+                log(`当前余额: ¥${oldBalance.toFixed(2)}`);
+                log(`充值金额: ¥${amount.toFixed(2)}`);
+                log(`预期新余额: ¥${newBalance.toFixed(2)}`);
+                log('正在调用API...');
+                
+                const response = await fetch(`/api/users/${currentUser.id}/balance`, {
+                    method: 'PUT',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ amount: newBalance })
+                });
+                
+                log(`API响应状态: ${response.status} ${response.statusText}`);
+                
+                if (response.ok) {
+                    const updatedUser = await response.json();
+                    log(`API返回新余额: ¥${updatedUser.accountBalance.toFixed(2)}`, 'success');
+                    
+                    // 更新本地数据
+                    currentUser.accountBalance = updatedUser.accountBalance;
+                    localStorage.setItem('currentUser', JSON.stringify(currentUser));
+                    
+                    // 更新显示
+                    document.getElementById('balanceDisplay').textContent = `余额: ¥${updatedUser.accountBalance.toFixed(2)}`;
+                    loadUser();
+                    
+                    log(`🎉 充值成功! 新余额: ¥${updatedUser.accountBalance.toFixed(2)}`, 'success');
+                    alert(`充值成功！新余额：¥${updatedUser.accountBalance.toFixed(2)}`);
+                } else {
+                    const error = await response.text();
+                    log(`充值失败: ${error}`, 'error');
+                    alert('充值失败：' + error);
+                }
+            } catch (error) {
+                log(`网络错误: ${error.message}`, 'error');
+                alert('网络错误：' + error.message);
+            }
+        }
+        
+        async function checkBalance() {
+            if (!currentUser) {
+                alert('请先登录业主账户');
+                return;
+            }
+            
+            log('正在获取最新余额...');
+            
+            try {
+                const response = await fetch(`/api/users/${currentUser.id}`);
+                
+                if (response.ok) {
+                    const userData = await response.json();
+                    log(`服务器余额: ¥${(userData.accountBalance || 0).toFixed(2)}`, 'success');
+                    
+                    // 更新本地数据
+                    currentUser.accountBalance = userData.accountBalance;
+                    localStorage.setItem('currentUser', JSON.stringify(currentUser));
+                    
+                    // 更新显示
+                    document.getElementById('balanceDisplay').textContent = `余额: ¥${(userData.accountBalance || 0).toFixed(2)}`;
+                    loadUser();
+                } else {
+                    log(`获取用户信息失败: ${response.status}`, 'error');
+                }
+            } catch (error) {
+                log(`网络错误: ${error.message}`, 'error');
+            }
+        }
+        
+        // 页面加载时自动检查用户状态
+        document.addEventListener('DOMContentLoaded', function() {
+            log('页面加载完成');
+            loadUser();
+        });
+    </script>
+</body>
+</html>

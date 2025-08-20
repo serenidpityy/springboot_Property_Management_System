@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>测试工作人员房产功能</title>
+    <link href="css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+    <div class="container mt-4">
+        <h2>测试工作人员房产功能</h2>
+        <div class="alert alert-info">
+            <h5>测试步骤：</h5>
+            <ol>
+                <li>点击下面的按钮测试页面跳转是否正常</li>
+                <li>检查是否正确跳转到添加房产页面</li>
+                <li>验证表单是否可以正常提交</li>
+            </ol>
+        </div>
+        
+        <div class="mb-3">
+            <button class="btn btn-primary" onclick="testAddProperty()">
+                <i class="fas fa-plus"></i>
+                测试添加房产页面跳转
+            </button>
+        </div>
+        
+        <div class="mb-3">
+            <button class="btn btn-secondary" onclick="goToStaffPage()">
+                <i class="fas fa-arrow-left"></i>
+                返回工作人员页面
+            </button>
+        </div>
+    </div>
+
+    <script src="js/bootstrap.min.js"></script>
+    <script>
+        function testAddProperty() {
+            // 模拟工作人员身份
+            const testUser = {
+                id: 1,
+                username: "staff001",
+                name: "测试工作人员",
+                userType: "STAFF"
+            };
+            localStorage.setItem('currentUser', JSON.stringify(testUser));
+            
+            // 跳转到添加房产页面
+            window.location.href = 'html/staff-add-property.html';
+        }
+        
+        function goToStaffPage() {
+            window.location.href = 'html/staff.html';
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,1629 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>工作人员控制台 - 物业管理系统</title>
+    <link href="../css/bootstrap.min.css" rel="stylesheet">
+    <link href="../css/dashboard.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+</head>
+<body>
+    <div class="dashboard-container">
+        <!-- 顶部导航栏 -->
+        <header class="dashboard-header">
+            <div class="header-left">
+                <button class="sidebar-toggle" id="sidebarToggle">
+                    <i class="fas fa-bars"></i>
+                </button>
+                <a href="#" class="brand-logo">
+                    <i class="fas fa-building"></i>
+                    <span>物业管理系统</span>
+                </a>
+            </div>
+            <div class="header-right">
+                <div class="user-info">
+                    <div class="user-avatar" id="userAvatar">
+                        S
+                    </div>
+                    <div class="user-details">
+                        <h4 id="userName">工作人员</h4>
+                        <p id="userRole">物业管理员</p>
+                    </div>
+                </div>
+                <button class="logout-btn" onclick="logout()">
+                    <i class="fas fa-sign-out-alt"></i>
+                    退出登录
+                </button>
+            </div>
+        </header>
+
+        <!-- 侧边栏 -->
+        <nav class="dashboard-sidebar" id="sidebar">
+            <div class="sidebar-content">
+                <!-- 概览 -->
+                <div class="sidebar-section">
+                    <div class="sidebar-title">概览</div>
+                    <ul class="nav-menu">
+                        <li class="nav-item">
+                            <a href="#" class="nav-link active" data-module="dashboard">
+                                <i class="nav-icon fas fa-tachometer-alt"></i>
+                                <span>工作台</span>
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+
+                <!-- 业主管理 -->
+                <div class="sidebar-section">
+                    <div class="sidebar-title">业主管理</div>
+                    <ul class="nav-menu">
+                        <li class="nav-item">
+                            <a href="#" class="nav-link" data-module="owner-info">
+                                <i class="nav-icon fas fa-users"></i>
+                                <span>业主信息管理</span>
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+
+                <!-- 房产管理 -->
+                <div class="sidebar-section">
+                    <div class="sidebar-title">房产管理</div>
+                    <ul class="nav-menu">
+                        <li class="nav-item">
+                            <a href="#" class="nav-link" data-module="property-management">
+                                <i class="nav-icon fas fa-home"></i>
+                                <span>住房信息管理</span>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="#" class="nav-link" data-module="parking-management">
+                                <i class="nav-icon fas fa-car"></i>
+                                <span>小区车位管理</span>
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+
+                <!-- 收费管理 -->
+                <div class="sidebar-section">
+                    <div class="sidebar-title">收费管理</div>
+                    <ul class="nav-menu">
+                        <li class="nav-item">
+                            <a href="#" class="nav-link" data-module="charge-management">
+                                <i class="nav-icon fas fa-credit-card"></i>
+                                <span>收费管理</span>
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+
+                <!-- 社区服务 -->
+                <div class="sidebar-section">
+                    <div class="sidebar-title">社区服务</div>
+                    <ul class="nav-menu">
+                        <li class="nav-item">
+                            <a href="#" class="nav-link" data-module="announcements">
+                                <i class="nav-icon fas fa-bullhorn"></i>
+                                <span>社区公告管理</span>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="#" class="nav-link" data-module="complaints">
+                                <i class="nav-icon fas fa-comments"></i>
+                                <span>业主投诉与建议</span>
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+
+                <!-- 个人中心 -->
+                <div class="sidebar-section">
+                    <div class="sidebar-title">个人中心</div>
+                    <ul class="nav-menu">
+                        <li class="nav-item">
+                            <a href="#" class="nav-link" data-module="profile">
+                                <i class="nav-icon fas fa-user-circle"></i>
+                                <span>个人信息管理</span>
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </nav>
+
+        <!-- 主内容区域 -->
+        <main class="dashboard-main">
+            <div class="main-content">
+                <!-- 面包屑导航 -->
+                <div class="breadcrumb" id="breadcrumb">
+                    <span class="breadcrumb-item">首页</span>
+                    <span class="breadcrumb-separator">/</span>
+                    <span class="breadcrumb-item active" id="currentPage">工作台</span>
+                </div>
+
+                <!-- 页面内容区域 -->
+                <div id="pageContent">
+                    <!-- 默认显示工作台 -->
+                    <div id="dashboard-content">
+                        <div class="page-header">
+                            <h1 class="page-title">
+                                <i class="fas fa-tachometer-alt me-3"></i>
+                                工作人员工作台
+                            </h1>
+                            <p class="page-subtitle">欢迎回来，这里是今日工作概览和待办事项</p>
+                        </div>
+
+                        <!-- 统计卡片 -->
+                        <div class="stats-grid">
+                            <div class="stat-card">
+                                <div class="stat-header">
+                                    <h3 class="stat-title">管理业主数</h3>
+                                    <div class="stat-icon primary">
+                                        <i class="fas fa-users"></i>
+                                    </div>
+                                </div>
+                                <div class="stat-value">156</div>
+                                <div class="stat-change positive">
+                                    <i class="fas fa-arrow-up"></i> +3 本周
+                                </div>
+                            </div>
+
+                            <div class="stat-card">
+                                <div class="stat-header">
+                                    <h3 class="stat-title">管理房产数</h3>
+                                    <div class="stat-icon success">
+                                        <i class="fas fa-home"></i>
+                                    </div>
+                                </div>
+                                <div class="stat-value">89</div>
+                                <div class="stat-change positive">
+                                    <i class="fas fa-arrow-up"></i> +2 本周
+                                </div>
+                            </div>
+
+                            <div class="stat-card">
+                                <div class="stat-header">
+                                    <h3 class="stat-title">待处理投诉</h3>
+                                    <div class="stat-icon warning">
+                                        <i class="fas fa-exclamation-triangle"></i>
+                                    </div>
+                                </div>
+                                <div class="stat-value">12</div>
+                                <div class="stat-change negative">
+                                    <i class="fas fa-arrow-up"></i> +5 今日
+                                </div>
+                            </div>
+
+                            <div class="stat-card">
+                                <div class="stat-header">
+                                    <h3 class="stat-title">今日收费</h3>
+                                    <div class="stat-icon info">
+                                        <i class="fas fa-money-bill-wave"></i>
+                                    </div>
+                                </div>
+                                <div class="stat-value">¥5,680</div>
+                                <div class="stat-change positive">
+                                    <i class="fas fa-arrow-up"></i> +15% 昨日
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- 今日任务 -->
+                        <div class="dashboard-card">
+                            <div class="card-header">
+                                <h2 class="card-title">
+                                    <i class="fas fa-tasks"></i>
+                                    今日任务
+                                </h2>
+                                <button class="btn btn-primary btn-sm">
+                                    <i class="fas fa-plus"></i>
+                                    添加任务
+                                </button>
+                            </div>
+                            <div class="card-body">
+                                <div class="row">
+                                    <div class="col-md-6 mb-3">
+                                        <div class="card border-left-primary">
+                                            <div class="card-body">
+                                                <h5 class="card-title">处理投诉建议</h5>
+                                                <p class="card-text">12条待处理的业主投诉需要及时回复</p>
+                                                <button class="btn btn-primary btn-sm" onclick="loadModule('complaints')">
+                                                    立即处理
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6 mb-3">
+                                        <div class="card border-left-success">
+                                            <div class="card-body">
+                                                <h5 class="card-title">发布社区公告</h5>
+                                                <p class="card-text">本周物业费缴费通知需要发布</p>
+                                                <button class="btn btn-success btn-sm" onclick="loadModule('announcements')">
+                                                    发布公告
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- 快速操作 -->
+                        <div class="dashboard-card">
+                            <div class="card-header">
+                                <h2 class="card-title">
+                                    <i class="fas fa-bolt"></i>
+                                    快速操作
+                                </h2>
+                            </div>
+                            <div class="card-body">
+                                <div class="row">
+                                    <div class="col-md-3 mb-3">
+                                        <button class="btn btn-primary w-100" onclick="loadModule('property-management')">
+                                            <i class="fas fa-home"></i>
+                                            房产管理
+                                        </button>
+                                    </div>
+                                    <div class="col-md-3 mb-3">
+                                        <button class="btn btn-success w-100" onclick="loadModule('charge-management')">
+                                            <i class="fas fa-credit-card"></i>
+                                            收费管理
+                                        </button>
+                                    </div>
+                                    <div class="col-md-3 mb-3">
+                                        <button class="btn btn-info w-100" onclick="loadModule('parking-management')">
+                                            <i class="fas fa-car"></i>
+                                            车位管理
+                                        </button>
+                                    </div>
+                                    <div class="col-md-3 mb-3">
+                                        <button class="btn btn-warning w-100" onclick="loadModule('announcements')">
+                                            <i class="fas fa-bullhorn"></i>
+                                            发布公告
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- 最近活动 -->
+                        <div class="dashboard-card">
+                            <div class="card-header">
+                                <h2 class="card-title">
+                                    <i class="fas fa-clock"></i>
+                                    最近活动
+                                </h2>
+                            </div>
+                            <div class="card-body">
+                                <div class="table-container">
+                                    <table class="table">
+                                        <thead>
+                                            <tr>
+                                                <th>时间</th>
+                                                <th>操作</th>
+                                                <th>对象</th>
+                                                <th>状态</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr>
+                                                <td>14:30</td>
+                                                <td>处理投诉</td>
+                                                <td>A栋101室 - 噪音问题</td>
+                                                <td><span class="badge badge-success">已处理</span></td>
+                                            </tr>
+                                            <tr>
+                                                <td>12:15</td>
+                                                <td>添加收费记录</td>
+                                                <td>B栋205室 - 物业费</td>
+                                                <td><span class="badge badge-success">已完成</span></td>
+                                            </tr>
+                                            <tr>
+                                                <td>10:45</td>
+                                                <td>更新车位信息</td>
+                                                <td>地下车库 P-156</td>
+                                                <td><span class="badge badge-info">已更新</span></td>
+                                            </tr>
+                                            <tr>
+                                                <td>09:30</td>
+                                                <td>发布公告</td>
+                                                <td>电梯维护通知</td>
+                                                <td><span class="badge badge-success">已发布</span></td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 其他模块内容将在这里动态加载 -->
+                    <div id="dynamic-content" style="display: none;">
+                        <!-- 动态内容区域 -->
+                    </div>
+                </div>
+            </div>
+        </main>
+
+        <!-- 移动端侧边栏覆盖层 -->
+        <div class="sidebar-overlay" id="sidebarOverlay"></div>
+    </div>
+
+    <script src="../js/jquery.min.js"></script>
+    <script src="../js/bootstrap.min.js"></script>
+    <script src="../js/staff-functions.js"></script>
+    <script>
+        // 全局变量
+        let currentUser = null;
+        let currentModule = 'dashboard';
+
+        // 页面加载完成后初始化
+        document.addEventListener('DOMContentLoaded', function() {
+            initializePage();
+            loadUserInfo();
+            bindEventListeners();
+        });
+
+        // 初始化页面
+        function initializePage() {
+            // 检查用户登录状态
+            const userData = localStorage.getItem('currentUser');
+            if (!userData) {
+                window.location.href = 'login.html';
+                return;
+            }
+
+            try {
+                currentUser = JSON.parse(userData);
+                if (currentUser.userType !== 'STAFF') {
+                    alert('权限不足，无法访问工作人员页面');
+                    window.location.href = 'login.html';
+                    return;
+                }
+            } catch (e) {
+                console.error('用户数据解析失败:', e);
+                window.location.href = 'login.html';
+                return;
+            }
+        }
+
+        // 加载用户信息
+        function loadUserInfo() {
+            if (currentUser) {
+                document.getElementById('userName').textContent = currentUser.name || currentUser.username;
+                document.getElementById('userRole').textContent = '物业管理员';
+                
+                // 设置头像
+                const avatar = document.getElementById('userAvatar');
+                avatar.textContent = (currentUser.name || currentUser.username).charAt(0).toUpperCase();
+            }
+        }
+
+        // 绑定事件监听器
+        function bindEventListeners() {
+            // 侧边栏切换
+            document.getElementById('sidebarToggle').addEventListener('click', toggleSidebar);
+            document.getElementById('sidebarOverlay').addEventListener('click', closeSidebar);
+
+            // 导航链接点击事件
+            document.querySelectorAll('.nav-link').forEach(link => {
+                link.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    const module = this.dataset.module;
+                    if (module) {
+                        loadModule(module);
+                        setActiveNavItem(this);
+                    }
+                });
+            });
+
+            // 响应式处理
+            window.addEventListener('resize', handleResize);
+        }
+
+        // 切换侧边栏显示/隐藏
+        function toggleSidebar() {
+            const sidebar = document.getElementById('sidebar');
+            const overlay = document.getElementById('sidebarOverlay');
+            
+            sidebar.classList.toggle('open');
+            overlay.classList.toggle('show');
+        }
+
+        // 关闭侧边栏
+        function closeSidebar() {
+            const sidebar = document.getElementById('sidebar');
+            const overlay = document.getElementById('sidebarOverlay');
+            
+            sidebar.classList.remove('open');
+            overlay.classList.remove('show');
+        }
+
+        // 响应式处理
+        function handleResize() {
+            if (window.innerWidth > 768) {
+                closeSidebar();
+            }
+        }
+
+        // 设置活动导航项
+        function setActiveNavItem(activeLink) {
+            // 移除所有活动状态
+            document.querySelectorAll('.nav-link').forEach(link => {
+                link.classList.remove('active');
+            });
+            
+            // 添加活动状态到当前项
+            activeLink.classList.add('active');
+            
+            // 更新面包屑
+            updateBreadcrumb(activeLink.textContent.trim());
+        }
+
+        // 更新面包屑导航
+        function updateBreadcrumb(pageName) {
+            document.getElementById('currentPage').textContent = pageName;
+        }
+
+        // 加载模块内容
+        function loadModule(module) {
+            currentModule = module;
+            
+            // 隐藏默认内容
+            document.getElementById('dashboard-content').style.display = 
+                module === 'dashboard' ? 'block' : 'none';
+            
+            const dynamicContent = document.getElementById('dynamic-content');
+            
+            if (module === 'dashboard') {
+                dynamicContent.style.display = 'none';
+                return;
+            }
+            
+            // 显示加载状态
+            dynamicContent.style.display = 'block';
+            dynamicContent.innerHTML = `
+                <div class="loading">
+                    <div class="spinner"></div>
+                    <span class="ms-2">加载中...</span>
+                </div>
+            `;
+            
+            // 模拟加载延迟
+            setTimeout(() => {
+                loadModuleContent(module);
+            }, 500);
+        }
+
+        // 加载具体模块内容
+        function loadModuleContent(module) {
+            const dynamicContent = document.getElementById('dynamic-content');
+            let content = '';
+            
+            switch (module) {
+                case 'owner-info':
+                    content = getOwnerInfoContent();
+                    break;
+                case 'property-management':
+                    content = getPropertyManagementContent();
+                    break;
+                case 'parking-management':
+                    content = getParkingManagementContent();
+                    break;
+                case 'charge-management':
+                    content = getChargeManagementContent();
+                    break;
+                case 'announcements':
+                    content = getAnnouncementsContent();
+                    break;
+                case 'complaints':
+                    content = getComplaintsContent();
+                    break;
+                case 'profile':
+                    content = getProfileContent();
+                    break;
+                default:
+                    content = getEmptyStateContent();
+            }
+            
+            dynamicContent.innerHTML = content;
+        }
+
+        // 各模块内容模板
+        function getOwnerInfoContent() {
+            return `
+                <div class="page-header">
+                    <h1 class="page-title">
+                        <i class="fas fa-users me-3"></i>
+                        业主信息管理
+                    </h1>
+                    <p class="page-subtitle">查看和管理业主基本信息</p>
+                </div>
+                <div class="dashboard-card">
+                    <div class="card-header">
+                        <h2 class="card-title">业主列表</h2>
+                        <div>
+                            <button class="btn btn-primary me-2" onclick="searchOwners()">
+                                <i class="fas fa-search"></i>
+                                搜索业主
+                            </button>
+                            <button class="btn btn-success" onclick="refreshOwnerList()">
+                                <i class="fas fa-refresh"></i>
+                                刷新
+                            </button>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <div id="ownerSearchForm" class="mb-3" style="display: none;">
+                            <div class="row">
+                                <div class="col-md-4">
+                                    <input type="text" class="form-control" id="searchOwnerName" placeholder="搜索业主姓名...">
+                                </div>
+                                <div class="col-md-4">
+                                    <input type="text" class="form-control" id="searchOwnerPhone" placeholder="搜索手机号...">
+                                </div>
+                                <div class="col-md-4">
+                                    <button class="btn btn-primary" onclick="performOwnerSearch()">
+                                        <i class="fas fa-search"></i>
+                                        搜索
+                                    </button>
+                                    <button class="btn btn-secondary ms-2" onclick="clearOwnerSearch()">
+                                        清空
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="table-container">
+                            <table class="table">
+                                <thead>
+                                    <tr>
+                                        <th>用户名</th>
+                                        <th>业主姓名</th>
+                                        <th>手机号</th>
+                                        <th>账户余额</th>
+                                        <th>注册时间</th>
+                                        <th>操作</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="ownerTableBody">
+                                    <tr>
+                                        <td colspan="6" class="text-center">
+                                            <div class="loading">
+                                                <div class="spinner"></div>
+                                                <span class="ms-2">加载业主信息中...</span>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        function getPropertyManagementContent() {
+            return `
+                <div class="page-header">
+                    <h1 class="page-title">
+                        <i class="fas fa-home me-3"></i>
+                        住房信息管理
+                    </h1>
+                    <p class="page-subtitle">管理小区房产信息，包括房屋基本信息和入住状态</p>
+                </div>
+                <div class="dashboard-card">
+                    <div class="card-header">
+                        <h2 class="card-title">房产列表</h2>
+                        <div>
+                            <button class="btn btn-primary me-2" onclick="goToAddProperty()">
+                                <i class="fas fa-plus"></i>
+                                添加房产
+                            </button>
+                            <button class="btn btn-secondary me-2" onclick="exportPropertyData()">
+                                <i class="fas fa-download"></i>
+                                导出数据
+                            </button>
+                            <button class="btn btn-success" onclick="refreshPropertyList()">
+                                <i class="fas fa-refresh"></i>
+                                刷新
+                            </button>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <div class="table-container">
+                            <table class="table">
+                                <thead>
+                                    <tr>
+                                        <th>房屋号</th>
+                                        <th>业主</th>
+                                        <th>楼栋</th>
+                                        <th>单元</th>
+                                        <th>面积(㎡)</th>
+                                        <th>房型</th>
+                                        <th>入住信息</th>
+                                        <th>操作</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="propertyTableBody">
+                                    <tr>
+                                        <td colspan="8" class="text-center">
+                                            <div class="loading">
+                                                <div class="spinner"></div>
+                                                <span class="ms-2">加载房产信息中...</span>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+
+
+                <!-- 编辑房产模态框 -->
+                <div class="modal fade" id="editPropertyModal" tabindex="-1">
+                    <div class="modal-dialog modal-lg">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title">
+                                    <i class="fas fa-edit"></i>
+                                    编辑房产信息
+                                </h5>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                            </div>
+                            <div class="modal-body">
+                                <form id="editPropertyForm">
+                                    <input type="hidden" id="editPropertyId">
+                                    <div class="row">
+                                        <div class="col-md-6 mb-3">
+                                            <label for="editPropertyHouseNumber" class="form-label">房屋号 *</label>
+                                            <input type="text" class="form-control" id="editPropertyHouseNumber" required>
+                                        </div>
+                                        <div class="col-md-6 mb-3">
+                                            <label for="editPropertyOwner" class="form-label">业主 *</label>
+                                            <select class="form-control" id="editPropertyOwner" required>
+                                                <option value="">请选择业主</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-md-4 mb-3">
+                                            <label for="editPropertyBuilding" class="form-label">楼栋 *</label>
+                                            <input type="text" class="form-control" id="editPropertyBuilding" required>
+                                        </div>
+                                        <div class="col-md-4 mb-3">
+                                            <label for="editPropertyUnit" class="form-label">单元 *</label>
+                                            <input type="text" class="form-control" id="editPropertyUnit" required>
+                                        </div>
+                                        <div class="col-md-4 mb-3">
+                                            <label for="editPropertyArea" class="form-label">面积(㎡)</label>
+                                            <input type="number" class="form-control" id="editPropertyArea" step="0.01">
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-md-6 mb-3">
+                                            <label for="editPropertyType" class="form-label">房型</label>
+                                            <select class="form-control" id="editPropertyType">
+                                                <option value="">请选择房型</option>
+                                                <option value="一室一厅">一室一厅</option>
+                                                <option value="两室一厅">两室一厅</option>
+                                                <option value="两室两厅">两室两厅</option>
+                                                <option value="三室一厅">三室一厅</option>
+                                                <option value="三室两厅">三室两厅</option>
+                                                <option value="四室两厅">四室两厅</option>
+                                                <option value="五室两厅">五室两厅</option>
+                                                <option value="其他">其他</option>
+                                            </select>
+                                        </div>
+                                        <div class="col-md-6 mb-3">
+                                            <label for="editPropertyOccupancy" class="form-label">入住信息</label>
+                                            <select class="form-control" id="editPropertyOccupancy">
+                                                <option value="">请选择入住状态</option>
+                                                <option value="已入住">已入住</option>
+                                                <option value="未入住">未入住</option>
+                                                <option value="装修中">装修中</option>
+                                                <option value="出租中">出租中</option>
+                                                <option value="空置">空置</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label for="editPropertyDescription" class="form-label">附加说明</label>
+                                        <textarea class="form-control" id="editPropertyDescription" rows="3" placeholder="请输入房产附加说明..."></textarea>
+                                    </div>
+                                </form>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">取消</button>
+                                <button type="button" class="btn btn-primary" onclick="saveEditedProperty()">
+                                    <i class="fas fa-save"></i>
+                                    保存修改
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        // 车位管理内容已移到 staff-functions.js
+
+        // 收费管理内容已移到 staff-functions.js
+
+        function getAnnouncementsContent() {
+            return `
+                <div class="page-header">
+                    <h1 class="page-title">
+                        <i class="fas fa-bullhorn me-3"></i>
+                        社区公告管理
+                    </h1>
+                    <p class="page-subtitle">发布和管理社区公告通知</p>
+                </div>
+                <div class="dashboard-card">
+                    <div class="card-header">
+                        <h2 class="card-title">公告列表</h2>
+                        <div>
+                            <button class="btn btn-primary me-2" onclick="showAddAnnouncementModal()">
+                                <i class="fas fa-plus"></i>
+                                新增公告
+                            </button>
+                            <button class="btn btn-success" onclick="refreshAnnouncementList()">
+                                <i class="fas fa-refresh"></i>
+                                刷新
+                            </button>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <div class="table-container">
+                            <table class="table">
+                                <thead>
+                                    <tr>
+                                        <th>标题</th>
+                                        <th>内容摘要</th>
+                                        <th>发布时间</th>
+                                        <th>操作</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="announcementTableBody">
+                                    <tr>
+                                        <td colspan="4" class="text-center">
+                                            <div class="loading">
+                                                <div class="spinner"></div>
+                                                <span class="ms-2">加载公告信息中...</span>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 添加公告模态框 -->
+                <div class="modal fade" id="addAnnouncementModal" tabindex="-1">
+                    <div class="modal-dialog modal-lg">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title">
+                                    <i class="fas fa-plus"></i>
+                                    发布新公告
+                                </h5>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                            </div>
+                            <div class="modal-body">
+                                <form id="addAnnouncementForm">
+                                    <div class="mb-3">
+                                        <label for="announcementTitle" class="form-label">公告标题 *</label>
+                                        <input type="text" class="form-control" id="announcementTitle" required placeholder="请输入公告标题">
+                                    </div>
+                                    <div class="mb-3">
+                                        <label for="announcementContent" class="form-label">公告内容 *</label>
+                                        <textarea class="form-control" id="announcementContent" rows="8" required placeholder="请输入公告详细内容"></textarea>
+                                    </div>
+                                    <div class="alert alert-info">
+                                        <i class="fas fa-info-circle"></i>
+                                        公告发布后将立即对所有业主可见
+                                    </div>
+                                </form>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">取消</button>
+                                <button type="button" class="btn btn-primary" onclick="saveAnnouncement()">
+                                    <i class="fas fa-paper-plane"></i>
+                                    发布公告
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        function getComplaintsContent() {
+            return `
+                <div class="page-header">
+                    <h1 class="page-title">
+                        <i class="fas fa-comments me-3"></i>
+                        业主投诉与建议管理
+                    </h1>
+                    <p class="page-subtitle">处理业主投诉和建议，提供及时反馈</p>
+                </div>
+                <div class="dashboard-card">
+                    <div class="card-header">
+                        <h2 class="card-title">投诉建议列表</h2>
+                        <div>
+                            <button class="btn btn-warning me-2" onclick="filterComplaintsByStatus('PENDING')">
+                                <i class="fas fa-clock"></i>
+                                待处理 (<span id="pendingCount">0</span>)
+                            </button>
+                            <button class="btn btn-success me-2" onclick="filterComplaintsByStatus('PROCESSED')">
+                                <i class="fas fa-check"></i>
+                                已处理
+                            </button>
+                            <button class="btn btn-info" onclick="filterComplaintsByStatus('')">
+                                <i class="fas fa-list"></i>
+                                全部
+                            </button>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <div class="table-container">
+                            <table class="table">
+                                <thead>
+                                    <tr>
+                                        <th>业主姓名</th>
+                                        <th>内容</th>
+                                        <th>提交时间</th>
+                                        <th>处理状态</th>
+                                        <th>操作</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="complaintTableBody">
+                                    <tr>
+                                        <td colspan="5" class="text-center">
+                                            <div class="loading">
+                                                <div class="spinner"></div>
+                                                <span class="ms-2">加载投诉建议中...</span>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        function getProfileContent() {
+            return `
+                <div class="page-header">
+                    <h1 class="page-title">
+                        <i class="fas fa-user-circle me-3"></i>
+                        个人信息管理
+                    </h1>
+                    <p class="page-subtitle">管理您的个人账户信息和工作设置</p>
+                </div>
+                <div class="dashboard-card">
+                    <div class="card-header">
+                        <h2 class="card-title">账户设置</h2>
+                    </div>
+                    <div class="card-body">
+                        <div class="empty-state">
+                            <div class="empty-state-icon">
+                                <i class="fas fa-user"></i>
+                            </div>
+                            <h3 class="empty-state-title">个人信息管理</h3>
+                            <p class="empty-state-description">此功能正在开发中，敬请期待...</p>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        function getEmptyStateContent() {
+            return `
+                <div class="empty-state">
+                    <div class="empty-state-icon">
+                        <i class="fas fa-exclamation-triangle"></i>
+                    </div>
+                    <h3 class="empty-state-title">页面未找到</h3>
+                    <p class="empty-state-description">您访问的功能模块不存在或正在开发中</p>
+                    <button class="btn btn-primary" onclick="loadModule('dashboard')">
+                        返回工作台
+                    </button>
+                </div>
+            `;
+        }
+
+        // 退出登录
+        function logout() {
+            if (confirm('确定要退出登录吗？')) {
+                localStorage.removeItem('currentUser');
+                window.location.href = 'login.html';
+            }
+        }
+
+        // === 业主信息管理相关函数 ===
+        function searchOwners() {
+            const searchForm = document.getElementById('ownerSearchForm');
+            searchForm.style.display = searchForm.style.display === 'none' ? 'block' : 'none';
+        }
+
+        function performOwnerSearch() {
+            const name = document.getElementById('searchOwnerName').value;
+            const phone = document.getElementById('searchOwnerPhone').value;
+            console.log('搜索业主:', { name, phone });
+            loadOwnerList({ name, phone });
+        }
+
+        function clearOwnerSearch() {
+            document.getElementById('searchOwnerName').value = '';
+            document.getElementById('searchOwnerPhone').value = '';
+            loadOwnerList();
+        }
+
+        function refreshOwnerList() {
+            loadOwnerList();
+        }
+
+        async function loadOwnerList(searchParams = {}) {
+            const tbody = document.getElementById('ownerTableBody');
+            tbody.innerHTML = `
+                <tr>
+                    <td colspan="6" class="text-center">
+                        <div class="loading">
+                            <div class="spinner"></div>
+                            <span class="ms-2">加载业主信息中...</span>
+                        </div>
+                    </td>
+                </tr>
+            `;
+
+            try {
+                const response = await fetch('/api/users/type/OWNER');
+                if (response.ok) {
+                    const owners = await response.json();
+                    displayOwnerList(owners);
+                } else {
+                    throw new Error('获取业主信息失败');
+                }
+            } catch (error) {
+                console.error('加载业主列表失败:', error);
+                tbody.innerHTML = `
+                    <tr>
+                        <td colspan="6" class="text-center text-danger">
+                            <i class="fas fa-exclamation-triangle"></i>
+                            加载业主信息失败，请稍后重试
+                        </td>
+                    </tr>
+                `;
+            }
+        }
+
+        function displayOwnerList(owners) {
+            const tbody = document.getElementById('ownerTableBody');
+            if (owners.length === 0) {
+                tbody.innerHTML = `
+                    <tr>
+                        <td colspan="6" class="text-center text-muted">
+                            <i class="fas fa-inbox"></i>
+                            暂无业主信息
+                        </td>
+                    </tr>
+                `;
+                return;
+            }
+
+            tbody.innerHTML = owners.map(owner => `
+                <tr>
+                    <td>${owner.username}</td>
+                    <td>${owner.name || '-'}</td>
+                    <td>${owner.phone || '-'}</td>
+                    <td>¥${(owner.accountBalance || 0).toFixed(2)}</td>
+                    <td>近期注册</td>
+                    <td>
+                        <button class="btn btn-sm btn-info me-1" onclick="viewOwnerDetails(${owner.id})">
+                            <i class="fas fa-eye"></i>
+                            查看
+                        </button>
+                    </td>
+                </tr>
+            `).join('');
+        }
+
+        function viewOwnerDetails(ownerId) {
+            alert('查看业主详情功能开发中...');
+        }
+
+        // === 房产管理相关函数 ===
+        function goToAddProperty() {
+            window.location.href = 'staff-add-property.html';
+        }
+
+        // 编辑房产信息
+        async function editProperty(propertyId) {
+            try {
+                const response = await fetch(`/api/properties/${propertyId}`);
+                if (response.ok) {
+                    const property = await response.json();
+                    showEditPropertyModal(property);
+                } else {
+                    alert('获取房产信息失败');
+                }
+            } catch (error) {
+                console.error('获取房产信息失败:', error);
+                alert('获取房产信息失败，请稍后重试');
+            }
+        }
+
+        // 显示编辑房产模态框
+        function showEditPropertyModal(property) {
+            // 填充表单数据
+            document.getElementById('editPropertyId').value = property.id;
+            document.getElementById('editPropertyHouseNumber').value = property.houseNumber;
+            document.getElementById('editPropertyBuilding').value = property.building;
+            document.getElementById('editPropertyUnit').value = property.unit;
+            document.getElementById('editPropertyArea').value = property.area || '';
+            document.getElementById('editPropertyType').value = property.houseType || '';
+            document.getElementById('editPropertyOccupancy').value = property.occupancyInfo || '';
+            document.getElementById('editPropertyDescription').value = property.additionalDescription || '';
+            
+            // 加载业主选项并设置当前选中的业主
+            loadEditOwnerOptions(property.owner ? property.owner.id : null);
+            
+            // 显示模态框
+            const modal = new bootstrap.Modal(document.getElementById('editPropertyModal'));
+            modal.show();
+        }
+
+        // 加载编辑时的业主选项
+        async function loadEditOwnerOptions(selectedOwnerId) {
+            try {
+                const response = await fetch('/api/users/type/OWNER');
+                if (response.ok) {
+                    const owners = await response.json();
+                    const select = document.getElementById('editPropertyOwner');
+                    select.innerHTML = '<option value="">请选择业主</option>' +
+                        owners.map(owner => 
+                            `<option value="${owner.id}" ${owner.id === selectedOwnerId ? 'selected' : ''}>
+                                ${owner.name || owner.username} (${owner.phone || '无手机号'})
+                            </option>`
+                        ).join('');
+                } else {
+                    console.error('获取业主列表失败');
+                }
+            } catch (error) {
+                console.error('加载业主选项失败:', error);
+            }
+        }
+
+        // 保存编辑的房产信息
+        async function saveEditedProperty() {
+            const form = document.getElementById('editPropertyForm');
+            if (!form.checkValidity()) {
+                form.reportValidity();
+                return;
+            }
+
+            const propertyData = {
+                id: parseInt(document.getElementById('editPropertyId').value),
+                houseNumber: document.getElementById('editPropertyHouseNumber').value,
+                owner: { id: parseInt(document.getElementById('editPropertyOwner').value) },
+                building: document.getElementById('editPropertyBuilding').value,
+                unit: document.getElementById('editPropertyUnit').value,
+                area: parseFloat(document.getElementById('editPropertyArea').value) || null,
+                houseType: document.getElementById('editPropertyType').value || null,
+                occupancyInfo: document.getElementById('editPropertyOccupancy').value || null,
+                additionalDescription: document.getElementById('editPropertyDescription').value || null
+            };
+
+            if (!propertyData.houseNumber || !propertyData.owner.id || 
+                !propertyData.building || !propertyData.unit) {
+                alert('请填写必填字段');
+                return;
+            }
+
+            try {
+                const response = await fetch(`/api/properties/${propertyData.id}`, {
+                    method: 'PUT',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(propertyData)
+                });
+
+                if (response.ok) {
+                    alert('房产信息更新成功！');
+                    bootstrap.Modal.getInstance(document.getElementById('editPropertyModal')).hide();
+                    refreshPropertyList();
+                } else {
+                    const error = await response.text();
+                    alert('更新失败：' + error);
+                }
+            } catch (error) {
+                console.error('保存房产失败:', error);
+                alert('保存失败，请稍后重试');
+            }
+        }
+
+        // 删除房产信息
+        async function deleteProperty(propertyId, houseNumber) {
+            if (!confirm(`确定要删除房产 "${houseNumber}" 吗？此操作不可撤销。`)) {
+                return;
+            }
+
+            try {
+                const response = await fetch(`/api/properties/${propertyId}`, {
+                    method: 'DELETE'
+                });
+
+                if (response.ok) {
+                    alert('房产信息删除成功！');
+                    refreshPropertyList();
+                } else {
+                    const error = await response.text();
+                    alert('删除失败：' + error);
+                }
+            } catch (error) {
+                console.error('删除房产失败:', error);
+                alert('删除失败，请稍后重试');
+            }
+        }
+
+
+
+        function refreshPropertyList() {
+            loadPropertyList();
+        }
+
+        function exportPropertyData() {
+            alert('导出房产数据功能开发中...');
+        }
+
+        async function loadPropertyList() {
+            const tbody = document.getElementById('propertyTableBody');
+            tbody.innerHTML = `
+                <tr>
+                    <td colspan="8" class="text-center">
+                        <div class="loading">
+                            <div class="spinner"></div>
+                            <span class="ms-2">加载房产信息中...</span>
+                        </div>
+                    </td>
+                </tr>
+            `;
+
+            try {
+                const response = await fetch('/api/properties');
+                if (response.ok) {
+                    const properties = await response.json();
+                    displayPropertyList(properties);
+                } else {
+                    throw new Error('获取房产信息失败');
+                }
+            } catch (error) {
+                console.error('加载房产列表失败:', error);
+                tbody.innerHTML = `
+                    <tr>
+                        <td colspan="8" class="text-center text-danger">
+                            <i class="fas fa-exclamation-triangle"></i>
+                            加载房产信息失败，请稍后重试
+                        </td>
+                    </tr>
+                `;
+            }
+        }
+
+        function displayPropertyList(properties) {
+            const tbody = document.getElementById('propertyTableBody');
+            if (properties.length === 0) {
+                tbody.innerHTML = `
+                    <tr>
+                        <td colspan="8" class="text-center text-muted">
+                            <i class="fas fa-inbox"></i>
+                            暂无房产信息
+                        </td>
+                    </tr>
+                `;
+                return;
+            }
+
+            tbody.innerHTML = properties.map(property => `
+                <tr>
+                    <td>${property.houseNumber}</td>
+                    <td>${property.owner ? (property.owner.name || property.owner.username) : '-'}</td>
+                    <td>${property.building}</td>
+                    <td>${property.unit}</td>
+                    <td>${property.area ? property.area + '㎡' : '-'}</td>
+                    <td>${property.houseType || '-'}</td>
+                    <td>
+                        <span class="badge badge-${getOccupancyBadgeClass(property.occupancyInfo)}">
+                            ${property.occupancyInfo || '未设置'}
+                        </span>
+                    </td>
+                    <td>
+                        <button class="btn btn-sm btn-info me-1" onclick="editProperty(${property.id})">
+                            <i class="fas fa-edit"></i>
+                            编辑
+                        </button>
+                        <button class="btn btn-sm btn-danger" onclick="deleteProperty(${property.id}, '${property.houseNumber}')">
+                            <i class="fas fa-trash"></i>
+                            删除
+                        </button>
+                    </td>
+                </tr>
+            `).join('');
+        }
+
+        function getOccupancyBadgeClass(occupancy) {
+            switch (occupancy) {
+                case '已入住': return 'success';
+                case '未入住': return 'secondary';
+                case '装修中': return 'warning';
+                case '出租中': return 'info';
+                default: return 'secondary';
+            }
+        }
+
+        function editProperty(propertyId) {
+            alert('编辑房产功能开发中...');
+        }
+
+        async function deleteProperty(propertyId, houseNumber) {
+            if (!confirm(`确定要删除房产 "${houseNumber}" 吗？此操作不可撤销。`)) {
+                return;
+            }
+
+            try {
+                const response = await fetch(`/api/properties/${propertyId}`, {
+                    method: 'DELETE'
+                });
+
+                if (response.ok) {
+                    alert('房产删除成功！');
+                    refreshPropertyList();
+                } else {
+                    alert('删除失败，请稍后重试');
+                }
+            } catch (error) {
+                console.error('删除房产失败:', error);
+                alert('删除失败，请稍后重试');
+            }
+        }
+
+        // 在模块加载时自动加载数据
+        const originalLoadModuleContent = loadModuleContent;
+        loadModuleContent = function(module) {
+            const content = originalLoadModuleContent(module);
+            
+            // 加载完内容后，根据模块类型加载数据
+            setTimeout(() => {
+                switch (module) {
+                    case 'owner-info':
+                        loadOwnerList();
+                        break;
+                    case 'property-management':
+                        loadPropertyList();
+                        break;
+                }
+            }, 100);
+            
+            return content;
+        };
+
+        // === 公告管理相关函数 ===
+        function showAddAnnouncementModal() {
+            const modal = new bootstrap.Modal(document.getElementById('addAnnouncementModal'));
+            modal.show();
+        }
+
+        async function saveAnnouncement() {
+            const announcementData = {
+                title: document.getElementById('announcementTitle').value,
+                content: document.getElementById('announcementContent').value,
+                publishTime: new Date().toISOString()
+            };
+
+            if (!announcementData.title || !announcementData.content) {
+                alert('请填写公告标题和内容');
+                return;
+            }
+
+            try {
+                const response = await fetch('/api/announcements', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(announcementData)
+                });
+
+                if (response.ok) {
+                    alert('公告发布成功！');
+                    bootstrap.Modal.getInstance(document.getElementById('addAnnouncementModal')).hide();
+                    document.getElementById('addAnnouncementForm').reset();
+                    refreshAnnouncementList();
+                } else {
+                    const error = await response.text();
+                    alert('发布失败：' + error);
+                }
+            } catch (error) {
+                console.error('发布公告失败:', error);
+                alert('发布失败，请稍后重试');
+            }
+        }
+
+        function refreshAnnouncementList() {
+            loadAnnouncementList();
+        }
+
+        async function loadAnnouncementList() {
+            const tbody = document.getElementById('announcementTableBody');
+            tbody.innerHTML = `
+                <tr>
+                    <td colspan="4" class="text-center">
+                        <div class="loading">
+                            <div class="spinner"></div>
+                            <span class="ms-2">加载公告信息中...</span>
+                        </div>
+                    </td>
+                </tr>
+            `;
+
+            try {
+                const response = await fetch('/api/announcements');
+                if (response.ok) {
+                    const announcements = await response.json();
+                    displayAnnouncementList(announcements);
+                } else {
+                    throw new Error('获取公告信息失败');
+                }
+            } catch (error) {
+                console.error('加载公告列表失败:', error);
+                tbody.innerHTML = `
+                    <tr>
+                        <td colspan="4" class="text-center text-danger">
+                            <i class="fas fa-exclamation-triangle"></i>
+                            加载公告信息失败，请稍后重试
+                        </td>
+                    </tr>
+                `;
+            }
+        }
+
+        function displayAnnouncementList(announcements) {
+            const tbody = document.getElementById('announcementTableBody');
+            if (announcements.length === 0) {
+                tbody.innerHTML = `
+                    <tr>
+                        <td colspan="4" class="text-center text-muted">
+                            <i class="fas fa-inbox"></i>
+                            暂无公告信息
+                        </td>
+                    </tr>
+                `;
+                return;
+            }
+
+            tbody.innerHTML = announcements.map(announcement => `
+                <tr>
+                    <td>${announcement.title}</td>
+                    <td>${announcement.content.length > 50 ? announcement.content.substring(0, 50) + '...' : announcement.content}</td>
+                    <td>${new Date(announcement.publishTime).toLocaleDateString()}</td>
+                    <td>
+                        <button class="btn btn-sm btn-info me-1" onclick="editAnnouncement(${announcement.id})">
+                            <i class="fas fa-edit"></i>
+                            编辑
+                        </button>
+                        <button class="btn btn-sm btn-danger" onclick="deleteAnnouncement(${announcement.id}, '${announcement.title}')">
+                            <i class="fas fa-trash"></i>
+                            删除
+                        </button>
+                    </td>
+                </tr>
+            `).join('');
+        }
+
+        function editAnnouncement(announcementId) {
+            alert('编辑公告功能开发中...');
+        }
+
+        async function deleteAnnouncement(announcementId, title) {
+            if (!confirm(`确定要删除公告 "${title}" 吗？此操作不可撤销。`)) {
+                return;
+            }
+
+            try {
+                const response = await fetch(`/api/announcements/${announcementId}`, {
+                    method: 'DELETE'
+                });
+
+                if (response.ok) {
+                    alert('公告删除成功！');
+                    refreshAnnouncementList();
+                } else {
+                    alert('删除失败，请稍后重试');
+                }
+            } catch (error) {
+                console.error('删除公告失败:', error);
+                alert('删除失败，请稍后重试');
+            }
+        }
+
+        // === 投诉建议管理相关函数 ===
+        function filterComplaintsByStatus(status) {
+            currentComplaintFilter = status;
+            loadComplaintList();
+        }
+
+        let currentComplaintFilter = '';
+
+        async function loadComplaintList() {
+            const tbody = document.getElementById('complaintTableBody');
+            tbody.innerHTML = `
+                <tr>
+                    <td colspan="5" class="text-center">
+                        <div class="loading">
+                            <div class="spinner"></div>
+                            <span class="ms-2">加载投诉建议中...</span>
+                        </div>
+                    </td>
+                </tr>
+            `;
+
+            try {
+                const response = await fetch('/api/complaints');
+                if (response.ok) {
+                    const complaints = await response.json();
+                    displayComplaintList(complaints);
+                    updatePendingCount(complaints);
+                } else {
+                    throw new Error('获取投诉建议失败');
+                }
+            } catch (error) {
+                console.error('加载投诉建议列表失败:', error);
+                tbody.innerHTML = `
+                    <tr>
+                        <td colspan="5" class="text-center text-danger">
+                            <i class="fas fa-exclamation-triangle"></i>
+                            加载投诉建议失败，请稍后重试
+                        </td>
+                    </tr>
+                `;
+            }
+        }
+
+        function updatePendingCount(complaints) {
+            const pendingCount = complaints.filter(c => c.processingStatus === 'PENDING').length;
+            const countElement = document.getElementById('pendingCount');
+            if (countElement) {
+                countElement.textContent = pendingCount;
+            }
+        }
+
+        function displayComplaintList(complaints) {
+            const tbody = document.getElementById('complaintTableBody');
+            
+            // 根据状态过滤
+            let filteredComplaints = complaints;
+            if (currentComplaintFilter) {
+                filteredComplaints = complaints.filter(c => c.processingStatus === currentComplaintFilter);
+            }
+
+            if (filteredComplaints.length === 0) {
+                tbody.innerHTML = `
+                    <tr>
+                        <td colspan="5" class="text-center text-muted">
+                            <i class="fas fa-inbox"></i>
+                            暂无投诉建议信息
+                        </td>
+                    </tr>
+                `;
+                return;
+            }
+
+            tbody.innerHTML = filteredComplaints.map(complaint => `
+                <tr>
+                    <td>${complaint.owner ? (complaint.owner.name || complaint.owner.username) : '-'}</td>
+                    <td>
+                        <div class="complaint-content" style="max-width: 300px;">
+                            ${complaint.content.length > 100 ? complaint.content.substring(0, 100) + '...' : complaint.content}
+                        </div>
+                    </td>
+                    <td>${new Date(complaint.submissionTime).toLocaleDateString()}</td>
+                    <td>
+                        <span class="badge badge-${complaint.processingStatus === 'PROCESSED' ? 'success' : 'warning'}">
+                            ${complaint.processingStatus === 'PROCESSED' ? '已处理' : '待处理'}
+                        </span>
+                    </td>
+                    <td>
+                        ${complaint.processingStatus === 'PENDING' ? 
+                            `<button class="btn btn-sm btn-success me-1" onclick="markComplaintAsProcessed(${complaint.id})">
+                                <i class="fas fa-check"></i>
+                                标记已处理
+                            </button>` : ''}
+                        <button class="btn btn-sm btn-danger" onclick="deleteComplaint(${complaint.id})">
+                            <i class="fas fa-trash"></i>
+                            删除
+                        </button>
+                    </td>
+                </tr>
+            `).join('');
+        }
+
+        async function markComplaintAsProcessed(complaintId) {
+            if (!confirm('确定要将此投诉标记为已处理吗？')) {
+                return;
+            }
+
+            try {
+                const response = await fetch(`/api/complaints/${complaintId}`, {
+                    method: 'PUT',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        processingStatus: 'PROCESSED'
+                    })
+                });
+
+                if (response.ok) {
+                    alert('投诉已标记为已处理！');
+                    loadComplaintList();
+                } else {
+                    alert('操作失败，请稍后重试');
+                }
+            } catch (error) {
+                console.error('标记投诉状态失败:', error);
+                alert('操作失败，请稍后重试');
+            }
+        }
+
+        async function deleteComplaint(complaintId) {
+            if (!confirm('确定要删除此投诉建议吗？此操作不可撤销。')) {
+                return;
+            }
+
+            try {
+                const response = await fetch(`/api/complaints/${complaintId}`, {
+                    method: 'DELETE'
+                });
+
+                if (response.ok) {
+                    alert('投诉建议删除成功！');
+                    loadComplaintList();
+                } else {
+                    alert('删除失败，请稍后重试');
+                }
+            } catch (error) {
+                console.error('删除投诉建议失败:', error);
+                alert('删除失败，请稍后重试');
+            }
+        }
+
+        // 扩展模块加载函数以包含新功能
+        const originalLoadModuleContentUpdate = loadModuleContent;
+        loadModuleContent = function(module) {
+            const result = originalLoadModuleContentUpdate(module);
+            
+            // 加载完内容后，根据模块类型加载数据
+            setTimeout(() => {
+                switch (module) {
+                    case 'owner-info':
+                        loadOwnerList();
+                        break;
+                    case 'property-management':
+                        loadPropertyList();
+                        break;
+                    case 'announcements':
+                        loadAnnouncementList();
+                        break;
+                    case 'complaints':
+                        loadComplaintList();
+                        break;
+                }
+            }, 100);
+            
+            return result;
+        };
+    </script>
+</body>
+</html>

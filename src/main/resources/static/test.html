@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>物业管理系统 - 测试页面</title>
+    <link href="css/bootstrap.min.css" rel="stylesheet">
+    <link href="css/auth.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <div class="container mt-5">
+        <div class="row justify-content-center">
+            <div class="col-lg-8">
+                <div class="card">
+                    <div class="card-header">
+                        <h3><i class="fas fa-cog"></i> 物业管理系统 - 功能测试</h3>
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <div class="d-grid">
+                                    <a href="html/index.html" class="btn btn-primary">
+                                        <i class="fas fa-home"></i>
+                                        首页
+                                    </a>
+                                </div>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <div class="d-grid">
+                                    <a href="html/login.html" class="btn btn-success">
+                                        <i class="fas fa-sign-in-alt"></i>
+                                        登录页面
+                                    </a>
+                                </div>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <div class="d-grid">
+                                    <a href="html/register.html" class="btn btn-info">
+                                        <i class="fas fa-user-plus"></i>
+                                        注册页面
+                                    </a>
+                                </div>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <div class="d-grid">
+                                    <a href="html/admin.html" class="btn btn-warning">
+                                        <i class="fas fa-user-shield"></i>
+                                        管理员界面
+                                    </a>
+                                </div>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <div class="d-grid">
+                                    <a href="html/staff.html" class="btn btn-secondary">
+                                        <i class="fas fa-user-tie"></i>
+                                        工作人员界面
+                                    </a>
+                                </div>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <div class="d-grid">
+                                    <a href="html/owner.html" class="btn btn-primary">
+                                        <i class="fas fa-user"></i>
+                                        业主界面
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <hr>
+                        
+                        <h5><i class="fas fa-tools"></i> 后端API测试</h5>
+                        <div class="row">
+                            <div class="col-12">
+                                <button class="btn btn-outline-primary me-2 mb-2" onclick="testAPI('/api/users')">
+                                    测试用户API
+                                </button>
+                                <button class="btn btn-outline-success me-2 mb-2" onclick="testAPI('/api/properties')">
+                                    测试房产API
+                                </button>
+                                <button class="btn btn-outline-info me-2 mb-2" onclick="testAPI('/api/parking')">
+                                    测试车位API
+                                </button>
+                                <button class="btn btn-outline-warning me-2 mb-2" onclick="testAPI('/api/charges')">
+                                    测试收费API
+                                </button>
+                                <button class="btn btn-outline-secondary me-2 mb-2" onclick="testAPI('/api/announcements')">
+                                    测试公告API
+                                </button>
+                                <button class="btn btn-outline-dark me-2 mb-2" onclick="testAPI('/api/complaints')">
+                                    测试投诉API
+                                </button>
+                            </div>
+                        </div>
+                        
+                        <div class="mt-3">
+                            <h6>API测试结果：</h6>
+                            <div id="apiResult" class="bg-light p-3 rounded" style="min-height: 100px; font-family: monospace; white-space: pre-wrap;"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="js/bootstrap.min.js"></script>
+    <script>
+        async function testAPI(endpoint) {
+            const resultDiv = document.getElementById('apiResult');
+            resultDiv.textContent = `测试中... GET ${endpoint}`;
+            
+            try {
+                const response = await fetch(endpoint);
+                const data = await response.json();
+                
+                resultDiv.textContent = `状态: ${response.status} ${response.statusText}\n\n` +
+                                       `响应数据:\n${JSON.stringify(data, null, 2)}`;
+            } catch (error) {
+                resultDiv.textContent = `错误: ${error.message}`;
+            }
+        }
+        
+        // 页面加载时显示系统信息
+        document.addEventListener('DOMContentLoaded', function() {
+            document.getElementById('apiResult').textContent = 
+                '物业管理系统后端API测试工具\n' +
+                '点击上方按钮测试不同的API端点\n' +
+                '服务器地址: http://localhost:9999\n' +
+                '数据库: H2 (内存数据库)';
+        });
+    </script>
+</body>
+</html>

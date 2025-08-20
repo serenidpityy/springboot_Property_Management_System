@@ -1,0 +1,44 @@
+#配置端口号
+server:
+  port:9999
+
+#配置数据源
+spring:
+  datasource:
+    url: jdbc:h2:mem:property_management_db;DB_CLOSE_DELAY=-1
+    driver-class-name: org.h2.Driver
+    username: sa
+    password: ''
+  jpa:
+    show-sql: true
+    hibernate:
+      ddl-auto: update
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.H2Dialect
+
+logging:
+  level:
+    com.wfit.springbootbookstores: debug
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

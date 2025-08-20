@@ -1,0 +1,686 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>管理员控制台 - 物业管理系统</title>
+    <link href="../css/bootstrap.min.css" rel="stylesheet">
+    <link href="../css/dashboard.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+</head>
+<body>
+    <div class="dashboard-container">
+        <!-- 顶部导航栏 -->
+        <header class="dashboard-header">
+            <div class="header-left">
+                <button class="sidebar-toggle" id="sidebarToggle">
+                    <i class="fas fa-bars"></i>
+                </button>
+                <a href="#" class="brand-logo">
+                    <i class="fas fa-building"></i>
+                    <span>物业管理系统</span>
+                </a>
+            </div>
+            <div class="header-right">
+                <div class="user-info">
+                    <div class="user-avatar" id="userAvatar">
+                        A
+                    </div>
+                    <div class="user-details">
+                        <h4 id="userName">管理员</h4>
+                        <p id="userRole">系统管理员</p>
+                    </div>
+                </div>
+                <button class="logout-btn" onclick="logout()">
+                    <i class="fas fa-sign-out-alt"></i>
+                    退出登录
+                </button>
+            </div>
+        </header>
+
+        <!-- 侧边栏 -->
+        <nav class="dashboard-sidebar" id="sidebar">
+            <div class="sidebar-content">
+                <!-- 概览 -->
+                <div class="sidebar-section">
+                    <div class="sidebar-title">概览</div>
+                    <ul class="nav-menu">
+                        <li class="nav-item">
+                            <a href="#" class="nav-link active" data-module="dashboard">
+                                <i class="nav-icon fas fa-tachometer-alt"></i>
+                                <span>控制台</span>
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+
+                <!-- 用户管理 -->
+                <div class="sidebar-section">
+                    <div class="sidebar-title">用户管理</div>
+                    <ul class="nav-menu">
+                        <li class="nav-item">
+                            <a href="#" class="nav-link" data-module="admin-users">
+                                <i class="nav-icon fas fa-crown"></i>
+                                <span>管理员管理</span>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="#" class="nav-link" data-module="staff-users">
+                                <i class="nav-icon fas fa-user-tie"></i>
+                                <span>工作人员管理</span>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="#" class="nav-link" data-module="owner-users">
+                                <i class="nav-icon fas fa-users"></i>
+                                <span>业主管理</span>
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+
+                <!-- 系统管理 -->
+                <div class="sidebar-section">
+                    <div class="sidebar-title">系统管理</div>
+                    <ul class="nav-menu">
+                        <li class="nav-item">
+                            <a href="#" class="nav-link" data-module="system-settings">
+                                <i class="nav-icon fas fa-cogs"></i>
+                                <span>系统设置</span>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="#" class="nav-link" data-module="system-logs">
+                                <i class="nav-icon fas fa-list-alt"></i>
+                                <span>系统日志</span>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="#" class="nav-link" data-module="backup-restore">
+                                <i class="nav-icon fas fa-database"></i>
+                                <span>备份恢复</span>
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+
+                <!-- 个人中心 -->
+                <div class="sidebar-section">
+                    <div class="sidebar-title">个人中心</div>
+                    <ul class="nav-menu">
+                        <li class="nav-item">
+                            <a href="#" class="nav-link" data-module="profile">
+                                <i class="nav-icon fas fa-user-circle"></i>
+                                <span>个人信息</span>
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </nav>
+
+        <!-- 主内容区域 -->
+        <main class="dashboard-main">
+            <div class="main-content">
+                <!-- 面包屑导航 -->
+                <div class="breadcrumb" id="breadcrumb">
+                    <span class="breadcrumb-item">首页</span>
+                    <span class="breadcrumb-separator">/</span>
+                    <span class="breadcrumb-item active" id="currentPage">控制台</span>
+                </div>
+
+                <!-- 页面内容区域 -->
+                <div id="pageContent">
+                    <!-- 默认显示控制台 -->
+                    <div id="dashboard-content">
+                        <div class="page-header">
+                            <h1 class="page-title">
+                                <i class="fas fa-tachometer-alt me-3"></i>
+                                管理员控制台
+                            </h1>
+                            <p class="page-subtitle">欢迎回来，这里是系统概览和快速操作面板</p>
+                        </div>
+
+                        <!-- 统计卡片 -->
+                        <div class="stats-grid">
+                            <div class="stat-card">
+                                <div class="stat-header">
+                                    <h3 class="stat-title">总用户数</h3>
+                                    <div class="stat-icon primary">
+                                        <i class="fas fa-users"></i>
+                                    </div>
+                                </div>
+                                <div class="stat-value">1,234</div>
+                                <div class="stat-change positive">
+                                    <i class="fas fa-arrow-up"></i> +12% 本月
+                                </div>
+                            </div>
+
+                            <div class="stat-card">
+                                <div class="stat-header">
+                                    <h3 class="stat-title">业主数量</h3>
+                                    <div class="stat-icon success">
+                                        <i class="fas fa-home"></i>
+                                    </div>
+                                </div>
+                                <div class="stat-value">856</div>
+                                <div class="stat-change positive">
+                                    <i class="fas fa-arrow-up"></i> +8% 本月
+                                </div>
+                            </div>
+
+                            <div class="stat-card">
+                                <div class="stat-header">
+                                    <h3 class="stat-title">工作人员</h3>
+                                    <div class="stat-icon info">
+                                        <i class="fas fa-user-tie"></i>
+                                    </div>
+                                </div>
+                                <div class="stat-value">24</div>
+                                <div class="stat-change positive">
+                                    <i class="fas fa-arrow-up"></i> +2 本月
+                                </div>
+                            </div>
+
+                            <div class="stat-card">
+                                <div class="stat-header">
+                                    <h3 class="stat-title">系统状态</h3>
+                                    <div class="stat-icon success">
+                                        <i class="fas fa-server"></i>
+                                    </div>
+                                </div>
+                                <div class="stat-value">正常</div>
+                                <div class="stat-change positive">
+                                    <i class="fas fa-check"></i> 运行稳定
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- 快速操作 -->
+                        <div class="dashboard-card">
+                            <div class="card-header">
+                                <h2 class="card-title">
+                                    <i class="fas fa-bolt"></i>
+                                    快速操作
+                                </h2>
+                            </div>
+                            <div class="card-body">
+                                <div class="row">
+                                    <div class="col-md-4 mb-3">
+                                        <button class="btn btn-primary w-100" onclick="loadModule('admin-users')">
+                                            <i class="fas fa-user-plus"></i>
+                                            添加管理员
+                                        </button>
+                                    </div>
+                                    <div class="col-md-4 mb-3">
+                                        <button class="btn btn-success w-100" onclick="loadModule('staff-users')">
+                                            <i class="fas fa-user-tie"></i>
+                                            管理工作人员
+                                        </button>
+                                    </div>
+                                    <div class="col-md-4 mb-3">
+                                        <button class="btn btn-info w-100" onclick="loadModule('system-settings')">
+                                            <i class="fas fa-cogs"></i>
+                                            系统设置
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- 最近活动 -->
+                        <div class="dashboard-card">
+                            <div class="card-header">
+                                <h2 class="card-title">
+                                    <i class="fas fa-clock"></i>
+                                    最近活动
+                                </h2>
+                            </div>
+                            <div class="card-body">
+                                <div class="table-container">
+                                    <table class="table">
+                                        <thead>
+                                            <tr>
+                                                <th>时间</th>
+                                                <th>操作</th>
+                                                <th>用户</th>
+                                                <th>状态</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr>
+                                                <td>10:30</td>
+                                                <td>添加新用户</td>
+                                                <td>张三 (业主)</td>
+                                                <td><span class="badge badge-success">成功</span></td>
+                                            </tr>
+                                            <tr>
+                                                <td>09:15</td>
+                                                <td>修改用户信息</td>
+                                                <td>李四 (工作人员)</td>
+                                                <td><span class="badge badge-success">成功</span></td>
+                                            </tr>
+                                            <tr>
+                                                <td>08:45</td>
+                                                <td>系统备份</td>
+                                                <td>系统</td>
+                                                <td><span class="badge badge-info">完成</span></td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 其他模块内容将在这里动态加载 -->
+                    <div id="dynamic-content" style="display: none;">
+                        <!-- 动态内容区域 -->
+                    </div>
+                </div>
+            </div>
+        </main>
+
+        <!-- 移动端侧边栏覆盖层 -->
+        <div class="sidebar-overlay" id="sidebarOverlay"></div>
+    </div>
+
+    <script src="../js/jquery.min.js"></script>
+    <script src="../js/bootstrap.min.js"></script>
+    <script>
+        // 全局变量
+        let currentUser = null;
+        let currentModule = 'dashboard';
+
+        // 页面加载完成后初始化
+        document.addEventListener('DOMContentLoaded', function() {
+            initializePage();
+            loadUserInfo();
+            bindEventListeners();
+        });
+
+        // 初始化页面
+        function initializePage() {
+            // 检查用户登录状态
+            const userData = localStorage.getItem('currentUser');
+            if (!userData) {
+                window.location.href = 'login.html';
+                return;
+            }
+
+            try {
+                currentUser = JSON.parse(userData);
+                if (currentUser.userType !== 'ADMIN') {
+                    alert('权限不足，无法访问管理员页面');
+                    window.location.href = 'login.html';
+                    return;
+                }
+            } catch (e) {
+                console.error('用户数据解析失败:', e);
+                window.location.href = 'login.html';
+                return;
+            }
+        }
+
+        // 加载用户信息
+        function loadUserInfo() {
+            if (currentUser) {
+                document.getElementById('userName').textContent = currentUser.name || currentUser.username;
+                document.getElementById('userRole').textContent = '系统管理员';
+                
+                // 设置头像
+                const avatar = document.getElementById('userAvatar');
+                avatar.textContent = (currentUser.name || currentUser.username).charAt(0).toUpperCase();
+            }
+        }
+
+        // 绑定事件监听器
+        function bindEventListeners() {
+            // 侧边栏切换
+            document.getElementById('sidebarToggle').addEventListener('click', toggleSidebar);
+            document.getElementById('sidebarOverlay').addEventListener('click', closeSidebar);
+
+            // 导航链接点击事件
+            document.querySelectorAll('.nav-link').forEach(link => {
+                link.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    const module = this.dataset.module;
+                    if (module) {
+                        loadModule(module);
+                        setActiveNavItem(this);
+                    }
+                });
+            });
+
+            // 响应式处理
+            window.addEventListener('resize', handleResize);
+        }
+
+        // 切换侧边栏显示/隐藏
+        function toggleSidebar() {
+            const sidebar = document.getElementById('sidebar');
+            const overlay = document.getElementById('sidebarOverlay');
+            
+            sidebar.classList.toggle('open');
+            overlay.classList.toggle('show');
+        }
+
+        // 关闭侧边栏
+        function closeSidebar() {
+            const sidebar = document.getElementById('sidebar');
+            const overlay = document.getElementById('sidebarOverlay');
+            
+            sidebar.classList.remove('open');
+            overlay.classList.remove('show');
+        }
+
+        // 响应式处理
+        function handleResize() {
+            if (window.innerWidth > 768) {
+                closeSidebar();
+            }
+        }
+
+        // 设置活动导航项
+        function setActiveNavItem(activeLink) {
+            // 移除所有活动状态
+            document.querySelectorAll('.nav-link').forEach(link => {
+                link.classList.remove('active');
+            });
+            
+            // 添加活动状态到当前项
+            activeLink.classList.add('active');
+            
+            // 更新面包屑
+            updateBreadcrumb(activeLink.textContent.trim());
+        }
+
+        // 更新面包屑导航
+        function updateBreadcrumb(pageName) {
+            document.getElementById('currentPage').textContent = pageName;
+        }
+
+        // 加载模块内容
+        function loadModule(module) {
+            currentModule = module;
+            
+            // 隐藏默认内容
+            document.getElementById('dashboard-content').style.display = 
+                module === 'dashboard' ? 'block' : 'none';
+            
+            const dynamicContent = document.getElementById('dynamic-content');
+            
+            if (module === 'dashboard') {
+                dynamicContent.style.display = 'none';
+                return;
+            }
+            
+            // 显示加载状态
+            dynamicContent.style.display = 'block';
+            dynamicContent.innerHTML = `
+                <div class="loading">
+                    <div class="spinner"></div>
+                    <span class="ms-2">加载中...</span>
+                </div>
+            `;
+            
+            // 模拟加载延迟
+            setTimeout(() => {
+                loadModuleContent(module);
+            }, 500);
+        }
+
+        // 加载具体模块内容
+        function loadModuleContent(module) {
+            const dynamicContent = document.getElementById('dynamic-content');
+            let content = '';
+            
+            switch (module) {
+                case 'admin-users':
+                    content = getAdminUsersContent();
+                    break;
+                case 'staff-users':
+                    content = getStaffUsersContent();
+                    break;
+                case 'owner-users':
+                    content = getOwnerUsersContent();
+                    break;
+                case 'system-settings':
+                    content = getSystemSettingsContent();
+                    break;
+                case 'system-logs':
+                    content = getSystemLogsContent();
+                    break;
+                case 'backup-restore':
+                    content = getBackupRestoreContent();
+                    break;
+                case 'profile':
+                    content = getProfileContent();
+                    break;
+                default:
+                    content = getEmptyStateContent();
+            }
+            
+            dynamicContent.innerHTML = content;
+        }
+
+        // 各模块内容模板
+        function getAdminUsersContent() {
+            return `
+                <div class="page-header">
+                    <h1 class="page-title">
+                        <i class="fas fa-crown me-3"></i>
+                        管理员管理
+                    </h1>
+                    <p class="page-subtitle">管理系统管理员账户</p>
+                </div>
+                <div class="dashboard-card">
+                    <div class="card-header">
+                        <h2 class="card-title">管理员列表</h2>
+                        <button class="btn btn-primary">
+                            <i class="fas fa-plus"></i>
+                            添加管理员
+                        </button>
+                    </div>
+                    <div class="card-body">
+                        <div class="empty-state">
+                            <div class="empty-state-icon">
+                                <i class="fas fa-users"></i>
+                            </div>
+                            <h3 class="empty-state-title">管理员管理功能</h3>
+                            <p class="empty-state-description">此功能正在开发中，敬请期待...</p>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        function getStaffUsersContent() {
+            return `
+                <div class="page-header">
+                    <h1 class="page-title">
+                        <i class="fas fa-user-tie me-3"></i>
+                        工作人员管理
+                    </h1>
+                    <p class="page-subtitle">管理物业工作人员账户</p>
+                </div>
+                <div class="dashboard-card">
+                    <div class="card-header">
+                        <h2 class="card-title">工作人员列表</h2>
+                        <button class="btn btn-primary">
+                            <i class="fas fa-plus"></i>
+                            添加工作人员
+                        </button>
+                    </div>
+                    <div class="card-body">
+                        <div class="empty-state">
+                            <div class="empty-state-icon">
+                                <i class="fas fa-user-tie"></i>
+                            </div>
+                            <h3 class="empty-state-title">工作人员管理功能</h3>
+                            <p class="empty-state-description">此功能正在开发中，敬请期待...</p>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        function getOwnerUsersContent() {
+            return `
+                <div class="page-header">
+                    <h1 class="page-title">
+                        <i class="fas fa-users me-3"></i>
+                        业主管理
+                    </h1>
+                    <p class="page-subtitle">管理小区业主账户信息</p>
+                </div>
+                <div class="dashboard-card">
+                    <div class="card-header">
+                        <h2 class="card-title">业主列表</h2>
+                        <button class="btn btn-primary">
+                            <i class="fas fa-plus"></i>
+                            添加业主
+                        </button>
+                    </div>
+                    <div class="card-body">
+                        <div class="empty-state">
+                            <div class="empty-state-icon">
+                                <i class="fas fa-home"></i>
+                            </div>
+                            <h3 class="empty-state-title">业主管理功能</h3>
+                            <p class="empty-state-description">此功能正在开发中，敬请期待...</p>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        function getSystemSettingsContent() {
+            return `
+                <div class="page-header">
+                    <h1 class="page-title">
+                        <i class="fas fa-cogs me-3"></i>
+                        系统设置
+                    </h1>
+                    <p class="page-subtitle">配置系统参数和选项</p>
+                </div>
+                <div class="dashboard-card">
+                    <div class="card-header">
+                        <h2 class="card-title">系统配置</h2>
+                    </div>
+                    <div class="card-body">
+                        <div class="empty-state">
+                            <div class="empty-state-icon">
+                                <i class="fas fa-cogs"></i>
+                            </div>
+                            <h3 class="empty-state-title">系统设置功能</h3>
+                            <p class="empty-state-description">此功能正在开发中，敬请期待...</p>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        function getSystemLogsContent() {
+            return `
+                <div class="page-header">
+                    <h1 class="page-title">
+                        <i class="fas fa-list-alt me-3"></i>
+                        系统日志
+                    </h1>
+                    <p class="page-subtitle">查看系统操作日志和错误记录</p>
+                </div>
+                <div class="dashboard-card">
+                    <div class="card-header">
+                        <h2 class="card-title">日志记录</h2>
+                    </div>
+                    <div class="card-body">
+                        <div class="empty-state">
+                            <div class="empty-state-icon">
+                                <i class="fas fa-file-alt"></i>
+                            </div>
+                            <h3 class="empty-state-title">系统日志功能</h3>
+                            <p class="empty-state-description">此功能正在开发中，敬请期待...</p>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        function getBackupRestoreContent() {
+            return `
+                <div class="page-header">
+                    <h1 class="page-title">
+                        <i class="fas fa-database me-3"></i>
+                        备份恢复
+                    </h1>
+                    <p class="page-subtitle">系统数据备份和恢复管理</p>
+                </div>
+                <div class="dashboard-card">
+                    <div class="card-header">
+                        <h2 class="card-title">数据管理</h2>
+                    </div>
+                    <div class="card-body">
+                        <div class="empty-state">
+                            <div class="empty-state-icon">
+                                <i class="fas fa-database"></i>
+                            </div>
+                            <h3 class="empty-state-title">备份恢复功能</h3>
+                            <p class="empty-state-description">此功能正在开发中，敬请期待...</p>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        function getProfileContent() {
+            return `
+                <div class="page-header">
+                    <h1 class="page-title">
+                        <i class="fas fa-user-circle me-3"></i>
+                        个人信息
+                    </h1>
+                    <p class="page-subtitle">管理您的个人账户信息</p>
+                </div>
+                <div class="dashboard-card">
+                    <div class="card-header">
+                        <h2 class="card-title">账户设置</h2>
+                    </div>
+                    <div class="card-body">
+                        <div class="empty-state">
+                            <div class="empty-state-icon">
+                                <i class="fas fa-user"></i>
+                            </div>
+                            <h3 class="empty-state-title">个人信息管理</h3>
+                            <p class="empty-state-description">此功能正在开发中，敬请期待...</p>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        function getEmptyStateContent() {
+            return `
+                <div class="empty-state">
+                    <div class="empty-state-icon">
+                        <i class="fas fa-exclamation-triangle"></i>
+                    </div>
+                    <h3 class="empty-state-title">页面未找到</h3>
+                    <p class="empty-state-description">您访问的功能模块不存在或正在开发中</p>
+                    <button class="btn btn-primary" onclick="loadModule('dashboard')">
+                        返回控制台
+                    </button>
+                </div>
+            `;
+        }
+
+        // 退出登录
+        function logout() {
+            if (confirm('确定要退出登录吗？')) {
+                localStorage.removeItem('currentUser');
+                window.location.href = 'login.html';
+            }
+        }
+    </script>
+</body>
+</html>

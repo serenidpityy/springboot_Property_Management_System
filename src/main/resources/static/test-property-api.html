@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>测试房产API</title>
+    <link href="css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+    <div class="container mt-4">
+        <h2>房产API测试页面</h2>
+        
+        <div class="row">
+            <div class="col-md-6">
+                <div class="card">
+                    <div class="card-header">
+                        <h5>测试获取房产列表</h5>
+                    </div>
+                    <div class="card-body">
+                        <button class="btn btn-primary" onclick="testGetProperties()">测试GET /api/properties</button>
+                        <div id="getResult" class="mt-3"></div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-md-6">
+                <div class="card">
+                    <div class="card-header">
+                        <h5>测试添加房产</h5>
+                    </div>
+                    <div class="card-body">
+                        <button class="btn btn-success" onclick="testAddProperty()">测试POST /api/properties</button>
+                        <div id="postResult" class="mt-3"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="row mt-4">
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-header">
+                        <h5>测试获取业主列表</h5>
+                    </div>
+                    <div class="card-body">
+                        <button class="btn btn-info" onclick="testGetOwners()">测试GET /api/users/type/OWNER</button>
+                        <div id="ownersResult" class="mt-3"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="js/bootstrap.min.js"></script>
+    <script>
+        async function testGetProperties() {
+            const resultDiv = document.getElementById('getResult');
+            resultDiv.innerHTML = '<div class="spinner-border spinner-border-sm" role="status"></div> 测试中...';
+            
+            try {
+                const response = await fetch('/api/properties');
+                const status = response.status;
+                const data = await response.json();
+                
+                if (response.ok) {
+                    resultDiv.innerHTML = `
+                        <div class="alert alert-success">
+                            <strong>成功!</strong> 状态码: ${status}
+                            <pre>${JSON.stringify(data, null, 2)}</pre>
+                        </div>
+                    `;
+                } else {
+                    resultDiv.innerHTML = `
+                        <div class="alert alert-danger">
+                            <strong>失败!</strong> 状态码: ${status}
+                            <pre>${JSON.stringify(data, null, 2)}</pre>
+                        </div>
+                    `;
+                }
+            } catch (error) {
+                resultDiv.innerHTML = `
+                    <div class="alert alert-danger">
+                        <strong>错误!</strong> ${error.message}
+                    </div>
+                `;
+            }
+        }
+        
+        async function testAddProperty() {
+            const resultDiv = document.getElementById('postResult');
+            resultDiv.innerHTML = '<div class="spinner-border spinner-border-sm" role="status"></div> 测试中...';
+            
+            // 测试数据
+            const testProperty = {
+                houseNumber: "TEST-001",
+                owner: { id: 1 }, // 假设存在ID为1的业主
+                building: "测试楼栋",
+                unit: "测试单元",
+                area: 100.0,
+                houseType: "三室两厅",
+                occupancyInfo: "未入住",
+                additionalDescription: "这是一个测试房产"
+            };
+            
+            try {
+                const response = await fetch('/api/properties', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(testProperty)
+                });
+                
+                const status = response.status;
+                const data = await response.text();
+                
+                if (response.ok) {
+                    resultDiv.innerHTML = `
+                        <div class="alert alert-success">
+                            <strong>成功!</strong> 状态码: ${status}
+                            <pre>${data}</pre>
+                        </div>
+                    `;
+                } else {
+                    resultDiv.innerHTML = `
+                        <div class="alert alert-danger">
+                            <strong>失败!</strong> 状态码: ${status}
+                            <pre>${data}</pre>
+                        </div>
+                    `;
+                }
+            } catch (error) {
+                resultDiv.innerHTML = `
+                    <div class="alert alert-danger">
+                        <strong>错误!</strong> ${error.message}
+                    </div>
+                `;
+            }
+        }
+        
+        async function testGetOwners() {
+            const resultDiv = document.getElementById('ownersResult');
+            resultDiv.innerHTML = '<div class="spinner-border spinner-border-sm" role="status"></div> 测试中...';
+            
+            try {
+                const response = await fetch('/api/users/type/OWNER');
+                const status = response.status;
+                const data = await response.json();
+                
+                if (response.ok) {
+                    resultDiv.innerHTML = `
+                        <div class="alert alert-success">
+                            <strong>成功!</strong> 状态码: ${status}
+                            <pre>${JSON.stringify(data, null, 2)}</pre>
+                        </div>
+                    `;
+                } else {
+                    resultDiv.innerHTML = `
+                        <div class="alert alert-danger">
+                            <strong>失败!</strong> 状态码: ${status}
+                            <pre>${JSON.stringify(data, null, 2)}</pre>
+                        </div>
+                    `;
+                }
+            } catch (error) {
+                resultDiv.innerHTML = `
+                    <div class="alert alert-danger">
+                        <strong>错误!</strong> ${error.message}
+                    </div>
+                `;
+            }
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,386 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>余额功能测试 - 修复验证</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 20px auto;
+            padding: 20px;
+            background: #f5f5f5;
+        }
+        .container {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        .test-section {
+            margin: 20px 0;
+            padding: 15px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+        .btn {
+            background: #007bff;
+            color: white;
+            border: none;
+            padding: 10px 15px;
+            border-radius: 5px;
+            cursor: pointer;
+            margin: 5px;
+        }
+        .btn:hover { background: #0056b3; }
+        .btn.success { background: #28a745; }
+        .btn.danger { background: #dc3545; }
+        .btn.warning { background: #ffc107; color: #212529; }
+        .log {
+            background: #f8f9fa;
+            border: 1px solid #dee2e6;
+            padding: 15px;
+            border-radius: 5px;
+            max-height: 400px;
+            overflow-y: auto;
+            font-family: monospace;
+            font-size: 12px;
+            margin-top: 15px;
+        }
+        .balance-display {
+            font-size: 24px;
+            font-weight: bold;
+            color: #28a745;
+            text-align: center;
+            margin: 15px 0;
+            padding: 15px;
+            background: #f8f9fa;
+            border-radius: 8px;
+        }
+        .test-input {
+            width: 100px;
+            padding: 5px;
+            margin: 0 10px;
+            border: 1px solid #ddd;
+            border-radius: 3px;
+        }
+        .status {
+            margin-top: 10px;
+            padding: 10px;
+            border-radius: 5px;
+        }
+        .status.success { background: #d4edda; color: #155724; }
+        .status.error { background: #f8d7da; color: #721c24; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>💰 余额功能测试 - 修复验证</h1>
+        <p><strong>测试目的：</strong>验证充值和缴费功能的余额计算是否正确</p>
+
+        <!-- 用户状态 -->
+        <div class="test-section">
+            <h3>👤 用户状态</h3>
+            <div id="userStatus">未登录 - 请先登录业主账户</div>
+            <div class="balance-display" id="balanceDisplay">余额: ¥0.00</div>
+            <button class="btn" onclick="loadUser()">🔄 检查登录状态</button>
+            <button class="btn warning" onclick="resetBalance()">🔄 重置余额为0</button>
+        </div>
+
+        <!-- 充值测试 -->
+        <div class="test-section">
+            <h3>💳 充值功能测试</h3>
+            <p>测试场景：验证充值金额是否正确累加到余额中</p>
+            
+            <div>
+                <label>充值金额: </label>
+                <input type="number" class="test-input" id="rechargeAmount" value="100" min="0.01" step="0.01">
+                <button class="btn success" onclick="testRecharge()">💰 测试充值</button>
+            </div>
+            
+            <div style="margin-top: 10px;">
+                <button class="btn" onclick="testRecharge(50)">充值 ¥50</button>
+                <button class="btn" onclick="testRecharge(100)">充值 ¥100</button>
+                <button class="btn" onclick="testRecharge(200)">充值 ¥200</button>
+            </div>
+            
+            <div id="rechargeStatus" class="status" style="display: none;"></div>
+        </div>
+
+        <!-- 连续充值测试 -->
+        <div class="test-section">
+            <h3>🔄 连续充值测试</h3>
+            <p>测试场景：多次充值，验证余额累加是否正确</p>
+            
+            <button class="btn" onclick="multiRecharge([50, 100, 25])">连续充值 ¥50 + ¥100 + ¥25</button>
+            <button class="btn" onclick="multiRecharge([100, 100, 100])">连续充值 ¥100 × 3次</button>
+            
+            <div id="multiRechargeStatus" class="status" style="display: none;"></div>
+        </div>
+
+        <!-- API直接测试 -->
+        <div class="test-section">
+            <h3>🔧 API直接测试</h3>
+            <p>直接测试后端API，验证修复是否生效</p>
+            
+            <div>
+                <label>设置余额为: </label>
+                <input type="number" class="test-input" id="setBalanceAmount" value="500" min="0" step="0.01">
+                <button class="btn danger" onclick="testSetBalance()">🎯 直接设置余额</button>
+            </div>
+            
+            <div id="apiTestStatus" class="status" style="display: none;"></div>
+        </div>
+
+        <!-- 快捷链接 -->
+        <div class="test-section">
+            <h3>🔗 快捷链接</h3>
+            <a href="html/login.html" class="btn">🔐 登录页面</a>
+            <a href="html/owner.html" class="btn">👤 业主页面</a>
+            <a href="html/recharge.html" class="btn success">💰 充值页面</a>
+        </div>
+
+        <!-- 测试日志 -->
+        <div class="log" id="logArea">
+            [系统] 余额功能测试工具已准备就绪
+        </div>
+    </div>
+
+    <script>
+        let currentUser = null;
+        
+        function log(message, type = 'info') {
+            const logArea = document.getElementById('logArea');
+            const timestamp = new Date().toLocaleTimeString();
+            const prefix = type === 'error' ? '❌' : type === 'success' ? '✅' : 'ℹ️';
+            logArea.innerHTML += `\n[${timestamp}] ${prefix} ${message}`;
+            logArea.scrollTop = logArea.scrollHeight;
+            console.log(`[${type.toUpperCase()}] ${message}`);
+        }
+
+        function showStatus(elementId, message, isSuccess) {
+            const element = document.getElementById(elementId);
+            element.textContent = message;
+            element.className = `status ${isSuccess ? 'success' : 'error'}`;
+            element.style.display = 'block';
+        }
+
+        function loadUser() {
+            log('正在检查用户登录状态...');
+            const userData = localStorage.getItem('currentUser');
+            
+            if (userData) {
+                try {
+                    currentUser = JSON.parse(userData);
+                    const userInfo = `用户: ${currentUser.username} | 姓名: ${currentUser.name || '未设置'} | 类型: ${currentUser.userType} | 余额: ¥${(currentUser.accountBalance || 0).toFixed(2)}`;
+                    
+                    document.getElementById('userStatus').textContent = userInfo;
+                    updateBalanceDisplay();
+                    
+                    log(`用户已登录: ${currentUser.username}`, 'success');
+                    log(`当前余额: ¥${(currentUser.accountBalance || 0).toFixed(2)}`);
+                    
+                    if (currentUser.userType !== 'OWNER') {
+                        log('警告: 当前用户不是业主类型', 'error');
+                    }
+                } catch (e) {
+                    log(`用户数据解析失败: ${e.message}`, 'error');
+                    currentUser = null;
+                }
+            } else {
+                log('未找到用户登录信息', 'error');
+                document.getElementById('userStatus').textContent = '未登录 - 请先登录业主账户';
+                currentUser = null;
+            }
+        }
+
+        function updateBalanceDisplay() {
+            const balance = currentUser ? (currentUser.accountBalance || 0) : 0;
+            document.getElementById('balanceDisplay').textContent = `余额: ¥${balance.toFixed(2)}`;
+        }
+
+        async function testRecharge(amount) {
+            if (!currentUser) {
+                alert('请先登录业主账户！');
+                return;
+            }
+
+            const rechargeAmount = amount || parseFloat(document.getElementById('rechargeAmount').value);
+            if (!rechargeAmount || rechargeAmount <= 0) {
+                alert('请输入有效的充值金额');
+                return;
+            }
+
+            log(`开始测试充值: ¥${rechargeAmount.toFixed(2)}`);
+            
+            try {
+                const oldBalance = currentUser.accountBalance || 0;
+                const expectedNewBalance = oldBalance + rechargeAmount;
+                
+                log(`当前余额: ¥${oldBalance.toFixed(2)}`);
+                log(`充值金额: ¥${rechargeAmount.toFixed(2)}`);
+                log(`期望新余额: ¥${expectedNewBalance.toFixed(2)}`);
+                
+                const response = await fetch(`/api/users/${currentUser.id}/balance`, {
+                    method: 'PUT',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ amount: expectedNewBalance })
+                });
+
+                if (response.ok) {
+                    const updatedUser = await response.json();
+                    log(`API返回余额: ¥${updatedUser.accountBalance.toFixed(2)}`, 'success');
+                    
+                    // 验证结果
+                    const isCorrect = Math.abs(updatedUser.accountBalance - expectedNewBalance) < 0.01;
+                    
+                    if (isCorrect) {
+                        log(`✅ 充值测试成功！余额正确累加`, 'success');
+                        showStatus('rechargeStatus', `充值成功！新余额：¥${updatedUser.accountBalance.toFixed(2)}`, true);
+                    } else {
+                        log(`❌ 充值测试失败！期望余额：¥${expectedNewBalance.toFixed(2)}，实际余额：¥${updatedUser.accountBalance.toFixed(2)}`, 'error');
+                        showStatus('rechargeStatus', `充值异常！期望：¥${expectedNewBalance.toFixed(2)}，实际：¥${updatedUser.accountBalance.toFixed(2)}`, false);
+                    }
+                    
+                    // 更新本地数据
+                    currentUser.accountBalance = updatedUser.accountBalance;
+                    localStorage.setItem('currentUser', JSON.stringify(currentUser));
+                    updateBalanceDisplay();
+                    
+                } else {
+                    const error = await response.text();
+                    log(`充值失败: ${error}`, 'error');
+                    showStatus('rechargeStatus', `充值失败：${error}`, false);
+                }
+            } catch (error) {
+                log(`网络错误: ${error.message}`, 'error');
+                showStatus('rechargeStatus', `网络错误：${error.message}`, false);
+            }
+        }
+
+        async function multiRecharge(amounts) {
+            if (!currentUser) {
+                alert('请先登录业主账户！');
+                return;
+            }
+
+            log(`开始连续充值测试: ${amounts.map(a => '¥' + a).join(' + ')}`);
+            const initialBalance = currentUser.accountBalance || 0;
+            const totalRecharge = amounts.reduce((sum, amount) => sum + amount, 0);
+            const expectedFinalBalance = initialBalance + totalRecharge;
+            
+            log(`初始余额: ¥${initialBalance.toFixed(2)}`);
+            log(`总充值金额: ¥${totalRecharge.toFixed(2)}`);
+            log(`期望最终余额: ¥${expectedFinalBalance.toFixed(2)}`);
+
+            try {
+                for (let i = 0; i < amounts.length; i++) {
+                    const amount = amounts[i];
+                    log(`第${i + 1}次充值: ¥${amount.toFixed(2)}`);
+                    
+                    const currentBalance = currentUser.accountBalance || 0;
+                    const newBalance = currentBalance + amount;
+                    
+                    const response = await fetch(`/api/users/${currentUser.id}/balance`, {
+                        method: 'PUT',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ amount: newBalance })
+                    });
+
+                    if (response.ok) {
+                        const updatedUser = await response.json();
+                        currentUser.accountBalance = updatedUser.accountBalance;
+                        localStorage.setItem('currentUser', JSON.stringify(currentUser));
+                        log(`第${i + 1}次充值成功，当前余额: ¥${updatedUser.accountBalance.toFixed(2)}`, 'success');
+                    } else {
+                        const error = await response.text();
+                        log(`第${i + 1}次充值失败: ${error}`, 'error');
+                        showStatus('multiRechargeStatus', `第${i + 1}次充值失败：${error}`, false);
+                        return;
+                    }
+                }
+
+                // 验证最终结果
+                const finalBalance = currentUser.accountBalance;
+                const isCorrect = Math.abs(finalBalance - expectedFinalBalance) < 0.01;
+                
+                if (isCorrect) {
+                    log(`✅ 连续充值测试成功！最终余额正确`, 'success');
+                    showStatus('multiRechargeStatus', `连续充值成功！最终余额：¥${finalBalance.toFixed(2)}`, true);
+                } else {
+                    log(`❌ 连续充值测试失败！期望：¥${expectedFinalBalance.toFixed(2)}，实际：¥${finalBalance.toFixed(2)}`, 'error');
+                    showStatus('multiRechargeStatus', `连续充值异常！期望：¥${expectedFinalBalance.toFixed(2)}，实际：¥${finalBalance.toFixed(2)}`, false);
+                }
+                
+                updateBalanceDisplay();
+                
+            } catch (error) {
+                log(`连续充值测试出错: ${error.message}`, 'error');
+                showStatus('multiRechargeStatus', `连续充值出错：${error.message}`, false);
+            }
+        }
+
+        async function testSetBalance() {
+            if (!currentUser) {
+                alert('请先登录业主账户！');
+                return;
+            }
+
+            const newBalance = parseFloat(document.getElementById('setBalanceAmount').value);
+            if (isNaN(newBalance) || newBalance < 0) {
+                alert('请输入有效的余额数值');
+                return;
+            }
+
+            log(`直接设置余额为: ¥${newBalance.toFixed(2)}`);
+            
+            try {
+                const response = await fetch(`/api/users/${currentUser.id}/balance`, {
+                    method: 'PUT',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ amount: newBalance })
+                });
+
+                if (response.ok) {
+                    const updatedUser = await response.json();
+                    log(`API设置成功，返回余额: ¥${updatedUser.accountBalance.toFixed(2)}`, 'success');
+                    
+                    const isCorrect = Math.abs(updatedUser.accountBalance - newBalance) < 0.01;
+                    
+                    if (isCorrect) {
+                        log(`✅ API测试成功！余额设置正确`, 'success');
+                        showStatus('apiTestStatus', `余额设置成功：¥${updatedUser.accountBalance.toFixed(2)}`, true);
+                    } else {
+                        log(`❌ API测试失败！设置值：¥${newBalance.toFixed(2)}，返回值：¥${updatedUser.accountBalance.toFixed(2)}`, 'error');
+                        showStatus('apiTestStatus', `余额设置异常！设置：¥${newBalance.toFixed(2)}，返回：¥${updatedUser.accountBalance.toFixed(2)}`, false);
+                    }
+                    
+                    currentUser.accountBalance = updatedUser.accountBalance;
+                    localStorage.setItem('currentUser', JSON.stringify(currentUser));
+                    updateBalanceDisplay();
+                    
+                } else {
+                    const error = await response.text();
+                    log(`API调用失败: ${error}`, 'error');
+                    showStatus('apiTestStatus', `API调用失败：${error}`, false);
+                }
+            } catch (error) {
+                log(`网络错误: ${error.message}`, 'error');
+                showStatus('apiTestStatus', `网络错误：${error.message}`, false);
+            }
+        }
+
+        async function resetBalance() {
+            await testSetBalance();
+            document.getElementById('setBalanceAmount').value = '0';
+        }
+
+        // 页面加载时自动检查用户状态
+        document.addEventListener('DOMContentLoaded', function() {
+            log('页面加载完成');
+            loadUser();
+        });
+    </script>
+</body>
+</html>

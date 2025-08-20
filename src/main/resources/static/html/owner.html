@@ -1,0 +1,2096 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>业主中心 - 物业管理系统</title>
+    <link href="../css/bootstrap.min.css" rel="stylesheet">
+    <link href="../css/dashboard.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        /* 备用模态框样式 */
+        .modal.show {
+            display: block !important;
+            background: rgba(0,0,0,0.5);
+        }
+        
+        .modal-open {
+            overflow: hidden;
+        }
+        
+        /* 简单的加载动画 */
+        .spinner {
+            width: 20px;
+            height: 20px;
+            border: 2px solid #f3f3f3;
+            border-top: 2px solid #3498db;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            display: inline-block;
+            margin-right: 10px;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body>
+    <div class="dashboard-container">
+        <!-- 顶部导航栏 -->
+        <header class="dashboard-header">
+            <div class="header-left">
+                <button class="sidebar-toggle" id="sidebarToggle">
+                    <i class="fas fa-bars"></i>
+                </button>
+                <a href="#" class="brand-logo">
+                    <i class="fas fa-building"></i>
+                    <span>物业管理系统</span>
+                </a>
+            </div>
+            <div class="header-right">
+                <button class="btn btn-primary btn-sm me-3" onclick="goToRecharge()">
+                    <i class="fas fa-plus"></i>
+                    充值
+                </button>
+                <div class="user-info">
+                    <div class="user-avatar" id="userAvatar">
+                        O
+                    </div>
+                    <div class="user-details">
+                        <h4 id="userName">业主</h4>
+                        <p id="userBalance">余额: ¥0.00</p>
+                    </div>
+                </div>
+                <button class="logout-btn" onclick="logout()">
+                    <i class="fas fa-sign-out-alt"></i>
+                    退出登录
+                </button>
+            </div>
+        </header>
+
+        <!-- 侧边栏 -->
+        <nav class="dashboard-sidebar" id="sidebar">
+            <div class="sidebar-content">
+                <!-- 概览 -->
+                <div class="sidebar-section">
+                    <div class="sidebar-title">概览</div>
+                    <ul class="nav-menu">
+                        <li class="nav-item">
+                            <a href="#" class="nav-link active" data-module="dashboard">
+                                <i class="nav-icon fas fa-tachometer-alt"></i>
+                                <span>个人中心</span>
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+
+                <!-- 个人信息 -->
+                <div class="sidebar-section">
+                    <div class="sidebar-title">个人信息</div>
+                    <ul class="nav-menu">
+                        <li class="nav-item">
+                            <a href="#" class="nav-link" data-module="profile">
+                                <i class="nav-icon fas fa-user-circle"></i>
+                                <span>个人信息管理</span>
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+
+                <!-- 我的资产 -->
+                <div class="sidebar-section">
+                    <div class="sidebar-title">我的资产</div>
+                    <ul class="nav-menu">
+                        <li class="nav-item">
+                            <a href="#" class="nav-link" data-module="my-properties">
+                                <i class="nav-icon fas fa-home"></i>
+                                <span>我的房屋</span>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="#" class="nav-link" data-module="my-parking">
+                                <i class="nav-icon fas fa-car"></i>
+                                <span>我的车位</span>
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+
+                <!-- 费用管理 -->
+                <div class="sidebar-section">
+                    <div class="sidebar-title">费用管理</div>
+                    <ul class="nav-menu">
+                        <li class="nav-item">
+                            <a href="#" class="nav-link" data-module="my-charges">
+                                <i class="nav-icon fas fa-credit-card"></i>
+                                <span>我的缴费信息</span>
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+
+                <!-- 社区服务 -->
+                <div class="sidebar-section">
+                    <div class="sidebar-title">社区服务</div>
+                    <ul class="nav-menu">
+                        <li class="nav-item">
+                            <a href="#" class="nav-link" data-module="announcements">
+                                <i class="nav-icon fas fa-bullhorn"></i>
+                                <span>社区公告</span>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="#" class="nav-link" data-module="complaints">
+                                <i class="nav-icon fas fa-comments"></i>
+                                <span>投诉与建议</span>
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </nav>
+
+        <!-- 主内容区域 -->
+        <main class="dashboard-main">
+            <div class="main-content">
+                <!-- 面包屑导航 -->
+                <div class="breadcrumb" id="breadcrumb">
+                    <span class="breadcrumb-item">首页</span>
+                    <span class="breadcrumb-separator">/</span>
+                    <span class="breadcrumb-item active" id="currentPage">个人中心</span>
+                </div>
+
+                <!-- 页面内容区域 -->
+                <div id="pageContent">
+                    <!-- 默认显示个人中心 -->
+                    <div id="dashboard-content">
+                        <div class="page-header">
+                            <h1 class="page-title">
+                                <i class="fas fa-home me-3"></i>
+                                业主个人中心
+                            </h1>
+                            <p class="page-subtitle">欢迎回来，这里是您的个人服务中心</p>
+                        </div>
+
+                        <!-- 账户概览 -->
+                        <div class="stats-grid">
+                            <div class="stat-card">
+                                <div class="stat-header">
+                                    <h3 class="stat-title">账户余额</h3>
+                                    <div class="stat-icon primary">
+                                        <i class="fas fa-wallet"></i>
+                                    </div>
+                                </div>
+                                <div class="stat-value" id="dashboardBalance">¥0.00</div>
+                                <div class="stat-change">
+                                    <button class="btn btn-primary btn-sm" onclick="goToRecharge()">
+                                        <i class="fas fa-plus"></i> 立即充值
+                                    </button>
+                                </div>
+                            </div>
+
+                            <div class="stat-card">
+                                <div class="stat-header">
+                                    <h3 class="stat-title">待缴费用</h3>
+                                    <div class="stat-icon warning">
+                                        <i class="fas fa-credit-card"></i>
+                                    </div>
+                                </div>
+                                <div class="stat-value">¥1,250</div>
+                                <div class="stat-change negative">
+                                    <i class="fas fa-exclamation-triangle"></i> 3笔待缴费
+                                </div>
+                            </div>
+
+                            <div class="stat-card">
+                                <div class="stat-header">
+                                    <h3 class="stat-title">我的房屋</h3>
+                                    <div class="stat-icon info">
+                                        <i class="fas fa-home"></i>
+                                    </div>
+                                </div>
+                                <div class="stat-value">2套</div>
+                                <div class="stat-change positive">
+                                    <i class="fas fa-check"></i> 均已入住
+                                </div>
+                            </div>
+
+                            <div class="stat-card">
+                                <div class="stat-header">
+                                    <h3 class="stat-title">我的车位</h3>
+                                    <div class="stat-icon success">
+                                        <i class="fas fa-car"></i>
+                                    </div>
+                                </div>
+                                <div class="stat-value">1个</div>
+                                <div class="stat-change positive">
+                                    <i class="fas fa-check"></i> 使用中
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- 快速操作 -->
+                        <div class="dashboard-card">
+                            <div class="card-header">
+                                <h2 class="card-title">
+                                    <i class="fas fa-bolt"></i>
+                                    快速操作
+                                </h2>
+                            </div>
+                            <div class="card-body">
+                                <div class="row">
+                                    <div class="col-md-3 mb-3">
+                                        <button class="btn btn-primary w-100" onclick="loadModule('my-charges')">
+                                            <i class="fas fa-credit-card"></i>
+                                            缴费中心
+                                        </button>
+                                    </div>
+                                    <div class="col-md-3 mb-3">
+                                        <button class="btn btn-success w-100" onclick="goToRecharge()">
+                                            <i class="fas fa-plus"></i>
+                                            账户充值
+                                        </button>
+                                    </div>
+                                    <div class="col-md-3 mb-3">
+                                        <button class="btn btn-info w-100" onclick="loadModule('complaints')">
+                                            <i class="fas fa-comments"></i>
+                                            提交建议
+                                        </button>
+                                    </div>
+                                    <div class="col-md-3 mb-3">
+                                        <button class="btn btn-warning w-100" onclick="loadModule('announcements')">
+                                            <i class="fas fa-bullhorn"></i>
+                                            查看公告
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- 最新公告 -->
+                        <div class="dashboard-card">
+                            <div class="card-header">
+                                <h2 class="card-title">
+                                    <i class="fas fa-bullhorn"></i>
+                                    最新公告
+                                </h2>
+                                <a href="#" class="btn btn-sm btn-secondary" onclick="loadModule('announcements')">
+                                    查看全部
+                                </a>
+                            </div>
+                            <div class="card-body">
+                                <div class="list-group">
+                                    <div class="list-group-item d-flex justify-content-between align-items-center">
+                                        <div>
+                                            <h6 class="mb-1">关于电梯维护的通知</h6>
+                                            <p class="mb-1 text-muted">定期维护将于本周六进行，请业主提前安排出行。</p>
+                                            <small class="text-muted">2024-01-15 09:00</small>
+                                        </div>
+                                        <span class="badge badge-info">重要</span>
+                                    </div>
+                                    <div class="list-group-item d-flex justify-content-between align-items-center">
+                                        <div>
+                                            <h6 class="mb-1">春节期间物业服务安排</h6>
+                                            <p class="mb-1 text-muted">春节假期物业服务时间调整通知。</p>
+                                            <small class="text-muted">2024-01-10 14:30</small>
+                                        </div>
+                                        <span class="badge badge-secondary">通知</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- 我的投诉建议 -->
+                        <div class="dashboard-card">
+                            <div class="card-header">
+                                <h2 class="card-title">
+                                    <i class="fas fa-comments"></i>
+                                    我的投诉建议
+                                </h2>
+                                <button class="btn btn-primary btn-sm" onclick="loadModule('complaints')">
+                                    <i class="fas fa-plus"></i>
+                                    提交新建议
+                                </button>
+                            </div>
+                            <div class="card-body">
+                                <div class="table-container">
+                                    <table class="table">
+                                        <thead>
+                                            <tr>
+                                                <th>提交时间</th>
+                                                <th>内容摘要</th>
+                                                <th>处理状态</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr>
+                                                <td>2024-01-10</td>
+                                                <td>楼道灯光昏暗，建议更换LED灯</td>
+                                                <td><span class="badge badge-success">已处理</span></td>
+                                            </tr>
+                                            <tr>
+                                                <td>2024-01-08</td>
+                                                <td>地下车库排水系统异常</td>
+                                                <td><span class="badge badge-warning">处理中</span></td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 其他模块内容将在这里动态加载 -->
+                    <div id="dynamic-content" style="display: none;">
+                        <!-- 动态内容区域 -->
+                    </div>
+                </div>
+            </div>
+        </main>
+
+        <!-- 移动端侧边栏覆盖层 -->
+        <div class="sidebar-overlay" id="sidebarOverlay"></div>
+
+        <!-- 业主添加房产模态框 -->
+        <div class="modal fade" id="ownerAddPropertyModal" tabindex="-1">
+            <div class="modal-dialog modal-lg">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">
+                            <i class="fas fa-plus"></i>
+                            申请添加房产信息
+                        </h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="alert alert-info">
+                            <i class="fas fa-info-circle"></i>
+                            请填写您的房产信息，提交后将添加到您的名下。
+                        </div>
+                        <form id="ownerAddPropertyForm">
+                            <div class="row">
+                                <div class="col-md-6 mb-3">
+                                    <label for="ownerPropertyHouseNumber" class="form-label">房屋号 *</label>
+                                    <input type="text" class="form-control" id="ownerPropertyHouseNumber" required placeholder="例如：1-101">
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label for="ownerPropertyBuilding" class="form-label">楼栋 *</label>
+                                    <input type="text" class="form-control" id="ownerPropertyBuilding" required placeholder="例如：1栋">
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-6 mb-3">
+                                    <label for="ownerPropertyUnit" class="form-label">单元 *</label>
+                                    <input type="text" class="form-control" id="ownerPropertyUnit" required placeholder="例如：1单元">
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label for="ownerPropertyArea" class="form-label">面积(㎡)</label>
+                                    <input type="number" class="form-control" id="ownerPropertyArea" step="0.01" placeholder="例如：120.5">
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-6 mb-3">
+                                    <label for="ownerPropertyType" class="form-label">房型</label>
+                                    <select class="form-control" id="ownerPropertyType">
+                                        <option value="">请选择房型</option>
+                                        <option value="一室一厅">一室一厅</option>
+                                        <option value="两室一厅">两室一厅</option>
+                                        <option value="两室两厅">两室两厅</option>
+                                        <option value="三室一厅">三室一厅</option>
+                                        <option value="三室两厅">三室两厅</option>
+                                        <option value="四室两厅">四室两厅</option>
+                                        <option value="其他">其他</option>
+                                    </select>
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label for="ownerPropertyOccupancy" class="form-label">入住信息</label>
+                                    <select class="form-control" id="ownerPropertyOccupancy">
+                                        <option value="">请选择入住状态</option>
+                                        <option value="已入住">已入住</option>
+                                        <option value="未入住">未入住</option>
+                                        <option value="装修中">装修中</option>
+                                        <option value="出租中">出租中</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="mb-3">
+                                <label for="ownerPropertyDescription" class="form-label">附加说明</label>
+                                <textarea class="form-control" id="ownerPropertyDescription" rows="3" placeholder="请输入房产附加说明..."></textarea>
+                            </div>
+                        </form>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">取消</button>
+                        <button type="button" class="btn btn-primary" onclick="submitOwnerProperty()">
+                            <i class="fas fa-save"></i>
+                            提交申请
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 业主添加车位模态框 -->
+        <div class="modal fade" id="ownerAddParkingModal" tabindex="-1">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">
+                            <i class="fas fa-plus"></i>
+                            申请添加车位信息
+                        </h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="alert alert-info">
+                            <i class="fas fa-info-circle"></i>
+                            请填写您的车位信息，提交后将添加到您的名下。
+                        </div>
+                        <form id="ownerAddParkingForm">
+                            <div class="mb-3">
+                                <label for="ownerParkingId" class="form-label">车位编号 *</label>
+                                <input type="text" class="form-control" id="ownerParkingId" required placeholder="例如：P-001、A区-15号">
+                                <div class="form-text">请输入您购买或租赁的车位编号</div>
+                            </div>
+                            <div class="mb-3">
+                                <label for="ownerParkingLocation" class="form-label">车位位置</label>
+                                <input type="text" class="form-control" id="ownerParkingLocation" placeholder="例如：地下一层A区">
+                                <div class="form-text">可选：车位的具体位置描述</div>
+                            </div>
+                        </form>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">取消</button>
+                        <button type="button" class="btn btn-primary" onclick="submitOwnerParking()">
+                            <i class="fas fa-save"></i>
+                            提交申请
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 充值功能已简化为跳转页面 -->
+    </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="../js/jquery.min.js"></script>
+    <script src="../js/bootstrap.min.js"></script>
+    <script>
+        // 全局变量
+        let currentUser = null;
+        let currentModule = 'dashboard';
+
+        // 页面加载完成后初始化
+        document.addEventListener('DOMContentLoaded', function() {
+            initializePage();
+            loadUserInfo();
+            bindEventListeners();
+        });
+
+        // 初始化页面
+        function initializePage() {
+            // 检查用户登录状态
+            const userData = localStorage.getItem('currentUser');
+            if (!userData) {
+                window.location.href = 'login.html';
+                return;
+            }
+
+            try {
+                currentUser = JSON.parse(userData);
+                if (currentUser.userType !== 'OWNER') {
+                    alert('权限不足，无法访问业主页面');
+                    window.location.href = 'login.html';
+                    return;
+                }
+            } catch (e) {
+                console.error('用户数据解析失败:', e);
+                window.location.href = 'login.html';
+                return;
+            }
+        }
+
+        // 加载用户信息
+        function loadUserInfo() {
+            if (currentUser) {
+                const nameElement = document.getElementById('userName');
+                if (nameElement) {
+                    nameElement.textContent = currentUser.name || currentUser.username;
+                }
+                
+                // 显示账户余额
+                const balance = currentUser.accountBalance || 0;
+                const formattedBalance = balance.toFixed(2);
+                
+                const userBalanceElement = document.getElementById('userBalance');
+                if (userBalanceElement) {
+                    userBalanceElement.textContent = `余额: ¥${formattedBalance}`;
+                }
+                
+                const dashboardBalanceElement = document.getElementById('dashboardBalance');
+                if (dashboardBalanceElement) {
+                    dashboardBalanceElement.textContent = `¥${formattedBalance}`;
+                }
+                
+                const sidebarBalanceElement = document.getElementById('sidebarBalance');
+                if (sidebarBalanceElement) {
+                    sidebarBalanceElement.textContent = `¥${formattedBalance}`;
+                }
+                
+                // 设置头像
+                const avatar = document.getElementById('userAvatar');
+                if (avatar) {
+                    avatar.textContent = (currentUser.name || currentUser.username).charAt(0).toUpperCase();
+                }
+                
+                console.log('User info loaded, balance:', formattedBalance);
+            }
+        }
+
+        // 绑定事件监听器
+        function bindEventListeners() {
+            // 侧边栏切换
+            document.getElementById('sidebarToggle').addEventListener('click', toggleSidebar);
+            document.getElementById('sidebarOverlay').addEventListener('click', closeSidebar);
+
+            // 导航链接点击事件
+            document.querySelectorAll('.nav-link').forEach(link => {
+                link.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    const module = this.dataset.module;
+                    if (module) {
+                        loadModule(module);
+                        setActiveNavItem(this);
+                    }
+                });
+            });
+
+            // 响应式处理
+            window.addEventListener('resize', handleResize);
+        }
+
+        // 切换侧边栏显示/隐藏
+        function toggleSidebar() {
+            const sidebar = document.getElementById('sidebar');
+            const overlay = document.getElementById('sidebarOverlay');
+            
+            sidebar.classList.toggle('open');
+            overlay.classList.toggle('show');
+        }
+
+        // 关闭侧边栏
+        function closeSidebar() {
+            const sidebar = document.getElementById('sidebar');
+            const overlay = document.getElementById('sidebarOverlay');
+            
+            sidebar.classList.remove('open');
+            overlay.classList.remove('show');
+        }
+
+        // 响应式处理
+        function handleResize() {
+            if (window.innerWidth > 768) {
+                closeSidebar();
+            }
+        }
+
+        // 设置活动导航项
+        function setActiveNavItem(activeLink) {
+            // 移除所有活动状态
+            document.querySelectorAll('.nav-link').forEach(link => {
+                link.classList.remove('active');
+            });
+            
+            // 添加活动状态到当前项
+            activeLink.classList.add('active');
+            
+            // 更新面包屑
+            updateBreadcrumb(activeLink.textContent.trim());
+        }
+
+        // 更新面包屑导航
+        function updateBreadcrumb(pageName) {
+            document.getElementById('currentPage').textContent = pageName;
+        }
+
+        // 显示充值模态框
+        function showRechargeModal() {
+            const rechargeModal = new bootstrap.Modal(document.getElementById('rechargeModal'));
+            rechargeModal.show();
+        }
+
+        // 处理充值
+        function processRecharge() {
+            const amount = document.getElementById('rechargeAmount').value;
+            const paymentMethod = document.querySelector('input[name="paymentMethod"]:checked').value;
+            
+            if (!amount || amount < 1) {
+                alert('请输入有效的充值金额');
+                return;
+            }
+            
+            // 模拟充值处理
+            if (confirm(`确认使用${paymentMethod}充值 ¥${amount} 元吗？`)) {
+                // 这里应该调用后端API处理充值
+                alert('充值成功！金额已到账。');
+                
+                // 更新用户余额（实际应该从后端获取最新余额）
+                if (currentUser.accountBalance) {
+                    currentUser.accountBalance += parseFloat(amount);
+                } else {
+                    currentUser.accountBalance = parseFloat(amount);
+                }
+                localStorage.setItem('currentUser', JSON.stringify(currentUser));
+                loadUserInfo();
+                
+                // 关闭模态框
+                bootstrap.Modal.getInstance(document.getElementById('rechargeModal')).hide();
+                
+                // 重置表单
+                document.getElementById('rechargeForm').reset();
+                document.getElementById('wechat').checked = true;
+            }
+        }
+
+        // 加载模块内容
+        function loadModule(module) {
+            currentModule = module;
+            
+            // 隐藏默认内容
+            document.getElementById('dashboard-content').style.display = 
+                module === 'dashboard' ? 'block' : 'none';
+            
+            const dynamicContent = document.getElementById('dynamic-content');
+            
+            if (module === 'dashboard') {
+                dynamicContent.style.display = 'none';
+                return;
+            }
+            
+            // 显示加载状态
+            dynamicContent.style.display = 'block';
+            dynamicContent.innerHTML = `
+                <div class="loading">
+                    <div class="spinner"></div>
+                    <span class="ms-2">加载中...</span>
+                </div>
+            `;
+            
+            // 模拟加载延迟
+            setTimeout(() => {
+                loadModuleContent(module);
+            }, 500);
+        }
+
+        // 加载具体模块内容
+        function loadModuleContent(module) {
+            const dynamicContent = document.getElementById('dynamic-content');
+            let content = '';
+            
+            switch (module) {
+                case 'profile':
+                    content = getProfileContent();
+                    break;
+                case 'my-properties':
+                    content = getMyPropertiesContent();
+                    break;
+                case 'my-parking':
+                    content = getMyParkingContent();
+                    break;
+                case 'my-charges':
+                    content = getMyChargesContent();
+                    break;
+                case 'announcements':
+                    content = getAnnouncementsContent();
+                    break;
+                case 'complaints':
+                    content = getComplaintsContent();
+                    break;
+                default:
+                    content = getEmptyStateContent();
+            }
+            
+            dynamicContent.innerHTML = content;
+        }
+
+        // 各模块内容模板
+        function getProfileContent() {
+            return `
+                <div class="page-header">
+                    <h1 class="page-title">
+                        <i class="fas fa-user-circle me-3"></i>
+                        个人信息管理
+                    </h1>
+                    <p class="page-subtitle">管理您的个人资料和账户设置</p>
+                </div>
+                <div class="row">
+                    <div class="col-md-8">
+                        <div class="dashboard-card">
+                            <div class="card-header">
+                                <h2 class="card-title">基本信息</h2>
+                                <button class="btn btn-primary" onclick="enableEditProfile()">
+                                    <i class="fas fa-edit"></i>
+                                    编辑信息
+                                </button>
+                            </div>
+                            <div class="card-body">
+                                <form id="profileForm">
+                                    <div class="row">
+                                        <div class="col-md-6 mb-3">
+                                            <label for="profileUsername" class="form-label">用户名</label>
+                                            <input type="text" class="form-control" id="profileUsername" readonly>
+                                        </div>
+                                        <div class="col-md-6 mb-3">
+                                            <label for="profileName" class="form-label">真实姓名</label>
+                                            <input type="text" class="form-control" id="profileName" readonly>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-md-6 mb-3">
+                                            <label for="profilePhone" class="form-label">手机号码</label>
+                                            <input type="tel" class="form-control" id="profilePhone" readonly>
+                                        </div>
+                                        <div class="col-md-6 mb-3">
+                                            <label for="profileBalance" class="form-label">账户余额</label>
+                                            <div class="input-group">
+                                                <span class="input-group-text">¥</span>
+                                                <input type="text" class="form-control" id="profileBalance" readonly>
+                                            </div>
+                                            <div class="form-text">余额只能通过充值增加</div>
+                                        </div>
+                                    </div>
+                                    <div class="mb-3" id="passwordSection" style="display: none;">
+                                        <label for="profilePassword" class="form-label">新密码</label>
+                                        <input type="password" class="form-control" id="profilePassword" placeholder="如不修改密码请留空">
+                                        <div class="form-text">留空表示不修改密码</div>
+                                    </div>
+                                    <div class="d-none" id="editButtons">
+                                        <button type="button" class="btn btn-success me-2" onclick="saveProfile()">
+                                            <i class="fas fa-save"></i>
+                                            保存修改
+                                        </button>
+                                        <button type="button" class="btn btn-secondary" onclick="cancelEditProfile()">
+                                            <i class="fas fa-times"></i>
+                                            取消
+                                        </button>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="dashboard-card">
+                            <div class="card-header">
+                                <h2 class="card-title">
+                                    <i class="fas fa-wallet"></i>
+                                    账户充值
+                                </h2>
+                            </div>
+                            <div class="card-body">
+                                                                    <div class="text-center mb-3">
+                                    <div class="stat-value" id="sidebarBalance">¥0.00</div>
+                                    <p class="text-muted">当前余额</p>
+                                </div>
+                                <button class="btn btn-primary w-100" onclick="goToRecharge()">
+                                    <i class="fas fa-wallet"></i>
+                                    立即充值
+                                </button>
+                                <div class="mt-2">
+                                    <small class="text-muted">支持微信、支付宝、银行卡</small>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        function getMyPropertiesContent() {
+            return `
+                <div class="page-header">
+                    <h1 class="page-title">
+                        <i class="fas fa-home me-3"></i>
+                        我的房屋
+                    </h1>
+                    <p class="page-subtitle">查看您名下的房产信息</p>
+                </div>
+                <div class="dashboard-card">
+                    <div class="card-header">
+                        <h2 class="card-title">房产列表</h2>
+                        <div>
+                            <button class="btn btn-primary me-2" onclick="showOwnerAddPropertyModal()">
+                                <i class="fas fa-plus"></i>
+                                申请添加房产
+                            </button>
+                            <button class="btn btn-secondary" onclick="refreshOwnerPropertyList()">
+                                <i class="fas fa-refresh"></i>
+                                刷新
+                            </button>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <div id="ownerPropertyList">
+                            <div class="text-center">
+                                <div class="loading">
+                                    <div class="spinner"></div>
+                                    <span class="ms-2">加载房产信息中...</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        function getMyParkingContent() {
+            return `
+                <div class="page-header">
+                    <h1 class="page-title">
+                        <i class="fas fa-car me-3"></i>
+                        我的车位
+                    </h1>
+                    <p class="page-subtitle">查看您的停车位信息</p>
+                </div>
+                <div class="dashboard-card">
+                    <div class="card-header">
+                        <h2 class="card-title">车位信息</h2>
+                        <div>
+                            <button class="btn btn-primary me-2" onclick="showOwnerAddParkingModal()">
+                                <i class="fas fa-plus"></i>
+                                申请添加车位
+                            </button>
+                            <button class="btn btn-secondary" onclick="refreshOwnerParkingList()">
+                                <i class="fas fa-refresh"></i>
+                                刷新
+                            </button>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <div id="ownerParkingList">
+                            <div class="text-center">
+                                <div class="loading">
+                                    <div class="spinner"></div>
+                                    <span class="ms-2">加载车位信息中...</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        function getMyChargesContent() {
+            return `
+                <div class="page-header">
+                    <h1 class="page-title">
+                        <i class="fas fa-credit-card me-3"></i>
+                        我的缴费信息
+                    </h1>
+                    <p class="page-subtitle">查看和缴纳各类费用</p>
+                </div>
+                <div class="dashboard-card">
+                    <div class="card-header">
+                        <h2 class="card-title">缴费记录</h2>
+                        <div>
+                            <button class="btn btn-warning me-2" onclick="filterOwnerChargesByStatus('UNPAID')">
+                                <i class="fas fa-clock"></i>
+                                待缴费 (<span id="ownerUnpaidCount">0</span>)
+                            </button>
+                            <button class="btn btn-success me-2" onclick="filterOwnerChargesByStatus('PAID')">
+                                <i class="fas fa-check"></i>
+                                已缴费
+                            </button>
+                            <button class="btn btn-info" onclick="filterOwnerChargesByStatus('')">
+                                <i class="fas fa-list"></i>
+                                全部
+                            </button>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <div class="table-container">
+                            <table class="table">
+                                <thead>
+                                    <tr>
+                                        <th>收费项目</th>
+                                        <th>收费金额</th>
+                                        <th>收费说明</th>
+                                        <th>缴费状态</th>
+                                        <th>缴费时间</th>
+                                        <th>操作</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="ownerChargeTableBody">
+                                    <tr>
+                                        <td colspan="6" class="text-center">
+                                            <div class="loading">
+                                                <div class="spinner"></div>
+                                                <span class="ms-2">加载缴费信息中...</span>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 缴费确认模态框 -->
+                <div class="modal fade" id="payChargeModal" tabindex="-1">
+                    <div class="modal-dialog">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title">
+                                    <i class="fas fa-credit-card"></i>
+                                    确认缴费
+                                </h5>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                            </div>
+                            <div class="modal-body">
+                                <div class="row">
+                                    <div class="col-12 mb-3">
+                                        <label class="form-label fw-bold">收费项目：</label>
+                                        <span id="payChargeItem"></span>
+                                    </div>
+                                    <div class="col-12 mb-3">
+                                        <label class="form-label fw-bold">收费金额：</label>
+                                        <span id="payChargeAmount" class="text-danger fw-bold"></span>
+                                    </div>
+                                    <div class="col-12 mb-3">
+                                        <label class="form-label fw-bold">账户余额：</label>
+                                        <span id="payAccountBalance" class="text-success fw-bold"></span>
+                                    </div>
+                                    <div class="col-12 mb-3" id="payChargeDescription">
+                                        <label class="form-label fw-bold">收费说明：</label>
+                                        <div id="payChargeDescriptionText"></div>
+                                    </div>
+                                </div>
+                                <div class="alert alert-info">
+                                    <i class="fas fa-info-circle"></i>
+                                    缴费后将从您的账户余额中扣除相应金额
+                                </div>
+                                <div class="alert alert-warning" id="insufficientBalanceAlert" style="display: none;">
+                                    <i class="fas fa-exclamation-triangle"></i>
+                                    账户余额不足，请先充值
+                                </div>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">取消</button>
+                                <button type="button" class="btn btn-primary" id="confirmPayBtn" onclick="confirmPayCharge()">
+                                    <i class="fas fa-credit-card"></i>
+                                    确认缴费
+                                </button>
+                                <button type="button" class="btn btn-warning" id="rechargeBtn" onclick="goToRecharge();" style="display: none;">
+                                    <i class="fas fa-plus"></i>
+                                    去充值
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        function getAnnouncementsContent() {
+            return `
+                <div class="page-header">
+                    <h1 class="page-title">
+                        <i class="fas fa-bullhorn me-3"></i>
+                        社区公告
+                    </h1>
+                    <p class="page-subtitle">查看最新的社区通知和公告</p>
+                </div>
+                <div class="dashboard-card">
+                    <div class="card-header">
+                        <h2 class="card-title">公告列表</h2>
+                        <button class="btn btn-secondary" onclick="refreshOwnerAnnouncementList()">
+                            <i class="fas fa-refresh"></i>
+                            刷新
+                        </button>
+                    </div>
+                    <div class="card-body">
+                        <div id="ownerAnnouncementList">
+                            <div class="text-center">
+                                <div class="loading">
+                                    <div class="spinner"></div>
+                                    <span class="ms-2">加载公告中...</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 公告详情模态框 -->
+                <div class="modal fade" id="announcementDetailModal" tabindex="-1">
+                    <div class="modal-dialog modal-lg">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title" id="announcementDetailTitle">
+                                    <i class="fas fa-bullhorn"></i>
+                                    公告详情
+                                </h5>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                            </div>
+                            <div class="modal-body">
+                                <div class="mb-3">
+                                    <h4 id="announcementTitle"></h4>
+                                    <small class="text-muted" id="announcementPublishTime"></small>
+                                </div>
+                                <div id="announcementContent" style="white-space: pre-wrap; line-height: 1.6;"></div>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">关闭</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        function getComplaintsContent() {
+            return `
+                <div class="page-header">
+                    <h1 class="page-title">
+                        <i class="fas fa-comments me-3"></i>
+                        投诉与建议
+                    </h1>
+                    <p class="page-subtitle">提交投诉建议或查看处理进度</p>
+                </div>
+                <div class="dashboard-card">
+                    <div class="card-header">
+                        <h2 class="card-title">我的投诉建议</h2>
+                        <div>
+                            <button class="btn btn-primary me-2" onclick="showAddComplaintModal()">
+                                <i class="fas fa-plus"></i>
+                                新增投诉/建议
+                            </button>
+                            <button class="btn btn-secondary" onclick="refreshOwnerComplaintList()">
+                                <i class="fas fa-refresh"></i>
+                                刷新
+                            </button>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <div class="table-container">
+                            <table class="table">
+                                <thead>
+                                    <tr>
+                                        <th>内容摘要</th>
+                                        <th>提交时间</th>
+                                        <th>处理状态</th>
+                                        <th>操作</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="ownerComplaintTableBody">
+                                    <tr>
+                                        <td colspan="4" class="text-center">
+                                            <div class="loading">
+                                                <div class="spinner"></div>
+                                                <span class="ms-2">加载投诉建议中...</span>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 新增投诉建议模态框 -->
+                <div class="modal fade" id="addComplaintModal" tabindex="-1">
+                    <div class="modal-dialog modal-lg">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title">
+                                    <i class="fas fa-plus"></i>
+                                    提交投诉/建议
+                                </h5>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                            </div>
+                            <div class="modal-body">
+                                <form id="addComplaintForm">
+                                    <div class="mb-3">
+                                        <label for="complaintContent" class="form-label">投诉/建议内容 *</label>
+                                        <textarea class="form-control" id="complaintContent" rows="6" required 
+                                                placeholder="请详细描述您的投诉或建议内容..."></textarea>
+                                        <div class="form-text">请详细描述问题或建议，以便我们更好地为您服务</div>
+                                    </div>
+                                    <div class="alert alert-info">
+                                        <i class="fas fa-info-circle"></i>
+                                        您的投诉建议提交后，我们会尽快处理并回复
+                                    </div>
+                                </form>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">取消</button>
+                                <button type="button" class="btn btn-primary" onclick="saveOwnerComplaint()">
+                                    <i class="fas fa-paper-plane"></i>
+                                    提交
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 投诉详情模态框 -->
+                <div class="modal fade" id="complaintDetailModal" tabindex="-1">
+                    <div class="modal-dialog modal-lg">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title">
+                                    <i class="fas fa-comments"></i>
+                                    投诉建议详情
+                                </h5>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                            </div>
+                            <div class="modal-body">
+                                <div class="mb-3">
+                                    <label class="form-label fw-bold">提交时间：</label>
+                                    <span id="complaintDetailTime"></span>
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label fw-bold">处理状态：</label>
+                                    <span id="complaintDetailStatus"></span>
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label fw-bold">内容：</label>
+                                    <div id="complaintDetailContent" style="white-space: pre-wrap; line-height: 1.6; 
+                                         padding: 1rem; background: #f8f9fa; border-radius: 8px; border-left: 4px solid var(--primary-color);"></div>
+                                </div>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">关闭</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        function getEmptyStateContent() {
+            return `
+                <div class="empty-state">
+                    <div class="empty-state-icon">
+                        <i class="fas fa-exclamation-triangle"></i>
+                    </div>
+                    <h3 class="empty-state-title">页面未找到</h3>
+                    <p class="empty-state-description">您访问的功能模块不存在或正在开发中</p>
+                    <button class="btn btn-primary" onclick="loadModule('dashboard')">
+                        返回个人中心
+                    </button>
+                </div>
+            `;
+        }
+
+        // 退出登录
+        function logout() {
+            if (confirm('确定要退出登录吗？')) {
+                localStorage.removeItem('currentUser');
+                window.location.href = 'login.html';
+            }
+        }
+
+        // === 充值功能相关函数 ===
+        // 跳转到简单充值页面
+        function goToRecharge() {
+            console.log('跳转到充值页面');
+            window.location.href = 'recharge.html';
+        }
+
+        // processRecharge 函数已移除，现在使用简单的页面跳转充值
+
+        // 更新余额显示的辅助函数
+        function updateBalanceDisplay() {
+            const balance = currentUser.accountBalance || 0;
+            const formattedBalance = balance.toFixed(2);
+            
+            // 更新侧边栏余额
+            const sidebarBalance = document.getElementById('sidebarBalance');
+            if (sidebarBalance) {
+                sidebarBalance.textContent = `¥${formattedBalance}`;
+            }
+            
+            // 更新个人信息页面余额
+            const profileBalance = document.getElementById('profileBalance');
+            if (profileBalance) {
+                profileBalance.value = formattedBalance;
+            }
+            
+            // 更新用户信息显示
+            loadUserInfo();
+            
+            console.log('Balance display updated to:', formattedBalance);
+        }
+
+        // 简化充值函数已移除，现在使用独立充值页面
+
+        // === 业主房产和车位添加功能 ===
+        function showOwnerAddPropertyModal() {
+            const modal = new bootstrap.Modal(document.getElementById('ownerAddPropertyModal'));
+            modal.show();
+        }
+
+        function showOwnerAddParkingModal() {
+            const modal = new bootstrap.Modal(document.getElementById('ownerAddParkingModal'));
+            modal.show();
+        }
+
+        async function submitOwnerProperty() {
+            const form = document.getElementById('ownerAddPropertyForm');
+            if (!form.checkValidity()) {
+                form.reportValidity();
+                return;
+            }
+
+            if (!currentUser) {
+                alert('请先登录');
+                return;
+            }
+
+            const propertyData = {
+                houseNumber: document.getElementById('ownerPropertyHouseNumber').value,
+                owner: { id: currentUser.id },
+                building: document.getElementById('ownerPropertyBuilding').value,
+                unit: document.getElementById('ownerPropertyUnit').value,
+                area: parseFloat(document.getElementById('ownerPropertyArea').value) || null,
+                houseType: document.getElementById('ownerPropertyType').value || null,
+                occupancyInfo: document.getElementById('ownerPropertyOccupancy').value || null,
+                additionalDescription: document.getElementById('ownerPropertyDescription').value || null
+            };
+
+            if (!propertyData.houseNumber || !propertyData.building || !propertyData.unit) {
+                alert('请填写必填字段：房屋号、楼栋、单元');
+                return;
+            }
+
+            try {
+                const response = await fetch('/api/properties', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(propertyData)
+                });
+
+                if (response.ok) {
+                    alert('房产信息添加成功！');
+                    bootstrap.Modal.getInstance(document.getElementById('ownerAddPropertyModal')).hide();
+                    form.reset();
+                    refreshOwnerPropertyList();
+                } else {
+                    const error = await response.text();
+                    alert('添加失败：' + error);
+                }
+            } catch (error) {
+                console.error('保存房产失败:', error);
+                alert('保存失败，请稍后重试');
+            }
+        }
+
+        async function submitOwnerParking() {
+            const form = document.getElementById('ownerAddParkingForm');
+            if (!form.checkValidity()) {
+                form.reportValidity();
+                return;
+            }
+
+            if (!currentUser) {
+                alert('请先登录');
+                return;
+            }
+
+            const parkingData = {
+                parkingId: document.getElementById('ownerParkingId').value,
+                owner: { id: currentUser.id }
+            };
+
+            if (!parkingData.parkingId) {
+                alert('请填写车位编号');
+                return;
+            }
+
+            try {
+                const response = await fetch('/api/parking', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(parkingData)
+                });
+
+                if (response.ok) {
+                    alert('车位信息添加成功！');
+                    bootstrap.Modal.getInstance(document.getElementById('ownerAddParkingModal')).hide();
+                    form.reset();
+                    refreshOwnerParkingList();
+                } else {
+                    const error = await response.text();
+                    alert('添加失败：' + error);
+                }
+            } catch (error) {
+                console.error('保存车位失败:', error);
+                alert('保存失败，请稍后重试');
+            }
+        }
+
+        // === 个人信息管理相关函数 ===
+        function enableEditProfile() {
+            // 加载当前用户信息到表单
+            loadProfileData();
+            
+            // 使表单可编辑
+            document.getElementById('profileUsername').readOnly = false;
+            document.getElementById('profileName').readOnly = false;
+            document.getElementById('profilePhone').readOnly = false;
+            
+            // 显示密码修改区域和操作按钮
+            document.getElementById('passwordSection').style.display = 'block';
+            document.getElementById('editButtons').classList.remove('d-none');
+        }
+
+        function cancelEditProfile() {
+            // 重新加载用户信息
+            loadProfileData();
+            
+            // 设置为只读
+            document.getElementById('profileUsername').readOnly = true;
+            document.getElementById('profileName').readOnly = true;
+            document.getElementById('profilePhone').readOnly = true;
+            
+            // 隐藏密码修改区域和操作按钮
+            document.getElementById('passwordSection').style.display = 'none';
+            document.getElementById('editButtons').classList.add('d-none');
+            
+            // 清空密码字段
+            document.getElementById('profilePassword').value = '';
+        }
+
+        function loadProfileData() {
+            if (currentUser) {
+                document.getElementById('profileUsername').value = currentUser.username || '';
+                document.getElementById('profileName').value = currentUser.name || '';
+                document.getElementById('profilePhone').value = currentUser.phone || '';
+                document.getElementById('profileBalance').value = (currentUser.accountBalance || 0).toFixed(2);
+                document.getElementById('sidebarBalance').textContent = `¥${(currentUser.accountBalance || 0).toFixed(2)}`;
+            }
+        }
+
+        async function saveProfile() {
+            const newUsername = document.getElementById('profileUsername').value;
+            const profileData = {
+                username: newUsername,
+                name: document.getElementById('profileName').value,
+                phone: document.getElementById('profilePhone').value || null
+            };
+
+            const password = document.getElementById('profilePassword').value;
+            if (password) {
+                profileData.password = password;
+            }
+
+            if (!profileData.username) {
+                alert('请填写用户名');
+                return;
+            }
+
+            if (!profileData.name) {
+                alert('请填写真实姓名');
+                return;
+            }
+
+            // 检查用户名是否已存在（如果修改了用户名）
+            if (newUsername !== currentUser.username) {
+                try {
+                    const checkResponse = await fetch(`/api/users/check-username?username=${encodeURIComponent(newUsername)}`);
+                    if (checkResponse.ok) {
+                        const exists = await checkResponse.json();
+                        if (exists) {
+                            alert('该用户名已存在，请选择其他用户名');
+                            return;
+                        }
+                    }
+                } catch (error) {
+                    console.error('检查用户名失败:', error);
+                }
+            }
+
+            try {
+                const response = await fetch(`/api/users/${currentUser.id}`, {
+                    method: 'PUT',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(profileData)
+                });
+
+                if (response.ok) {
+                    const updatedUser = await response.json();
+                    
+                    // 更新本地存储的用户信息
+                    currentUser.username = updatedUser.username;
+                    currentUser.name = updatedUser.name;
+                    currentUser.phone = updatedUser.phone;
+                    localStorage.setItem('currentUser', JSON.stringify(currentUser));
+                    
+                    // 更新页面显示
+                    loadUserInfo();
+                    
+                    alert('个人信息更新成功！');
+                    cancelEditProfile();
+                } else {
+                    const error = await response.text();
+                    alert('更新失败：' + error);
+                }
+            } catch (error) {
+                console.error('更新个人信息失败:', error);
+                alert('更新失败，请稍后重试');
+            }
+        }
+
+        // === 社区公告查看相关函数 ===
+        function refreshOwnerAnnouncementList() {
+            loadOwnerAnnouncementList();
+        }
+
+        async function loadOwnerAnnouncementList() {
+            const container = document.getElementById('ownerAnnouncementList');
+            container.innerHTML = `
+                <div class="text-center">
+                    <div class="loading">
+                        <div class="spinner"></div>
+                        <span class="ms-2">加载公告中...</span>
+                    </div>
+                </div>
+            `;
+
+            try {
+                const response = await fetch('/api/announcements');
+                if (response.ok) {
+                    const announcements = await response.json();
+                    displayOwnerAnnouncementList(announcements);
+                } else {
+                    throw new Error('获取公告信息失败');
+                }
+            } catch (error) {
+                console.error('加载公告列表失败:', error);
+                container.innerHTML = `
+                    <div class="text-center text-danger">
+                        <i class="fas fa-exclamation-triangle"></i>
+                        加载公告信息失败，请稍后重试
+                    </div>
+                `;
+            }
+        }
+
+        function displayOwnerAnnouncementList(announcements) {
+            const container = document.getElementById('ownerAnnouncementList');
+            if (announcements.length === 0) {
+                container.innerHTML = `
+                    <div class="text-center text-muted">
+                        <i class="fas fa-inbox"></i>
+                        <p>暂无公告信息</p>
+                    </div>
+                `;
+                return;
+            }
+
+            container.innerHTML = announcements.map(announcement => `
+                <div class="card mb-3">
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between align-items-start">
+                            <div class="flex-grow-1">
+                                <h5 class="card-title">${announcement.title}</h5>
+                                <p class="card-text text-muted">
+                                    ${announcement.content.length > 100 ? announcement.content.substring(0, 100) + '...' : announcement.content}
+                                </p>
+                                <small class="text-muted">
+                                    <i class="fas fa-calendar"></i>
+                                    ${new Date(announcement.publishTime).toLocaleDateString()}
+                                </small>
+                            </div>
+                            <button class="btn btn-primary btn-sm" onclick="showAnnouncementDetail(${announcement.id}, '${announcement.title}', '${announcement.content}', '${announcement.publishTime}')">
+                                <i class="fas fa-eye"></i>
+                                查看
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function showAnnouncementDetail(id, title, content, publishTime) {
+            document.getElementById('announcementTitle').textContent = title;
+            document.getElementById('announcementContent').textContent = content;
+            document.getElementById('announcementPublishTime').textContent = '发布时间：' + new Date(publishTime).toLocaleString();
+            
+            const modal = new bootstrap.Modal(document.getElementById('announcementDetailModal'));
+            modal.show();
+        }
+
+        // === 投诉与建议相关函数 ===
+        function showAddComplaintModal() {
+            const modal = new bootstrap.Modal(document.getElementById('addComplaintModal'));
+            modal.show();
+        }
+
+        async function saveOwnerComplaint() {
+            const content = document.getElementById('complaintContent').value;
+            if (!content.trim()) {
+                alert('请输入投诉或建议内容');
+                return;
+            }
+
+            const complaintData = {
+                owner: { id: currentUser.id },
+                content: content.trim(),
+                processingStatus: 'PENDING',
+                submissionTime: new Date().toISOString()
+            };
+
+            try {
+                const response = await fetch('/api/complaints', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(complaintData)
+                });
+
+                if (response.ok) {
+                    alert('投诉建议提交成功！我们会尽快处理。');
+                    bootstrap.Modal.getInstance(document.getElementById('addComplaintModal')).hide();
+                    document.getElementById('addComplaintForm').reset();
+                    refreshOwnerComplaintList();
+                } else {
+                    const error = await response.text();
+                    alert('提交失败：' + error);
+                }
+            } catch (error) {
+                console.error('提交投诉建议失败:', error);
+                alert('提交失败，请稍后重试');
+            }
+        }
+
+        function refreshOwnerComplaintList() {
+            loadOwnerComplaintList();
+        }
+
+        async function loadOwnerComplaintList() {
+            const tbody = document.getElementById('ownerComplaintTableBody');
+            tbody.innerHTML = `
+                <tr>
+                    <td colspan="4" class="text-center">
+                        <div class="loading">
+                            <div class="spinner"></div>
+                            <span class="ms-2">加载投诉建议中...</span>
+                        </div>
+                    </td>
+                </tr>
+            `;
+
+            try {
+                // 获取当前用户的投诉建议
+                const response = await fetch('/api/complaints');
+                if (response.ok) {
+                    const allComplaints = await response.json();
+                    const myComplaints = allComplaints.filter(c => c.owner && c.owner.id === currentUser.id);
+                    displayOwnerComplaintList(myComplaints);
+                } else {
+                    throw new Error('获取投诉建议失败');
+                }
+            } catch (error) {
+                console.error('加载投诉建议列表失败:', error);
+                tbody.innerHTML = `
+                    <tr>
+                        <td colspan="4" class="text-center text-danger">
+                            <i class="fas fa-exclamation-triangle"></i>
+                            加载投诉建议失败，请稍后重试
+                        </td>
+                    </tr>
+                `;
+            }
+        }
+
+        function displayOwnerComplaintList(complaints) {
+            const tbody = document.getElementById('ownerComplaintTableBody');
+            if (complaints.length === 0) {
+                tbody.innerHTML = `
+                    <tr>
+                        <td colspan="4" class="text-center text-muted">
+                            <i class="fas fa-inbox"></i>
+                            您还没有提交过投诉或建议
+                        </td>
+                    </tr>
+                `;
+                return;
+            }
+
+            tbody.innerHTML = complaints.map(complaint => `
+                <tr>
+                    <td>
+                        <div style="max-width: 300px;">
+                            ${complaint.content.length > 50 ? complaint.content.substring(0, 50) + '...' : complaint.content}
+                        </div>
+                    </td>
+                    <td>${new Date(complaint.submissionTime).toLocaleDateString()}</td>
+                    <td>
+                        <span class="badge badge-${complaint.processingStatus === 'PROCESSED' ? 'success' : 'warning'}">
+                            ${complaint.processingStatus === 'PROCESSED' ? '已处理' : '待处理'}
+                        </span>
+                    </td>
+                    <td>
+                        <button class="btn btn-sm btn-info" onclick="showOwnerComplaintDetail('${complaint.content}', '${complaint.submissionTime}', '${complaint.processingStatus}')">
+                            <i class="fas fa-eye"></i>
+                            查看详情
+                        </button>
+                    </td>
+                </tr>
+            `).join('');
+        }
+
+        function showOwnerComplaintDetail(content, submissionTime, status) {
+            document.getElementById('complaintDetailContent').textContent = content;
+            document.getElementById('complaintDetailTime').textContent = new Date(submissionTime).toLocaleString();
+            document.getElementById('complaintDetailStatus').innerHTML = `
+                <span class="badge badge-${status === 'PROCESSED' ? 'success' : 'warning'}">
+                    ${status === 'PROCESSED' ? '已处理' : '待处理'}
+                </span>
+            `;
+            
+            const modal = new bootstrap.Modal(document.getElementById('complaintDetailModal'));
+            modal.show();
+        }
+
+        // === 我的资产相关函数 ===
+        function refreshOwnerPropertyList() {
+            loadOwnerPropertyList();
+        }
+
+        async function loadOwnerPropertyList() {
+            const container = document.getElementById('ownerPropertyList');
+            container.innerHTML = `
+                <div class="text-center">
+                    <div class="loading">
+                        <div class="spinner"></div>
+                        <span class="ms-2">加载房产信息中...</span>
+                    </div>
+                </div>
+            `;
+
+            try {
+                const response = await fetch(`/api/properties/owner/${currentUser.id}`);
+                if (response.ok) {
+                    const properties = await response.json();
+                    displayOwnerPropertyList(properties);
+                } else {
+                    throw new Error('获取房产信息失败');
+                }
+            } catch (error) {
+                console.error('加载房产列表失败:', error);
+                container.innerHTML = `
+                    <div class="text-center text-danger">
+                        <i class="fas fa-exclamation-triangle"></i>
+                        加载房产信息失败，请稍后重试
+                    </div>
+                `;
+            }
+        }
+
+        function displayOwnerPropertyList(properties) {
+            const container = document.getElementById('ownerPropertyList');
+            if (properties.length === 0) {
+                container.innerHTML = `
+                    <div class="text-center text-muted">
+                        <i class="fas fa-home"></i>
+                        <p>您名下暂无房产信息</p>
+                    </div>
+                `;
+                return;
+            }
+
+            container.innerHTML = properties.map(property => `
+                <div class="card mb-3">
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <h5 class="card-title">
+                                    <i class="fas fa-home text-primary"></i>
+                                    ${property.houseNumber}
+                                </h5>
+                                <p class="card-text">
+                                    <strong>位置：</strong>${property.building}栋 ${property.unit}单元<br>
+                                    <strong>面积：</strong>${property.area ? property.area + '㎡' : '未设置'}<br>
+                                    <strong>房型：</strong>${property.houseType || '未设置'}
+                                </p>
+                            </div>
+                            <div class="col-md-6">
+                                <p class="card-text">
+                                    <strong>入住状态：</strong>
+                                    <span class="badge badge-${getOccupancyBadgeClass(property.occupancyInfo)}">
+                                        ${property.occupancyInfo || '未设置'}
+                                    </span>
+                                </p>
+                                ${property.additionalDescription ? `<p class="card-text"><strong>备注：</strong>${property.additionalDescription}</p>` : ''}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function refreshOwnerParkingList() {
+            loadOwnerParkingList();
+        }
+
+        async function loadOwnerParkingList() {
+            const container = document.getElementById('ownerParkingList');
+            container.innerHTML = `
+                <div class="text-center">
+                    <div class="loading">
+                        <div class="spinner"></div>
+                        <span class="ms-2">加载车位信息中...</span>
+                    </div>
+                </div>
+            `;
+
+            try {
+                const response = await fetch('/api/parking');
+                if (response.ok) {
+                    const allParkingSpaces = await response.json();
+                    const myParkingSpaces = allParkingSpaces.filter(p => p.owner && p.owner.id === currentUser.id);
+                    displayOwnerParkingList(myParkingSpaces);
+                } else {
+                    throw new Error('获取车位信息失败');
+                }
+            } catch (error) {
+                console.error('加载车位列表失败:', error);
+                container.innerHTML = `
+                    <div class="text-center text-danger">
+                        <i class="fas fa-exclamation-triangle"></i>
+                        加载车位信息失败，请稍后重试
+                    </div>
+                `;
+            }
+        }
+
+        function displayOwnerParkingList(parkingSpaces) {
+            const container = document.getElementById('ownerParkingList');
+            if (parkingSpaces.length === 0) {
+                container.innerHTML = `
+                    <div class="text-center text-muted">
+                        <i class="fas fa-car"></i>
+                        <p>您名下暂无车位信息</p>
+                    </div>
+                `;
+                return;
+            }
+
+            container.innerHTML = parkingSpaces.map(parking => `
+                <div class="card mb-3">
+                    <div class="card-body">
+                        <h5 class="card-title">
+                            <i class="fas fa-car text-primary"></i>
+                            车位编号：${parking.parkingId}
+                        </h5>
+                        <p class="card-text">
+                            <strong>业主：</strong>${parking.owner ? (parking.owner.name || parking.owner.username) : '-'}<br>
+                            <strong>分配时间：</strong>近期分配
+                        </p>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function getOccupancyBadgeClass(occupancy) {
+            switch (occupancy) {
+                case '已入住': return 'success';
+                case '未入住': return 'secondary';
+                case '装修中': return 'warning';
+                case '出租中': return 'info';
+                default: return 'secondary';
+            }
+        }
+
+        // === 缴费信息管理相关函数 ===
+        let currentOwnerChargeFilter = '';
+        let currentChargeForPayment = null;
+
+        function filterOwnerChargesByStatus(status) {
+            currentOwnerChargeFilter = status;
+            loadOwnerChargeList();
+        }
+
+        async function loadOwnerChargeList() {
+            const tbody = document.getElementById('ownerChargeTableBody');
+            tbody.innerHTML = `
+                <tr>
+                    <td colspan="6" class="text-center">
+                        <div class="loading">
+                            <div class="spinner"></div>
+                            <span class="ms-2">加载缴费信息中...</span>
+                        </div>
+                    </td>
+                </tr>
+            `;
+
+            try {
+                const response = await fetch('/api/charges');
+                if (response.ok) {
+                    const allCharges = await response.json();
+                    const myCharges = allCharges.filter(c => c.owner && c.owner.id === currentUser.id);
+                    displayOwnerChargeList(myCharges);
+                    updateOwnerUnpaidCount(myCharges);
+                } else {
+                    throw new Error('获取缴费信息失败');
+                }
+            } catch (error) {
+                console.error('加载缴费列表失败:', error);
+                tbody.innerHTML = `
+                    <tr>
+                        <td colspan="6" class="text-center text-danger">
+                            <i class="fas fa-exclamation-triangle"></i>
+                            加载缴费信息失败，请稍后重试
+                        </td>
+                    </tr>
+                `;
+            }
+        }
+
+        function updateOwnerUnpaidCount(charges) {
+            const unpaidCount = charges.filter(c => c.paymentStatus === 'UNPAID').length;
+            const countElement = document.getElementById('ownerUnpaidCount');
+            if (countElement) {
+                countElement.textContent = unpaidCount;
+            }
+        }
+
+        function displayOwnerChargeList(charges) {
+            const tbody = document.getElementById('ownerChargeTableBody');
+            
+            // 根据状态过滤
+            let filteredCharges = charges;
+            if (currentOwnerChargeFilter) {
+                filteredCharges = charges.filter(c => c.paymentStatus === currentOwnerChargeFilter);
+            }
+
+            if (filteredCharges.length === 0) {
+                tbody.innerHTML = `
+                    <tr>
+                        <td colspan="6" class="text-center text-muted">
+                            <i class="fas fa-inbox"></i>
+                            暂无缴费记录
+                        </td>
+                    </tr>
+                `;
+                return;
+            }
+
+            tbody.innerHTML = filteredCharges.map(charge => `
+                <tr>
+                    <td>${charge.chargeItem}</td>
+                    <td class="fw-bold text-danger">¥${charge.amount.toFixed(2)}</td>
+                    <td>${charge.description || '-'}</td>
+                    <td>
+                        <span class="badge badge-${charge.paymentStatus === 'PAID' ? 'success' : 'warning'}">
+                            ${charge.paymentStatus === 'PAID' ? '已缴费' : '未缴费'}
+                        </span>
+                    </td>
+                    <td>${charge.paymentTime ? new Date(charge.paymentTime).toLocaleDateString() : '-'}</td>
+                    <td>
+                        ${charge.paymentStatus === 'UNPAID' ? 
+                            `<button class="btn btn-sm btn-primary" onclick="showPayChargeModal(${charge.id}, '${charge.chargeItem}', ${charge.amount}, '${charge.description || ''}')">
+                                <i class="fas fa-credit-card"></i>
+                                缴费
+                            </button>` : 
+                            `<span class="text-success">
+                                <i class="fas fa-check"></i>
+                                已缴费
+                            </span>`}
+                    </td>
+                </tr>
+            `).join('');
+        }
+
+        function showPayChargeModal(chargeId, chargeItem, amount, description) {
+            currentChargeForPayment = chargeId;
+            
+            document.getElementById('payChargeItem').textContent = chargeItem;
+            document.getElementById('payChargeAmount').textContent = '¥' + amount.toFixed(2);
+            document.getElementById('payAccountBalance').textContent = '¥' + (currentUser.accountBalance || 0).toFixed(2);
+            
+            if (description) {
+                document.getElementById('payChargeDescriptionText').textContent = description;
+                document.getElementById('payChargeDescription').style.display = 'block';
+            } else {
+                document.getElementById('payChargeDescription').style.display = 'none';
+            }
+
+            const balance = currentUser.accountBalance || 0;
+            const sufficientBalance = balance >= amount;
+            
+            if (sufficientBalance) {
+                document.getElementById('insufficientBalanceAlert').style.display = 'none';
+                document.getElementById('confirmPayBtn').style.display = 'inline-block';
+                document.getElementById('rechargeBtn').style.display = 'none';
+            } else {
+                document.getElementById('insufficientBalanceAlert').style.display = 'block';
+                document.getElementById('confirmPayBtn').style.display = 'none';
+                document.getElementById('rechargeBtn').style.display = 'inline-block';
+            }
+
+            const modal = new bootstrap.Modal(document.getElementById('payChargeModal'));
+            modal.show();
+        }
+
+        async function confirmPayCharge() {
+            if (!currentChargeForPayment) {
+                alert('缴费信息错误');
+                return;
+            }
+
+            try {
+                // 先获取当前费用信息
+                const chargeResponse = await fetch(`/api/charges/${currentChargeForPayment}`);
+                if (!chargeResponse.ok) {
+                    throw new Error('获取费用信息失败');
+                }
+                const charge = await chargeResponse.json();
+
+                // 检查余额是否充足
+                if (currentUser.accountBalance < charge.amount) {
+                    alert('账户余额不足，请先充值');
+                    return;
+                }
+
+                // 更新费用状态为已缴费
+                const updateResponse = await fetch(`/api/charges/${currentChargeForPayment}`, {
+                    method: 'PUT',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        paymentStatus: 'PAID',
+                        paymentTime: new Date().toISOString()
+                    })
+                });
+
+                if (!updateResponse.ok) {
+                    throw new Error('更新缴费状态失败');
+                }
+
+                // 更新用户余额
+                const newBalance = currentUser.accountBalance - charge.amount;
+                const balanceResponse = await fetch(`/api/users/${currentUser.id}/balance`, {
+                    method: 'PUT',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ amount: newBalance })
+                });
+
+                if (balanceResponse.ok) {
+                    // 更新本地用户信息
+                    currentUser.accountBalance = newBalance;
+                    localStorage.setItem('currentUser', JSON.stringify(currentUser));
+                    
+                    // 更新页面显示
+                    loadUserInfo();
+                    
+                    alert('缴费成功！余额已更新。');
+                    bootstrap.Modal.getInstance(document.getElementById('payChargeModal')).hide();
+                    loadOwnerChargeList();
+                } else {
+                    alert('缴费成功，但余额更新失败，请刷新页面查看最新余额');
+                }
+            } catch (error) {
+                console.error('缴费失败:', error);
+                alert('缴费失败，请稍后重试');
+            }
+        }
+
+        // 扩展模块加载函数
+        const originalLoadModuleContent = loadModuleContent;
+        loadModuleContent = function(module) {
+            const result = originalLoadModuleContent(module);
+            
+            // 加载完内容后，根据模块类型加载数据
+            setTimeout(() => {
+                switch (module) {
+                    case 'profile':
+                        loadProfileData();
+                        break;
+                    case 'announcements':
+                        loadOwnerAnnouncementList();
+                        break;
+                    case 'complaints':
+                        loadOwnerComplaintList();
+                        break;
+                    case 'my-properties':
+                        loadOwnerPropertyList();
+                        break;
+                    case 'my-parking':
+                        loadOwnerParkingList();
+                        break;
+                    case 'my-charges':
+                        loadOwnerChargeList();
+                        break;
+                }
+            }, 100);
+            
+            return result;
+        };
+
+        // 全局测试函数 - 可以从浏览器控制台调用
+        window.testRecharge = async function(amount = 100) {
+            if (!currentUser) {
+                console.log('请先登录业主账户');
+                return;
+            }
+            
+            console.log(`测试充值: ¥${amount}`);
+            
+            try {
+                const oldBalance = currentUser.accountBalance || 0;
+                const newBalance = oldBalance + amount;
+                
+                console.log(`当前余额: ¥${oldBalance.toFixed(2)}`);
+                console.log(`充值金额: ¥${amount.toFixed(2)}`);
+                console.log(`预期新余额: ¥${newBalance.toFixed(2)}`);
+                
+                const response = await fetch(`/api/users/${currentUser.id}/balance`, {
+                    method: 'PUT',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ amount: newBalance })
+                });
+                
+                console.log(`API响应状态: ${response.status}`);
+                
+                if (response.ok) {
+                    const updatedUser = await response.json();
+                    console.log('✅ 充值成功!', updatedUser);
+                    
+                    // 更新本地数据
+                    currentUser.accountBalance = updatedUser.accountBalance;
+                    localStorage.setItem('currentUser', JSON.stringify(currentUser));
+                    
+                    // 更新显示
+                    updateBalanceDisplay();
+                    
+                    alert(`充值成功！新余额：¥${updatedUser.accountBalance.toFixed(2)}`);
+                    return updatedUser;
+                } else {
+                    const error = await response.text();
+                    console.error('❌ 充值失败:', error);
+                    alert('充值失败：' + error);
+                }
+            } catch (error) {
+                console.error('❌ 网络错误:', error);
+                alert('网络错误：' + error.message);
+            }
+        };
+
+        // 全局函数 - 打开充值模态框
+        window.openRechargeModal = function() {
+            showRechargeModal();
+        };
+
+        // 全局函数 - 检查当前用户
+        window.checkCurrentUser = function() {
+            console.log('当前用户:', currentUser);
+            return currentUser;
+        };
+    </script>
+</body>
+</html>

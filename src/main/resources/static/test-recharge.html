@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>充值功能测试</title>
+    <link href="css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <div class="container mt-5">
+        <div class="row justify-content-center">
+            <div class="col-md-6">
+                <div class="card">
+                    <div class="card-header">
+                        <h3><i class="fas fa-wallet"></i> 充值功能测试</h3>
+                    </div>
+                    <div class="card-body">
+                        <div class="mb-3">
+                            <label class="form-label">当前用户信息</label>
+                            <div id="userInfo" class="alert alert-info">
+                                请先登录业主账户
+                            </div>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="testAmount" class="form-label">测试充值金额</label>
+                            <div class="input-group">
+                                <span class="input-group-text">¥</span>
+                                <input type="number" class="form-control" id="testAmount" value="100" min="0.01" step="0.01">
+                            </div>
+                        </div>
+                        
+                        <div class="d-grid gap-2">
+                            <button class="btn btn-primary" onclick="testRecharge()">
+                                <i class="fas fa-plus"></i>
+                                测试充值
+                            </button>
+                            <button class="btn btn-success" onclick="checkBalance()">
+                                <i class="fas fa-refresh"></i>
+                                刷新余额
+                            </button>
+                            <a href="html/login.html" class="btn btn-warning">
+                                <i class="fas fa-sign-in-alt"></i>
+                                去登录
+                            </a>
+                            <a href="html/owner.html" class="btn btn-info">
+                                <i class="fas fa-user"></i>
+                                业主页面
+                            </a>
+                        </div>
+                        
+                        <div class="mt-3">
+                            <h6>操作日志：</h6>
+                            <div id="testLog" class="bg-light p-3 rounded" style="min-height: 100px; font-family: monospace; white-space: pre-wrap; max-height: 300px; overflow-y: auto;"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="js/bootstrap.min.js"></script>
+    <script>
+        let currentUser = null;
+        
+        function log(message) {
+            const logElement = document.getElementById('testLog');
+            const timestamp = new Date().toLocaleTimeString();
+            logElement.textContent += `[${timestamp}] ${message}\n`;
+            logElement.scrollTop = logElement.scrollHeight;
+            console.log(message);
+        }
+        
+        function loadUser() {
+            const userData = localStorage.getItem('currentUser');
+            if (userData) {
+                try {
+                    currentUser = JSON.parse(userData);
+                    document.getElementById('userInfo').innerHTML = 
+                        `<strong>用户名:</strong> ${currentUser.username}<br>` +
+                        `<strong>姓名:</strong> ${currentUser.name || '未设置'}<br>` +
+                        `<strong>类型:</strong> ${currentUser.userType}<br>` +
+                        `<strong>账户余额:</strong> ¥${(currentUser.accountBalance || 0).toFixed(2)}`;
+                    log(`用户已登录: ${currentUser.username}, 余额: ¥${(currentUser.accountBalance || 0).toFixed(2)}`);
+                } catch (e) {
+                    log('用户数据解析失败: ' + e.message);
+                    currentUser = null;
+                }
+            } else {
+                log('未找到用户登录信息');
+                currentUser = null;
+            }
+        }
+        
+        async function testRecharge() {
+            if (!currentUser) {
+                alert('请先登录业主账户');
+                return;
+            }
+            
+            const amount = parseFloat(document.getElementById('testAmount').value);
+            if (!amount || amount <= 0) {
+                alert('请输入有效的充值金额');
+                return;
+            }
+            
+            log(`开始测试充值: ¥${amount.toFixed(2)}`);
+            
+            try {
+                const oldBalance = currentUser.accountBalance || 0;
+                const newBalance = oldBalance + amount;
+                
+                log(`当前余额: ¥${oldBalance.toFixed(2)}`);
+                log(`充值金额: ¥${amount.toFixed(2)}`);
+                log(`预期新余额: ¥${newBalance.toFixed(2)}`);
+                
+                const response = await fetch(`/api/users/${currentUser.id}/balance`, {
+                    method: 'PUT',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ amount: newBalance })
+                });
+                
+                log(`API请求状态: ${response.status} ${response.statusText}`);
+                
+                if (response.ok) {
+                    const updatedUser = await response.json();
+                    log(`API返回数据: ${JSON.stringify(updatedUser)}`);
+                    
+                    // 更新本地用户信息
+                    currentUser.accountBalance = updatedUser.accountBalance;
+                    localStorage.setItem('currentUser', JSON.stringify(currentUser));
+                    
+                    log(`✅ 充值成功! 新余额: ¥${updatedUser.accountBalance.toFixed(2)}`);
+                    
+                    // 刷新显示
+                    loadUser();
+                    
+                    alert(`充值成功！新余额：¥${updatedUser.accountBalance.toFixed(2)}`);
+                } else {
+                    const error = await response.text();
+                    log(`❌ 充值失败: ${error}`);
+                    alert('充值失败：' + error);
+                }
+            } catch (error) {
+                log(`❌ 网络错误: ${error.message}`);
+                alert('网络错误：' + error.message);
+            }
+        }
+        
+        async function checkBalance() {
+            if (!currentUser) {
+                alert('请先登录业主账户');
+                return;
+            }
+            
+            log('检查最新余额...');
+            
+            try {
+                const response = await fetch(`/api/users/${currentUser.id}`);
+                
+                if (response.ok) {
+                    const userData = await response.json();
+                    log(`服务器余额: ¥${(userData.accountBalance || 0).toFixed(2)}`);
+                    
+                    // 更新本地数据
+                    currentUser.accountBalance = userData.accountBalance;
+                    localStorage.setItem('currentUser', JSON.stringify(currentUser));
+                    
+                    loadUser();
+                } else {
+                    log(`获取用户信息失败: ${response.status}`);
+                }
+            } catch (error) {
+                log(`网络错误: ${error.message}`);
+            }
+        }
+        
+        // 页面加载时初始化
+        document.addEventListener('DOMContentLoaded', function() {
+            log('充值测试页面已加载');
+            loadUser();
+        });
+    </script>
+</body>
+</html>

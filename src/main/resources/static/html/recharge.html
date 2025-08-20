@@ -1,0 +1,397 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>账户充值 - 物业管理系统</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .recharge-container {
+            background: white;
+            padding: 40px;
+            border-radius: 15px;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
+            width: 100%;
+            max-width: 500px;
+            text-align: center;
+        }
+
+        .logo {
+            font-size: 48px;
+            margin-bottom: 10px;
+        }
+
+        h1 {
+            color: #333;
+            margin-bottom: 10px;
+            font-size: 28px;
+        }
+
+        .subtitle {
+            color: #666;
+            margin-bottom: 30px;
+            font-size: 16px;
+        }
+
+        .user-info {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 30px;
+            border-left: 4px solid #007bff;
+        }
+
+        .balance {
+            font-size: 32px;
+            font-weight: bold;
+            color: #28a745;
+            margin: 10px 0;
+        }
+
+        .form-group {
+            margin-bottom: 25px;
+            text-align: left;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #333;
+        }
+
+        input {
+            width: 100%;
+            padding: 15px;
+            border: 2px solid #e1e5e9;
+            border-radius: 8px;
+            font-size: 16px;
+            transition: border-color 0.3s;
+        }
+
+        input:focus {
+            outline: none;
+            border-color: #007bff;
+            box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.1);
+        }
+
+        .amount-buttons {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        .amount-btn {
+            padding: 12px;
+            border: 2px solid #e1e5e9;
+            background: white;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-size: 14px;
+            font-weight: 600;
+        }
+
+        .amount-btn:hover {
+            border-color: #007bff;
+            background: #f8f9fa;
+        }
+
+        .amount-btn.active {
+            border-color: #007bff;
+            background: #007bff;
+            color: white;
+        }
+
+        .recharge-btn {
+            width: 100%;
+            padding: 18px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 18px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.2s;
+            margin-bottom: 20px;
+        }
+
+        .recharge-btn:hover {
+            transform: translateY(-2px);
+        }
+
+        .recharge-btn:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .back-btn {
+            background: #6c757d;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            text-decoration: none;
+            display: inline-block;
+            margin-top: 10px;
+        }
+
+        .back-btn:hover {
+            background: #5a6268;
+        }
+
+        .loading {
+            display: none;
+            margin: 20px 0;
+        }
+
+        .spinner {
+            border: 3px solid #f3f3f3;
+            border-top: 3px solid #007bff;
+            border-radius: 50%;
+            width: 30px;
+            height: 30px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .alert {
+            padding: 15px;
+            border-radius: 8px;
+            margin: 15px 0;
+            font-weight: 500;
+        }
+
+        .alert-success {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+
+        .alert-error {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+    </style>
+</head>
+<body>
+    <div class="recharge-container">
+        <div class="logo">💰</div>
+        <h1>账户充值</h1>
+        <p class="subtitle">快速为您的账户充值</p>
+
+        <div class="user-info">
+            <div><strong>用户：</strong><span id="userName">加载中...</span></div>
+            <div class="balance">余额：¥<span id="currentBalance">0.00</span></div>
+        </div>
+
+        <form id="rechargeForm">
+            <div class="form-group">
+                <label for="amount">充值金额</label>
+                <input type="number" id="amount" min="0.01" step="0.01" placeholder="请输入充值金额" required>
+            </div>
+
+            <div class="amount-buttons">
+                <button type="button" class="amount-btn" onclick="setAmount(50)">¥50</button>
+                <button type="button" class="amount-btn" onclick="setAmount(100)">¥100</button>
+                <button type="button" class="amount-btn" onclick="setAmount(200)">¥200</button>
+                <button type="button" class="amount-btn" onclick="setAmount(500)">¥500</button>
+                <button type="button" class="amount-btn" onclick="setAmount(1000)">¥1000</button>
+                <button type="button" class="amount-btn" onclick="setAmount(2000)">¥2000</button>
+            </div>
+
+            <button type="submit" class="recharge-btn" id="rechargeBtn">
+                立即充值
+            </button>
+        </form>
+
+        <div class="loading" id="loading">
+            <div class="spinner"></div>
+            <p>充值处理中，请稍候...</p>
+        </div>
+
+        <div id="alertArea"></div>
+
+        <a href="owner.html" class="back-btn">返回业主页面</a>
+    </div>
+
+    <script>
+        let currentUser = null;
+
+        // 页面加载时检查用户登录状态
+        document.addEventListener('DOMContentLoaded', function() {
+            loadUserInfo();
+        });
+
+        // 加载用户信息
+        function loadUserInfo() {
+            const userData = localStorage.getItem('currentUser');
+            
+            if (!userData) {
+                showAlert('未登录，请先登录', 'error');
+                setTimeout(() => {
+                    window.location.href = 'login.html';
+                }, 2000);
+                return;
+            }
+
+            try {
+                currentUser = JSON.parse(userData);
+                
+                if (currentUser.userType !== 'OWNER') {
+                    showAlert('只有业主才能充值', 'error');
+                    setTimeout(() => {
+                        window.location.href = 'login.html';
+                    }, 2000);
+                    return;
+                }
+
+                document.getElementById('userName').textContent = currentUser.name || currentUser.username;
+                document.getElementById('currentBalance').textContent = (currentUser.accountBalance || 0).toFixed(2);
+
+            } catch (error) {
+                showAlert('用户数据错误，请重新登录', 'error');
+                setTimeout(() => {
+                    window.location.href = 'login.html';
+                }, 2000);
+            }
+        }
+
+        // 设置充值金额
+        function setAmount(amount) {
+            document.getElementById('amount').value = amount;
+            
+            // 更新按钮状态
+            document.querySelectorAll('.amount-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            event.target.classList.add('active');
+        }
+
+        // 显示提示信息
+        function showAlert(message, type = 'success') {
+            const alertArea = document.getElementById('alertArea');
+            const alertClass = type === 'error' ? 'alert-error' : 'alert-success';
+            
+            alertArea.innerHTML = `<div class="alert ${alertClass}">${message}</div>`;
+            
+            // 3秒后自动隐藏
+            setTimeout(() => {
+                alertArea.innerHTML = '';
+            }, 3000);
+        }
+
+        // 处理表单提交
+        document.getElementById('rechargeForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const amount = parseFloat(document.getElementById('amount').value);
+            
+            if (!amount || amount <= 0) {
+                showAlert('请输入有效的充值金额（最低¥0.01）', 'error');
+                return;
+            }
+
+            await processRecharge(amount);
+        });
+
+        // 处理充值
+        async function processRecharge(amount) {
+            if (!currentUser) {
+                showAlert('用户信息丢失，请重新登录', 'error');
+                return;
+            }
+
+            // 显示加载状态
+            const form = document.getElementById('rechargeForm');
+            const loading = document.getElementById('loading');
+            const btn = document.getElementById('rechargeBtn');
+            
+            form.style.display = 'none';
+            loading.style.display = 'block';
+            btn.disabled = true;
+
+            try {
+                const oldBalance = currentUser.accountBalance || 0;
+                const newBalance = oldBalance + amount;
+
+                console.log(`充值请求: 用户ID=${currentUser.id}, 原余额=¥${oldBalance}, 充值金额=¥${amount}, 新余额=¥${newBalance}`);
+
+                const response = await fetch(`/api/users/${currentUser.id}/balance`, {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ amount: newBalance })
+                });
+
+                console.log(`API响应: ${response.status} ${response.statusText}`);
+
+                if (response.ok) {
+                    const updatedUser = await response.json();
+                    console.log('充值成功:', updatedUser);
+
+                    // 更新本地用户数据
+                    currentUser.accountBalance = updatedUser.accountBalance;
+                    localStorage.setItem('currentUser', JSON.stringify(currentUser));
+
+                    // 更新页面显示
+                    document.getElementById('currentBalance').textContent = updatedUser.accountBalance.toFixed(2);
+
+                    // 显示成功信息
+                    showAlert(`🎉 充值成功！充值金额：¥${amount.toFixed(2)}，当前余额：¥${updatedUser.accountBalance.toFixed(2)}`, 'success');
+
+                    // 清空表单
+                    document.getElementById('amount').value = '';
+                    document.querySelectorAll('.amount-btn').forEach(btn => {
+                        btn.classList.remove('active');
+                    });
+
+                    // 3秒后自动返回
+                    setTimeout(() => {
+                        window.location.href = 'owner.html';
+                    }, 3000);
+
+                } else {
+                    const errorText = await response.text();
+                    console.error('充值失败:', errorText);
+                    showAlert(`充值失败：${errorText}`, 'error');
+                }
+
+            } catch (error) {
+                console.error('网络错误:', error);
+                showAlert(`网络错误：${error.message}`, 'error');
+            } finally {
+                // 恢复界面状态
+                form.style.display = 'block';
+                loading.style.display = 'none';
+                btn.disabled = false;
+            }
+        }
+    </script>
+</body>
+</html>
