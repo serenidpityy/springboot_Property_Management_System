@@ -1,0 +1,384 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>编辑房产信息 - 物业管理系统</title>
+    <link href="../css/bootstrap.min.css" rel="stylesheet">
+    <link href="../css/auth.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        .property-form-container {
+            max-width: 800px;
+            margin: 50px auto;
+            padding: 30px;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        }
+        
+        .form-header {
+            text-align: center;
+            margin-bottom: 30px;
+            padding-bottom: 20px;
+            border-bottom: 2px solid #f8f9fa;
+        }
+        
+        .form-header h1 {
+            color: #2c3e50;
+            font-weight: 600;
+            margin-bottom: 10px;
+        }
+        
+        .form-header p {
+            color: #6c757d;
+            margin: 0;
+        }
+        
+        .btn-back {
+            background: linear-gradient(135deg, #6c757d, #5a6268);
+            border: none;
+            color: white;
+            padding: 10px 20px;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+        }
+        
+        .btn-back:hover {
+            background: linear-gradient(135deg, #5a6268, #495057);
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        }
+        
+        .btn-submit {
+            background: linear-gradient(135deg, #28a745, #1e7e34);
+            border: none;
+            color: white;
+            padding: 12px 30px;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+        }
+        
+        .btn-submit:hover {
+            background: linear-gradient(135deg, #1e7e34, #155724);
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(40,167,69,0.3);
+        }
+        
+        .required {
+            color: #dc3545;
+        }
+        
+        .form-control:focus {
+            border-color: #28a745;
+            box-shadow: 0 0 0 0.2rem rgba(40,167,69,0.25);
+        }
+        
+        body {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+        }
+        
+        .loading-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+        }
+        
+        .loading-content {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+    <!-- 加载遮罩层 -->
+    <div class="loading-overlay" id="loadingOverlay">
+        <div class="loading-content">
+            <div class="spinner-border text-primary" role="status">
+                <span class="visually-hidden">加载中...</span>
+            </div>
+            <p class="mt-2 mb-0">正在加载房产信息...</p>
+        </div>
+    </div>
+
+    <div class="container">
+        <div class="property-form-container">
+            <div class="form-header">
+                <h1>
+                    <i class="fas fa-edit me-3"></i>
+                    编辑房产信息
+                </h1>
+                <p>修改房产的详细信息，保存后将更新系统记录</p>
+            </div>
+            
+            <form id="propertyForm">
+                <input type="hidden" id="propertyId">
+                
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label for="houseNumber" class="form-label">
+                            房屋号 <span class="required">*</span>
+                        </label>
+                        <input type="text" class="form-control" id="houseNumber" required 
+                               placeholder="例如：1-101">
+                        <div class="form-text">格式：楼栋-房间号</div>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label for="ownerId" class="form-label">
+                            业主 <span class="required">*</span>
+                        </label>
+                        <select class="form-control" id="ownerId" required>
+                            <option value="">请选择业主</option>
+                        </select>
+                        <div class="form-text">选择房产所属业主</div>
+                    </div>
+                </div>
+                
+                <div class="row">
+                    <div class="col-md-4 mb-3">
+                        <label for="building" class="form-label">
+                            楼栋 <span class="required">*</span>
+                        </label>
+                        <input type="text" class="form-control" id="building" required 
+                               placeholder="例如：1栋">
+                    </div>
+                    <div class="col-md-4 mb-3">
+                        <label for="unit" class="form-label">
+                            单元 <span class="required">*</span>
+                        </label>
+                        <input type="text" class="form-control" id="unit" required 
+                               placeholder="例如：1单元">
+                    </div>
+                    <div class="col-md-4 mb-3">
+                        <label for="area" class="form-label">面积(㎡)</label>
+                        <input type="number" class="form-control" id="area" step="0.01" 
+                               placeholder="例如：120.5">
+                    </div>
+                </div>
+                
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label for="houseType" class="form-label">房型</label>
+                        <select class="form-control" id="houseType">
+                            <option value="">请选择房型</option>
+                            <option value="一室一厅">一室一厅</option>
+                            <option value="两室一厅">两室一厅</option>
+                            <option value="两室两厅">两室两厅</option>
+                            <option value="三室一厅">三室一厅</option>
+                            <option value="三室两厅">三室两厅</option>
+                            <option value="四室两厅">四室两厅</option>
+                            <option value="五室两厅">五室两厅</option>
+                            <option value="其他">其他</option>
+                        </select>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label for="occupancyInfo" class="form-label">入住信息</label>
+                        <select class="form-control" id="occupancyInfo">
+                            <option value="">请选择入住状态</option>
+                            <option value="已入住">已入住</option>
+                            <option value="未入住">未入住</option>
+                            <option value="装修中">装修中</option>
+                            <option value="出租中">出租中</option>
+                            <option value="空置">空置</option>
+                        </select>
+                    </div>
+                </div>
+                
+                <div class="mb-4">
+                    <label for="additionalDescription" class="form-label">附加说明</label>
+                    <textarea class="form-control" id="additionalDescription" rows="4" 
+                              placeholder="请输入房产的附加说明信息，如装修情况、特殊设施等..."></textarea>
+                </div>
+                
+                <div class="d-flex justify-content-between">
+                    <button type="button" class="btn btn-back" onclick="goBack()">
+                        <i class="fas fa-arrow-left me-2"></i>
+                        返回房产管理
+                    </button>
+                    <button type="submit" class="btn btn-submit">
+                        <i class="fas fa-save me-2"></i>
+                        保存修改
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script src="../js/bootstrap.min.js"></script>
+    <script>
+        let currentUser = null;
+        let propertyId = null;
+
+        // 页面加载时初始化
+        document.addEventListener('DOMContentLoaded', function() {
+            // 检查是否已登录
+            currentUser = JSON.parse(localStorage.getItem('currentUser') || 'null');
+            if (!currentUser || currentUser.userType !== 'STAFF') {
+                alert('请先以工作人员身份登录');
+                window.location.href = 'login.html';
+                return;
+            }
+            
+            // 从URL参数获取房产ID
+            const urlParams = new URLSearchParams(window.location.search);
+            propertyId = urlParams.get('id');
+            
+            if (!propertyId) {
+                alert('缺少房产ID参数');
+                window.location.href = 'staff.html#property-management';
+                return;
+            }
+            
+            // 加载数据
+            loadOwnerOptions();
+            loadPropertyData();
+        });
+
+        // 加载业主选项
+        async function loadOwnerOptions() {
+            try {
+                const response = await fetch('/api/users/type/OWNER');
+                if (response.ok) {
+                    const owners = await response.json();
+                    const select = document.getElementById('ownerId');
+                    select.innerHTML = '<option value="">请选择业主</option>' +
+                        owners.map(owner => 
+                            `<option value="${owner.id}">${owner.name || owner.username} (${owner.phone || '无手机号'})</option>`
+                        ).join('');
+                } else {
+                    console.error('获取业主列表失败');
+                }
+            } catch (error) {
+                console.error('加载业主选项失败:', error);
+            }
+        }
+
+        // 加载房产数据
+        async function loadPropertyData() {
+            try {
+                const response = await fetch(`/api/properties/${propertyId}`);
+                if (response.ok) {
+                    const property = await response.json();
+                    fillFormData(property);
+                } else {
+                    alert('获取房产信息失败');
+                    window.location.href = 'staff.html#property-management';
+                }
+            } catch (error) {
+                console.error('加载房产数据失败:', error);
+                alert('加载房产数据失败，请稍后重试');
+                window.location.href = 'staff.html#property-management';
+            } finally {
+                // 隐藏加载遮罩层
+                document.getElementById('loadingOverlay').style.display = 'none';
+            }
+        }
+
+        // 填充表单数据
+        function fillFormData(property) {
+            document.getElementById('propertyId').value = property.id;
+            document.getElementById('houseNumber').value = property.houseNumber || '';
+            document.getElementById('building').value = property.building || '';
+            document.getElementById('unit').value = property.unit || '';
+            document.getElementById('area').value = property.area || '';
+            document.getElementById('houseType').value = property.houseType || '';
+            document.getElementById('occupancyInfo').value = property.occupancyInfo || '';
+            document.getElementById('additionalDescription').value = property.additionalDescription || '';
+            
+            // 设置业主选项（需要等待业主选项加载完成）
+            setTimeout(() => {
+                if (property.owner && property.owner.id) {
+                    document.getElementById('ownerId').value = property.owner.id;
+                }
+            }, 500);
+        }
+
+        // 表单提交处理
+        document.getElementById('propertyForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            if (!this.checkValidity()) {
+                this.reportValidity();
+                return;
+            }
+
+            const propertyData = {
+                id: parseInt(document.getElementById('propertyId').value),
+                houseNumber: document.getElementById('houseNumber').value.trim(),
+                owner: { id: parseInt(document.getElementById('ownerId').value) },
+                building: document.getElementById('building').value.trim(),
+                unit: document.getElementById('unit').value.trim(),
+                area: parseFloat(document.getElementById('area').value) || null,
+                houseType: document.getElementById('houseType').value || null,
+                occupancyInfo: document.getElementById('occupancyInfo').value || null,
+                additionalDescription: document.getElementById('additionalDescription').value.trim() || null
+            };
+
+            if (!propertyData.houseNumber || !propertyData.owner.id || 
+                !propertyData.building || !propertyData.unit) {
+                alert('请填写所有必填字段');
+                return;
+            }
+
+            // 显示保存中状态
+            const submitBtn = document.querySelector('.btn-submit');
+            const originalText = submitBtn.innerHTML;
+            submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>保存中...';
+            submitBtn.disabled = true;
+
+            try {
+                console.log('发送更新请求:', propertyData);
+                const response = await fetch(`/api/properties/${propertyData.id}`, {
+                    method: 'PUT',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(propertyData)
+                });
+
+                if (response.ok) {
+                    const updatedProperty = await response.json();
+                    console.log('更新成功:', updatedProperty);
+                    alert('房产信息更新成功！');
+                    // 1秒后自动返回房产管理页面
+                    setTimeout(() => {
+                        window.location.href = 'staff.html';
+                    }, 1000);
+                } else {
+                    const error = await response.text();
+                    console.error('更新失败:', error);
+                    alert('更新失败：' + error);
+                }
+            } catch (error) {
+                console.error('保存房产失败:', error);
+                alert('保存失败，请稍后重试');
+            } finally {
+                // 恢复按钮状态
+                submitBtn.innerHTML = originalText;
+                submitBtn.disabled = false;
+            }
+        });
+
+        // 返回房产管理页面
+        function goBack() {
+            if (confirm('确定要返回吗？未保存的修改将丢失。')) {
+                window.location.href = 'staff.html';
+                // 延迟触发房产管理模块
+                setTimeout(() => {
+                    if (window.location.hash !== '#property-management') {
+                        window.location.hash = '#property-management';
+                    }
+                }, 100);
+            }
+        }
+    </script>
+</body>
+</html>
