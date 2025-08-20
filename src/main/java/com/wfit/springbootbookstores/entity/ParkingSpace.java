@@ -20,7 +20,7 @@ public class ParkingSpace {
     @Column(name = "parking_id", nullable = false, unique = true, length = 50)
     private String parkingId;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "owner_id", nullable = false)
     private User owner;
 }

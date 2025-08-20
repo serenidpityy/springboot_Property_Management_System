@@ -667,7 +667,57 @@
             `;
         }
 
-        // 车位管理内容已移到 staff-functions.js
+        function getParkingManagementContent() {
+            return `
+                <div class="page-header">
+                    <h1 class="page-title">
+                        <i class="fas fa-car me-3"></i>
+                        小区车位管理
+                    </h1>
+                    <p class="page-subtitle">管理小区停车位信息和分配情况</p>
+                </div>
+                <div class="dashboard-card">
+                    <div class="card-header">
+                        <h2 class="card-title">车位列表</h2>
+                        <div>
+                            <button class="btn btn-primary me-2" onclick="goToAddParking()">
+                                <i class="fas fa-plus"></i>
+                                添加车位
+                            </button>
+                            <button class="btn btn-success" onclick="refreshParkingList()">
+                                <i class="fas fa-refresh"></i>
+                                刷新
+                            </button>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <div class="table-container">
+                            <table class="table">
+                                <thead>
+                                    <tr>
+                                        <th>车位编号</th>
+                                        <th>业主姓名</th>
+                                        <th>业主手机号</th>
+                                        <th>分配时间</th>
+                                        <th>操作</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="parkingTableBody">
+                                    <tr>
+                                        <td colspan="5" class="text-center">
+                                            <div class="loading">
+                                                <div class="spinner"></div>
+                                                <span class="ms-2">加载车位信息中...</span>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
 
         // 收费管理内容已移到 staff-functions.js
 
@@ -1092,6 +1142,122 @@
 
 
 
+        // === 车位管理相关函数 ===
+        function goToAddParking() {
+            window.location.href = 'staff-add-parking.html';
+        }
+
+        function editParking(parkingId) {
+            window.location.href = `staff-edit-parking.html?id=${parkingId}`;
+        }
+
+        async function deleteParking(parkingId, parkingIdDisplay) {
+            if (!confirm(`确定要删除车位 "${parkingIdDisplay}" 吗？此操作不可撤销。`)) {
+                return;
+            }
+
+            try {
+                const response = await fetch(`/api/parking/${parkingId}`, {
+                    method: 'DELETE'
+                });
+
+                if (response.ok) {
+                    alert('车位删除成功！');
+                    refreshParkingList();
+                } else {
+                    alert('删除失败，请稍后重试');
+                }
+            } catch (error) {
+                console.error('删除车位失败:', error);
+                alert('删除失败，请稍后重试');
+            }
+        }
+
+        function refreshParkingList() {
+            loadParkingList();
+        }
+
+        async function loadParkingList() {
+            const tbody = document.getElementById('parkingTableBody');
+            
+            if (!tbody) {
+                console.error('车位表格元素未找到');
+                return;
+            }
+            
+            tbody.innerHTML = `
+                <tr>
+                    <td colspan="5" class="text-center">
+                        <div class="loading">
+                            <div class="spinner"></div>
+                            <span class="ms-2">加载车位信息中...</span>
+                        </div>
+                    </td>
+                </tr>
+            `;
+
+            try {
+                const response = await fetch('/api/parking');
+                if (response.ok) {
+                    const parkingSpaces = await response.json();
+                    displayParkingList(parkingSpaces);
+                } else {
+                    throw new Error(`获取车位信息失败: ${response.status} ${response.statusText}`);
+                }
+            } catch (error) {
+                console.error('加载车位列表失败:', error);
+                if (tbody) {
+                    tbody.innerHTML = `
+                        <tr>
+                            <td colspan="5" class="text-center text-danger">
+                                <i class="fas fa-exclamation-triangle"></i>
+                                加载车位信息失败，请稍后重试
+                                <br>
+                                <button class="btn btn-sm btn-outline-primary mt-2" onclick="loadParkingList()">
+                                    <i class="fas fa-redo"></i>
+                                    重新加载
+                                </button>
+                            </td>
+                        </tr>
+                    `;
+                }
+            }
+        }
+
+        function displayParkingList(parkingSpaces) {
+            const tbody = document.getElementById('parkingTableBody');
+            if (parkingSpaces.length === 0) {
+                tbody.innerHTML = `
+                    <tr>
+                        <td colspan="5" class="text-center text-muted">
+                            <i class="fas fa-inbox"></i>
+                            暂无车位信息
+                        </td>
+                    </tr>
+                `;
+                return;
+            }
+
+            tbody.innerHTML = parkingSpaces.map(parking => `
+                <tr>
+                    <td>${parking.parkingId}</td>
+                    <td>${parking.owner ? (parking.owner.name || parking.owner.username) : '-'}</td>
+                    <td>${parking.owner ? (parking.owner.phone || '-') : '-'}</td>
+                    <td>近期分配</td>
+                    <td>
+                        <button class="btn btn-sm btn-info me-1" onclick="editParking(${parking.id})">
+                            <i class="fas fa-edit"></i>
+                            编辑
+                        </button>
+                        <button class="btn btn-sm btn-danger" onclick="deleteParking(${parking.id}, '${parking.parkingId}')">
+                            <i class="fas fa-trash"></i>
+                            删除
+                        </button>
+                    </td>
+                </tr>
+            `).join('');
+        }
+
         // 在模块加载时自动加载数据
         const originalLoadModuleContent = loadModuleContent;
         loadModuleContent = function(module) {
@@ -1105,6 +1271,9 @@
                         break;
                     case 'property-management':
                         loadPropertyList();
+                        break;
+                    case 'parking-management':
+                        loadParkingList();
                         break;
                 }
             }, 100);
@@ -1411,6 +1580,9 @@
                         break;
                     case 'property-management':
                         loadPropertyList();
+                        break;
+                    case 'parking-management':
+                        loadParkingList();
                         break;
                     case 'announcements':
                         loadAnnouncementList();
