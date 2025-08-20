@@ -1,0 +1,384 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>缴费确认 - 物业管理系统</title>
+    <link href="../css/bootstrap.min.css" rel="stylesheet">
+    <link href="../css/dashboard.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        .loading-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(255, 255, 255, 0.9);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 9999;
+        }
+        .form-container {
+            max-width: 600px;
+            margin: 2rem auto;
+            padding: 0 1rem;
+        }
+        .btn-spinner {
+            display: none;
+            width: 1rem;
+            height: 1rem;
+            border: 2px solid transparent;
+            border-top: 2px solid #fff;
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+            margin-right: 0.5rem;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        .charge-info {
+            background: #f8f9fa;
+            border-left: 4px solid #007bff;
+            padding: 1rem;
+            border-radius: 8px;
+            margin-bottom: 1rem;
+        }
+        .balance-info {
+            background: #e8f5e8;
+            border-left: 4px solid #28a745;
+            padding: 1rem;
+            border-radius: 8px;
+            margin-bottom: 1rem;
+        }
+        .insufficient-balance {
+            background: #f8d7da;
+            border-left: 4px solid #dc3545;
+            color: #721c24;
+        }
+        .amount-highlight {
+            font-size: 1.5rem;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <div class="loading-overlay" id="loadingOverlay">
+        <div class="text-center">
+            <div class="spinner-border text-primary" role="status">
+                <span class="visually-hidden">Loading...</span>
+            </div>
+            <div class="mt-2">处理中...</div>
+        </div>
+    </div>
+
+    <div class="form-container">
+        <div class="card">
+            <div class="card-header">
+                <div class="d-flex justify-content-between align-items-center">
+                    <h2 class="mb-0">
+                        <i class="fas fa-credit-card text-primary me-2"></i>
+                        缴费确认
+                    </h2>
+                    <button class="btn btn-outline-secondary" onclick="goBack()">
+                        <i class="fas fa-arrow-left"></i>
+                        返回
+                    </button>
+                </div>
+            </div>
+            <div class="card-body">
+                <div id="loadingInfo" class="text-center py-4">
+                    <div class="spinner-border text-primary" role="status">
+                        <span class="visually-hidden">Loading...</span>
+                    </div>
+                    <div class="mt-2">正在加载缴费信息...</div>
+                </div>
+                
+                <div id="chargeInfo" style="display: none;">
+                    <!-- 收费信息 -->
+                    <div class="charge-info">
+                        <h5><i class="fas fa-file-invoice-dollar me-2"></i>收费信息</h5>
+                        <div class="row">
+                            <div class="col-sm-4"><strong>收费项目：</strong></div>
+                            <div class="col-sm-8" id="chargeItem">-</div>
+                        </div>
+                        <div class="row mt-2">
+                            <div class="col-sm-4"><strong>收费金额：</strong></div>
+                            <div class="col-sm-8">
+                                <span class="amount-highlight text-danger" id="chargeAmount">¥0.00</span>
+                            </div>
+                        </div>
+                        <div class="row mt-2" id="chargeDescriptionRow">
+                            <div class="col-sm-4"><strong>收费说明：</strong></div>
+                            <div class="col-sm-8" id="chargeDescription">-</div>
+                        </div>
+                    </div>
+                    
+                    <!-- 账户余额信息 -->
+                    <div class="balance-info" id="balanceContainer">
+                        <h5><i class="fas fa-wallet me-2"></i>账户信息</h5>
+                        <div class="row">
+                            <div class="col-sm-4"><strong>当前余额：</strong></div>
+                            <div class="col-sm-8">
+                                <span class="amount-highlight text-success" id="accountBalance">¥0.00</span>
+                            </div>
+                        </div>
+                        <div class="row mt-2">
+                            <div class="col-sm-4"><strong>缴费后余额：</strong></div>
+                            <div class="col-sm-8">
+                                <span class="amount-highlight" id="afterPayBalance">¥0.00</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- 提示信息 -->
+                    <div class="alert alert-info" id="normalAlert">
+                        <i class="fas fa-info-circle me-2"></i>
+                        点击"确认缴费"后，系统将从您的账户余额中扣除相应金额，并更新缴费状态为"已缴费"。
+                    </div>
+
+
+
+                    <!-- 操作按钮 -->
+                    <div class="d-flex justify-content-end gap-2">
+                        <button type="button" class="btn btn-secondary" onclick="goBack()">
+                            <i class="fas fa-times"></i>
+                            取消
+                        </button>
+                        <button type="button" class="btn btn-warning" id="rechargeBtn" onclick="goToRecharge()" style="display: none;">
+                            <i class="fas fa-plus"></i>
+                            去充值
+                        </button>
+                        <button type="button" class="btn btn-primary" id="payBtn" onclick="confirmPayment()">
+                            <div class="btn-spinner" id="btnSpinner"></div>
+                            <i class="fas fa-credit-card" id="btnIcon"></i>
+                            确认缴费
+                        </button>
+                    </div>
+                </div>
+
+
+            </div>
+        </div>
+    </div>
+
+    <script src="../js/bootstrap.min.js"></script>
+    <script>
+        let chargeId = null;
+        let chargeData = null;
+        let currentUser = null;
+
+        // 页面加载时初始化
+        document.addEventListener('DOMContentLoaded', function() {
+            // 获取当前用户信息
+            currentUser = JSON.parse(localStorage.getItem('currentUser'));
+            if (!currentUser) {
+                alert('请先登录');
+                window.location.href = 'login.html';
+                return;
+            }
+            
+            // 获取URL参数中的收费记录ID
+            chargeId = getChargeIdFromUrl();
+            if (!chargeId) {
+                alert('缺少收费记录ID参数');
+                goBack();
+                return;
+            }
+            
+            loadChargeData();
+        });
+
+        // 从URL获取收费记录ID
+        function getChargeIdFromUrl() {
+            const urlParams = new URLSearchParams(window.location.search);
+            return urlParams.get('id');
+        }
+
+        // 加载收费记录数据
+        async function loadChargeData() {
+            try {
+                const response = await fetch(`/api/charges/${chargeId}`);
+                if (response.ok) {
+                    chargeData = await response.json();
+                    
+                    // 检查是否为当前用户的收费记录
+                    if (chargeData.owner && chargeData.owner.id !== currentUser.id) {
+                        alert('您无权访问此缴费记录');
+                        goBack();
+                        return;
+                    }
+                    
+                    // 检查缴费状态
+                    if (chargeData.paymentStatus === 'PAID') {
+                        alert('此项费用已经缴费完成');
+                        goBack();
+                        return;
+                    }
+                    
+                    displayChargeData();
+                } else if (response.status === 404) {
+                    alert('缴费记录不存在');
+                    goBack();
+                } else {
+                    throw new Error('加载缴费记录失败');
+                }
+            } catch (error) {
+                console.error('加载缴费记录失败:', error);
+                showError();
+            }
+        }
+
+        // 显示收费数据
+        function displayChargeData() {
+            document.getElementById('chargeItem').textContent = chargeData.chargeItem || '-';
+            document.getElementById('chargeAmount').textContent = '¥' + (chargeData.amount || 0).toFixed(2);
+            
+            // 显示收费说明（如果有）
+            if (chargeData.description && chargeData.description.trim()) {
+                document.getElementById('chargeDescription').textContent = chargeData.description;
+                document.getElementById('chargeDescriptionRow').style.display = 'block';
+            } else {
+                document.getElementById('chargeDescriptionRow').style.display = 'none';
+            }
+            
+            // 显示账户余额信息
+            const currentBalance = currentUser.accountBalance || 0;
+            const chargeAmount = chargeData.amount || 0;
+            const afterPayBalance = currentBalance - chargeAmount;
+            
+            document.getElementById('accountBalance').textContent = '¥' + currentBalance.toFixed(2);
+            document.getElementById('afterPayBalance').textContent = '¥' + afterPayBalance.toFixed(2);
+            
+            // 检查余额是否充足
+            if (afterPayBalance < 0) {
+                document.getElementById('afterPayBalance').classList.add('text-danger');
+                document.getElementById('balanceContainer').classList.remove('balance-info');
+                document.getElementById('balanceContainer').classList.add('insufficient-balance');
+                document.getElementById('payBtn').style.display = 'none';
+                document.getElementById('rechargeBtn').style.display = 'inline-block';
+            } else {
+                document.getElementById('afterPayBalance').classList.add('text-success');
+            }
+            
+            // 显示内容，隐藏加载状态
+            document.getElementById('loadingInfo').style.display = 'none';
+            document.getElementById('chargeInfo').style.display = 'block';
+        }
+
+        // 显示错误信息
+        function showError() {
+            document.getElementById('loadingInfo').style.display = 'none';
+            alert('无法加载缴费信息，请稍后重试');
+            goBack();
+        }
+
+        // 确认缴费
+        async function confirmPayment() {
+            if (!chargeData || !currentUser) {
+                alert('数据异常，请重新加载页面');
+                return;
+            }
+            
+            // 再次检查余额
+            if (currentUser.accountBalance < chargeData.amount) {
+                alert('余额不足，无法完成缴费');
+                return;
+            }
+            
+            if (!confirm(`确认缴费 ¥${chargeData.amount.toFixed(2)} 吗？\n缴费后将从您的账户余额中扣除相应金额。`)) {
+                return;
+            }
+            
+            showLoading(true);
+            
+            try {
+                // 更新收费记录状态
+                const updateChargeResponse = await fetch(`/api/charges/${chargeId}`, {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        ...chargeData,
+                        paymentStatus: 'PAID',
+                        paymentTime: new Date().toISOString()
+                    })
+                });
+                
+                if (!updateChargeResponse.ok) {
+                    throw new Error('更新缴费状态失败');
+                }
+                
+                // 更新用户余额
+                const newBalance = currentUser.accountBalance - chargeData.amount;
+                const balanceResponse = await fetch(`/api/users/${currentUser.id}/balance`, {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ amount: newBalance })
+                });
+                
+                if (balanceResponse.ok) {
+                    // 更新本地用户信息
+                    currentUser.accountBalance = newBalance;
+                    localStorage.setItem('currentUser', JSON.stringify(currentUser));
+                    
+                    alert('缴费成功！余额已更新。');
+                    // 跳转回业主页面的缴费信息
+                    window.location.href = 'owner.html#my-charges';
+                } else {
+                    alert('缴费成功，但余额更新失败，请刷新页面查看最新余额');
+                    goBack();
+                }
+                
+            } catch (error) {
+                console.error('缴费失败:', error);
+                alert('缴费失败：' + error.message);
+            } finally {
+                showLoading(false);
+            }
+        }
+
+        // 显示/隐藏加载状态
+        function showLoading(show) {
+            const overlay = document.getElementById('loadingOverlay');
+            const payBtn = document.getElementById('payBtn');
+            const btnSpinner = document.getElementById('btnSpinner');
+            const btnIcon = document.getElementById('btnIcon');
+            
+            if (show) {
+                overlay.style.display = 'flex';
+                payBtn.disabled = true;
+                btnSpinner.style.display = 'inline-block';
+                btnIcon.style.display = 'none';
+            } else {
+                overlay.style.display = 'none';
+                payBtn.disabled = false;
+                btnSpinner.style.display = 'none';
+                btnIcon.style.display = 'inline';
+            }
+        }
+
+        // 跳转到充值页面
+        function goToRecharge() {
+            window.location.href = 'recharge.html';
+        }
+
+        // 返回上一页
+        function goBack() {
+            window.location.href = 'owner.html#my-charges';
+        }
+
+        // ESC键返回
+        document.addEventListener('keydown', function(event) {
+            if (event.key === 'Escape') {
+                goBack();
+            }
+        });
+    </script>
+</body>
+</html>

@@ -22,7 +22,7 @@ public class Charge {
     @Column(name = "charge_item", nullable = false, length = 100)
     private String chargeItem;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "owner_id", nullable = false)
     private User owner;
 

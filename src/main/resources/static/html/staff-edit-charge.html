@@ -1,0 +1,391 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>编辑收费记录 - 物业管理系统</title>
+    <link href="../css/bootstrap.min.css" rel="stylesheet">
+    <link href="../css/dashboard.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        .loading-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(255, 255, 255, 0.9);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 9999;
+        }
+        .form-container {
+            max-width: 800px;
+            margin: 2rem auto;
+            padding: 0 1rem;
+        }
+        .btn-spinner {
+            display: none;
+            width: 1rem;
+            height: 1rem;
+            border: 2px solid transparent;
+            border-top: 2px solid #fff;
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+            margin-right: 0.5rem;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        .info-badge {
+            background: #e3f2fd;
+            color: #1976d2;
+            padding: 0.5rem 1rem;
+            border-radius: 8px;
+            border-left: 4px solid #1976d2;
+            margin-bottom: 1rem;
+        }
+    </style>
+</head>
+<body>
+    <div class="loading-overlay" id="loadingOverlay">
+        <div class="text-center">
+            <div class="spinner-border text-primary" role="status">
+                <span class="visually-hidden">Loading...</span>
+            </div>
+            <div class="mt-2">处理中...</div>
+        </div>
+    </div>
+
+    <div class="form-container">
+        <div class="card">
+            <div class="card-header">
+                <div class="d-flex justify-content-between align-items-center">
+                    <h2 class="mb-0">
+                        <i class="fas fa-edit text-primary me-2"></i>
+                        编辑收费记录
+                    </h2>
+                    <button class="btn btn-outline-secondary" onclick="goBack()">
+                        <i class="fas fa-arrow-left"></i>
+                        返回
+                    </button>
+                </div>
+            </div>
+            <div class="card-body">
+                <div class="info-badge">
+                    <i class="fas fa-info-circle me-2"></i>
+                    正在加载收费记录信息...
+                </div>
+                
+                <form id="editChargeForm" style="display: none;">
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label for="chargeItem" class="form-label">
+                                <i class="fas fa-tag me-1"></i>
+                                收费项目 <span class="text-danger">*</span>
+                            </label>
+                            <select class="form-control" id="chargeItem" required>
+                                <option value="">请选择收费项目</option>
+                                <option value="物业费">物业费</option>
+                                <option value="水费">水费</option>
+                                <option value="电费">电费</option>
+                                <option value="燃气费">燃气费</option>
+                                <option value="停车费">停车费</option>
+                                <option value="维修费">维修费</option>
+                                <option value="清洁费">清洁费</option>
+                                <option value="电梯费">电梯费</option>
+                                <option value="其他">其他</option>
+                            </select>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label for="chargeOwner" class="form-label">
+                                <i class="fas fa-user me-1"></i>
+                                业主姓名 <span class="text-danger">*</span>
+                            </label>
+                            <select class="form-control" id="chargeOwner" required>
+                                <option value="">请选择业主</option>
+                            </select>
+                        </div>
+                    </div>
+                    
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label for="chargeAmount" class="form-label">
+                                <i class="fas fa-yen-sign me-1"></i>
+                                收费金额 <span class="text-danger">*</span>
+                            </label>
+                            <div class="input-group">
+                                <span class="input-group-text">¥</span>
+                                <input type="number" class="form-control" id="chargeAmount" 
+                                       step="0.01" min="0" placeholder="0.00" required>
+                            </div>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label for="chargeStatus" class="form-label">
+                                <i class="fas fa-credit-card me-1"></i>
+                                缴费状态
+                            </label>
+                            <select class="form-control" id="chargeStatus">
+                                <option value="UNPAID">未缴费</option>
+                                <option value="PAID">已缴费</option>
+                            </select>
+                        </div>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="chargeDescription" class="form-label">
+                            <i class="fas fa-comment me-1"></i>
+                            收费说明
+                        </label>
+                        <textarea class="form-control" id="chargeDescription" rows="4" 
+                                  placeholder="请输入收费说明（选填）..."></textarea>
+                        <div class="form-text">
+                            <span id="charLength">0</span>/500 字符
+                        </div>
+                    </div>
+                    
+                    <div class="d-flex justify-content-end gap-2">
+                        <button type="button" class="btn btn-secondary" onclick="goBack()">
+                            <i class="fas fa-times"></i>
+                            取消
+                        </button>
+                        <button type="submit" class="btn btn-primary" id="submitBtn">
+                            <div class="btn-spinner" id="btnSpinner"></div>
+                            <i class="fas fa-save" id="btnIcon"></i>
+                            保存修改
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script src="../js/bootstrap.min.js"></script>
+    <script>
+        let chargeId = null;
+
+        // 页面加载时初始化
+        document.addEventListener('DOMContentLoaded', function() {
+            chargeId = getChargeIdFromUrl();
+            if (!chargeId) {
+                alert('缺少收费记录ID参数');
+                goBack();
+                return;
+            }
+            
+            loadOwnerOptions().then(() => {
+                loadChargeData();
+            });
+            setupFormValidation();
+            setupCharacterCount();
+        });
+
+        // 从URL获取收费记录ID
+        function getChargeIdFromUrl() {
+            const urlParams = new URLSearchParams(window.location.search);
+            return urlParams.get('id');
+        }
+
+        // 加载业主选项
+        async function loadOwnerOptions() {
+            try {
+                const response = await fetch('/api/users/type/OWNER');
+                if (response.ok) {
+                    const owners = await response.json();
+                    const select = document.getElementById('chargeOwner');
+                    select.innerHTML = '<option value="">请选择业主</option>' +
+                        owners.map(owner => `<option value="${owner.id}">${owner.name || owner.username}</option>`).join('');
+                } else {
+                    throw new Error('加载业主列表失败');
+                }
+            } catch (error) {
+                console.error('加载业主选项失败:', error);
+                alert('加载业主列表失败，请刷新页面重试');
+            }
+        }
+
+        // 加载收费记录数据
+        async function loadChargeData() {
+            try {
+                const response = await fetch(`/api/charges/${chargeId}`);
+                if (response.ok) {
+                    const charge = await response.json();
+                    populateForm(charge);
+                    showForm();
+                } else if (response.status === 404) {
+                    alert('收费记录不存在');
+                    goBack();
+                } else {
+                    throw new Error('加载收费记录失败');
+                }
+            } catch (error) {
+                console.error('加载收费记录失败:', error);
+                alert('加载收费记录失败，请稍后重试');
+                goBack();
+            }
+        }
+
+        // 填充表单数据
+        function populateForm(charge) {
+            document.getElementById('chargeItem').value = charge.chargeItem || '';
+            document.getElementById('chargeOwner').value = charge.owner ? charge.owner.id : '';
+            document.getElementById('chargeAmount').value = charge.amount || '';
+            document.getElementById('chargeStatus').value = charge.paymentStatus || 'UNPAID';
+            document.getElementById('chargeDescription').value = charge.description || '';
+            
+            // 更新字符计数
+            const textarea = document.getElementById('chargeDescription');
+            const event = new Event('input');
+            textarea.dispatchEvent(event);
+        }
+
+        // 显示表单
+        function showForm() {
+            document.querySelector('.info-badge').style.display = 'none';
+            document.getElementById('editChargeForm').style.display = 'block';
+        }
+
+        // 设置表单验证
+        function setupFormValidation() {
+            const form = document.getElementById('editChargeForm');
+            form.addEventListener('submit', handleSubmit);
+        }
+
+        // 设置字符计数
+        function setupCharacterCount() {
+            const textarea = document.getElementById('chargeDescription');
+            const counter = document.getElementById('charLength');
+            
+            textarea.addEventListener('input', function() {
+                const length = this.value.length;
+                counter.textContent = length;
+                
+                if (length > 500) {
+                    counter.parentElement.classList.add('text-danger');
+                    this.value = this.value.substring(0, 500);
+                    counter.textContent = 500;
+                } else {
+                    counter.parentElement.classList.remove('text-danger');
+                }
+            });
+        }
+
+        // 处理表单提交
+        async function handleSubmit(event) {
+            event.preventDefault();
+            
+            // 验证表单
+            if (!validateForm()) {
+                return;
+            }
+            
+            // 显示加载状态
+            showLoading(true);
+            
+            try {
+                const formData = collectFormData();
+                const response = await fetch(`/api/charges/${chargeId}`, {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(formData)
+                });
+                
+                if (response.ok) {
+                    alert('收费记录修改成功！');
+                    // 跳转回工作人员页面
+                    window.location.href = 'staff.html#charge-management';
+                } else {
+                    const error = await response.text();
+                    throw new Error(error || '修改失败');
+                }
+            } catch (error) {
+                console.error('保存收费记录失败:', error);
+                alert('保存失败：' + error.message);
+            } finally {
+                showLoading(false);
+            }
+        }
+
+        // 验证表单
+        function validateForm() {
+            const chargeItem = document.getElementById('chargeItem').value.trim();
+            const chargeOwner = document.getElementById('chargeOwner').value;
+            const chargeAmount = document.getElementById('chargeAmount').value;
+            
+            if (!chargeItem) {
+                alert('请选择收费项目');
+                document.getElementById('chargeItem').focus();
+                return false;
+            }
+            
+            if (!chargeOwner) {
+                alert('请选择业主');
+                document.getElementById('chargeOwner').focus();
+                return false;
+            }
+            
+            if (!chargeAmount || parseFloat(chargeAmount) <= 0) {
+                alert('请输入有效的收费金额');
+                document.getElementById('chargeAmount').focus();
+                return false;
+            }
+            
+            return true;
+        }
+
+        // 收集表单数据
+        function collectFormData() {
+            const chargeStatus = document.getElementById('chargeStatus').value;
+            
+            return {
+                chargeItem: document.getElementById('chargeItem').value.trim(),
+                owner: { 
+                    id: parseInt(document.getElementById('chargeOwner').value) 
+                },
+                amount: parseFloat(document.getElementById('chargeAmount').value),
+                description: document.getElementById('chargeDescription').value.trim() || null,
+                paymentStatus: chargeStatus,
+                paymentTime: chargeStatus === 'PAID' ? new Date().toISOString() : null
+            };
+        }
+
+        // 显示/隐藏加载状态
+        function showLoading(show) {
+            const overlay = document.getElementById('loadingOverlay');
+            const submitBtn = document.getElementById('submitBtn');
+            const btnSpinner = document.getElementById('btnSpinner');
+            const btnIcon = document.getElementById('btnIcon');
+            
+            if (show) {
+                overlay.style.display = 'flex';
+                submitBtn.disabled = true;
+                btnSpinner.style.display = 'inline-block';
+                btnIcon.style.display = 'none';
+            } else {
+                overlay.style.display = 'none';
+                submitBtn.disabled = false;
+                btnSpinner.style.display = 'none';
+                btnIcon.style.display = 'inline';
+            }
+        }
+
+        // 返回上一页
+        function goBack() {
+            if (confirm('确定要返回吗？未保存的修改将丢失。')) {
+                window.location.href = 'staff.html#charge-management';
+            }
+        }
+
+        // ESC键返回
+        document.addEventListener('keydown', function(event) {
+            if (event.key === 'Escape') {
+                goBack();
+            }
+        });
+    </script>
+</body>
+</html>
