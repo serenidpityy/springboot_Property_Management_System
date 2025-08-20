@@ -1266,7 +1266,7 @@
                         <div class="d-flex justify-content-between align-items-start">
                             <div class="flex-grow-1">
                                 <h5 class="card-title">${announcement.title}</h5>
-                                <p class="card-text text-muted">
+                                <p class="card-text text-muted" onclick="showAnnouncementSimple('${announcement.title.replace(/'/g, "\\'")}', '${announcement.content.replace(/'/g, "\\'").replace(/\n/g, "\\n")}', '${announcement.publishTime}')" style="cursor: pointer;">
                                     ${announcement.content.length > 100 ? announcement.content.substring(0, 100) + '...' : announcement.content}
                                 </p>
                                 <small class="text-muted">
@@ -1282,6 +1282,13 @@
                     </div>
                 </div>
             `).join('');
+        }
+
+        function showAnnouncementSimple(title, content, publishTime) {
+            // 简单的窗口显示完整内容
+            const formattedTime = new Date(publishTime).toLocaleString('zh-CN');
+            const message = `标题：${title}\n\n内容：\n${content}\n\n发布时间：${formattedTime}`;
+            alert(message);
         }
 
         function showAnnouncementDetail(id, title, content, publishTime) {

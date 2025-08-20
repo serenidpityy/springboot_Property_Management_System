@@ -7,6 +7,7 @@
     <link href="../css/bootstrap.min.css" rel="stylesheet">
     <link href="../css/dashboard.css" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+
 </head>
 <body>
     <div class="dashboard-container">
@@ -734,7 +735,7 @@
                     <div class="card-header">
                         <h2 class="card-title">公告列表</h2>
                         <div>
-                            <button class="btn btn-primary me-2" onclick="showAddAnnouncementModal()">
+                            <button class="btn btn-primary me-2" onclick="goToAddAnnouncement()">
                                 <i class="fas fa-plus"></i>
                                 新增公告
                             </button>
@@ -770,43 +771,8 @@
                     </div>
                 </div>
 
-                <!-- 添加公告模态框 -->
-                <div class="modal fade" id="addAnnouncementModal" tabindex="-1">
-                    <div class="modal-dialog modal-lg">
-                        <div class="modal-content">
-                            <div class="modal-header">
-                                <h5 class="modal-title">
-                                    <i class="fas fa-plus"></i>
-                                    发布新公告
-                                </h5>
-                                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-                            </div>
-                            <div class="modal-body">
-                                <form id="addAnnouncementForm">
-                                    <div class="mb-3">
-                                        <label for="announcementTitle" class="form-label">公告标题 *</label>
-                                        <input type="text" class="form-control" id="announcementTitle" required placeholder="请输入公告标题">
-                                    </div>
-                                    <div class="mb-3">
-                                        <label for="announcementContent" class="form-label">公告内容 *</label>
-                                        <textarea class="form-control" id="announcementContent" rows="8" required placeholder="请输入公告详细内容"></textarea>
-                                    </div>
-                                    <div class="alert alert-info">
-                                        <i class="fas fa-info-circle"></i>
-                                        公告发布后将立即对所有业主可见
-                                    </div>
-                                </form>
-                            </div>
-                            <div class="modal-footer">
-                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">取消</button>
-                                <button type="button" class="btn btn-primary" onclick="saveAnnouncement()">
-                                    <i class="fas fa-paper-plane"></i>
-                                    发布公告
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+
+
             `;
         }
 
@@ -1275,6 +1241,9 @@
                     case 'parking-management':
                         loadParkingList();
                         break;
+                    case 'announcements':
+                        loadAnnouncementList();
+                        break;
                 }
             }, 100);
             
@@ -1282,43 +1251,8 @@
         };
 
         // === 公告管理相关函数 ===
-        function showAddAnnouncementModal() {
-            const modal = new bootstrap.Modal(document.getElementById('addAnnouncementModal'));
-            modal.show();
-        }
-
-        async function saveAnnouncement() {
-            const announcementData = {
-                title: document.getElementById('announcementTitle').value,
-                content: document.getElementById('announcementContent').value,
-                publishTime: new Date().toISOString()
-            };
-
-            if (!announcementData.title || !announcementData.content) {
-                alert('请填写公告标题和内容');
-                return;
-            }
-
-            try {
-                const response = await fetch('/api/announcements', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(announcementData)
-                });
-
-                if (response.ok) {
-                    alert('公告发布成功！');
-                    bootstrap.Modal.getInstance(document.getElementById('addAnnouncementModal')).hide();
-                    document.getElementById('addAnnouncementForm').reset();
-                    refreshAnnouncementList();
-                } else {
-                    const error = await response.text();
-                    alert('发布失败：' + error);
-                }
-            } catch (error) {
-                console.error('发布公告失败:', error);
-                alert('发布失败，请稍后重试');
-            }
+        function goToAddAnnouncement() {
+            window.location.href = 'staff-add-announcement.html';
         }
 
         function refreshAnnouncementList() {
@@ -1360,6 +1294,7 @@
         }
 
         function displayAnnouncementList(announcements) {
+            
             const tbody = document.getElementById('announcementTableBody');
             if (announcements.length === 0) {
                 tbody.innerHTML = `
@@ -1373,10 +1308,15 @@
                 return;
             }
 
-            tbody.innerHTML = announcements.map(announcement => `
+            tbody.innerHTML = announcements.map((announcement, index) => `
                 <tr>
                     <td>${announcement.title}</td>
-                    <td>${announcement.content.length > 50 ? announcement.content.substring(0, 50) + '...' : announcement.content}</td>
+                    <td>
+                        <span onclick="showAnnouncementDetails('${announcement.title.replace(/'/g, "\\'")}', '${announcement.content.replace(/'/g, "\\'").replace(/\n/g, "\\n")}', '${announcement.publishTime}')" 
+                              style="cursor: pointer; color: #007bff; text-decoration: underline;">
+                            ${announcement.content.length > 50 ? announcement.content.substring(0, 50) + '...' : announcement.content}
+                        </span>
+                    </td>
                     <td>${new Date(announcement.publishTime).toLocaleDateString()}</td>
                     <td>
                         <button class="btn btn-sm btn-info me-1" onclick="editAnnouncement(${announcement.id})">
@@ -1392,8 +1332,15 @@
             `).join('');
         }
 
+        function showAnnouncementDetails(title, content, publishTime) {
+            // 简单的窗口显示完整内容
+            const formattedTime = new Date(publishTime).toLocaleString('zh-CN');
+            const message = `标题：${title}\n\n内容：\n${content}\n\n发布时间：${formattedTime}`;
+            alert(message);
+        }
+
         function editAnnouncement(announcementId) {
-            alert('编辑公告功能开发中...');
+            window.location.href = `staff-edit-announcement.html?id=${announcementId}`;
         }
 
         async function deleteAnnouncement(announcementId, title) {
@@ -1596,5 +1543,8 @@
             return result;
         };
     </script>
+    
+    <!-- Bootstrap JavaScript -->
+    <script src="../js/bootstrap.min.js"></script>
 </body>
 </html>

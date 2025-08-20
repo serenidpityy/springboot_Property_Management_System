@@ -1,0 +1,349 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>发布新公告 - 物业管理系统</title>
+    <link href="../css/bootstrap.min.css" rel="stylesheet">
+    <link href="../css/auth.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        .announcement-form-container {
+            max-width: 800px;
+            margin: 50px auto;
+            padding: 30px;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        }
+        
+        .form-header {
+            text-align: center;
+            margin-bottom: 30px;
+            padding-bottom: 20px;
+            border-bottom: 2px solid #f8f9fa;
+        }
+        
+        .form-header h1 {
+            color: #2c3e50;
+            font-weight: 600;
+            margin-bottom: 10px;
+        }
+        
+        .form-header p {
+            color: #6c757d;
+            margin: 0;
+        }
+        
+        .btn-back {
+            background: linear-gradient(135deg, #6c757d, #5a6268);
+            border: none;
+            color: white;
+            padding: 10px 20px;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+        }
+        
+        .btn-back:hover {
+            background: linear-gradient(135deg, #5a6268, #495057);
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+            color: white;
+        }
+        
+        .btn-submit {
+            background: linear-gradient(135deg, #007bff, #0056b3);
+            border: none;
+            color: white;
+            padding: 12px 30px;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+            font-weight: 500;
+        }
+        
+        .btn-submit:hover {
+            background: linear-gradient(135deg, #0056b3, #004085);
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0,123,255,0.3);
+            color: white;
+        }
+        
+        .form-control {
+            border: 2px solid #e9ecef;
+            border-radius: 8px;
+            padding: 12px 15px;
+            transition: all 0.3s ease;
+        }
+        
+        .form-control:focus {
+            border-color: #007bff;
+            box-shadow: 0 0 0 0.2rem rgba(0,123,255,0.25);
+        }
+        
+        .form-label {
+            font-weight: 500;
+            color: #495057;
+            margin-bottom: 8px;
+        }
+        
+        .required {
+            color: #dc3545;
+        }
+        
+        .form-actions {
+            margin-top: 30px;
+            padding-top: 20px;
+            border-top: 1px solid #e9ecef;
+            text-align: center;
+        }
+        
+        .loading-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            display: none;
+            z-index: 9999;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        .loading-content {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            text-align: center;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+        }
+        
+        .char-count {
+            font-size: 0.875em;
+            color: #6c757d;
+            text-align: right;
+            margin-top: 5px;
+        }
+        
+        .preview-section {
+            margin-top: 20px;
+            padding: 20px;
+            background: #f8f9fa;
+            border-radius: 8px;
+            border-left: 4px solid #007bff;
+        }
+    </style>
+</head>
+<body>
+    <!-- 加载遮罩层 -->
+    <div class="loading-overlay" id="loadingOverlay">
+        <div class="loading-content">
+            <div class="spinner-border text-primary" role="status">
+                <span class="visually-hidden">发布中...</span>
+            </div>
+            <p class="mt-2 mb-0">正在发布公告...</p>
+        </div>
+    </div>
+
+    <div class="container">
+        <div class="announcement-form-container">
+            <div class="form-header">
+                <h1>
+                    <i class="fas fa-bullhorn text-primary me-2"></i>
+                    发布新公告
+                </h1>
+                <p>发布社区公告，通知业主重要信息</p>
+            </div>
+            
+            <form id="announcementForm">
+                <div class="row">
+                    <div class="col-md-12 mb-3">
+                        <label for="title" class="form-label">
+                            <i class="fas fa-heading me-1"></i>
+                            公告标题 <span class="required">*</span>
+                        </label>
+                        <input type="text" class="form-control" id="title" required 
+                               placeholder="请输入公告标题" maxlength="100">
+                        <div class="char-count">
+                            <span id="titleCount">0</span>/100
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="row">
+                    <div class="col-md-12 mb-3">
+                        <label for="content" class="form-label">
+                            <i class="fas fa-align-left me-1"></i>
+                            公告内容 <span class="required">*</span>
+                        </label>
+                        <textarea class="form-control" id="content" required rows="8"
+                                  placeholder="请输入公告详细内容..." maxlength="2000"></textarea>
+                        <div class="char-count">
+                            <span id="contentCount">0</span>/2000
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="row">
+                    <div class="col-md-12 mb-3">
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" id="showPreview">
+                            <label class="form-check-label" for="showPreview">
+                                预览公告效果
+                            </label>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- 预览区域 -->
+                <div id="previewSection" class="preview-section" style="display: none;">
+                    <h6><i class="fas fa-eye me-2"></i>公告预览</h6>
+                    <div class="mt-3">
+                        <h5 id="previewTitle" class="text-primary"></h5>
+                        <p id="previewContent" class="mb-0"></p>
+                        <small class="text-muted">发布时间：<span id="previewTime"></span></small>
+                    </div>
+                </div>
+                
+                <div class="alert alert-info">
+                    <i class="fas fa-info-circle me-2"></i>
+                    公告发布后将立即对所有业主可见，请确认内容准确无误
+                </div>
+                
+                <div class="form-actions">
+                    <button type="button" class="btn btn-back me-3" onclick="goBack()">
+                        <i class="fas fa-arrow-left me-2"></i>
+                        返回列表
+                    </button>
+                    <button type="submit" class="btn btn-submit">
+                        <i class="fas fa-paper-plane me-2"></i>
+                        发布公告
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script src="../js/bootstrap.min.js"></script>
+    <script>
+        // 字符计数
+        document.getElementById('title').addEventListener('input', function() {
+            const count = this.value.length;
+            document.getElementById('titleCount').textContent = count;
+            updatePreview();
+        });
+
+        document.getElementById('content').addEventListener('input', function() {
+            const count = this.value.length;
+            document.getElementById('contentCount').textContent = count;
+            updatePreview();
+        });
+
+        // 预览功能
+        document.getElementById('showPreview').addEventListener('change', function() {
+            const previewSection = document.getElementById('previewSection');
+            if (this.checked) {
+                previewSection.style.display = 'block';
+                updatePreview();
+            } else {
+                previewSection.style.display = 'none';
+            }
+        });
+
+        function updatePreview() {
+            const title = document.getElementById('title').value;
+            const content = document.getElementById('content').value;
+            
+            document.getElementById('previewTitle').textContent = title || '公告标题';
+            document.getElementById('previewContent').textContent = content || '公告内容';
+            document.getElementById('previewTime').textContent = new Date().toLocaleString('zh-CN');
+        }
+
+        // 表单提交处理
+        document.getElementById('announcementForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const title = document.getElementById('title').value.trim();
+            const content = document.getElementById('content').value.trim();
+            
+            // 基本验证
+            if (!title) {
+                alert('请输入公告标题');
+                document.getElementById('title').focus();
+                return;
+            }
+            
+            if (!content) {
+                alert('请输入公告内容');
+                document.getElementById('content').focus();
+                return;
+            }
+            
+            // 显示加载状态
+            const submitBtn = document.querySelector('.btn-submit');
+            const originalText = submitBtn.innerHTML;
+            submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>发布中...';
+            submitBtn.disabled = true;
+            
+            const loadingOverlay = document.getElementById('loadingOverlay');
+            loadingOverlay.style.display = 'flex';
+            
+            try {
+                const announcementData = {
+                    title: title,
+                    content: content,
+                    publishTime: new Date().toISOString()
+                };
+                
+                const response = await fetch('/api/announcements', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(announcementData)
+                });
+                
+                if (response.ok) {
+                    const savedAnnouncement = await response.json();
+                    alert('公告发布成功！');
+                    
+                    // 跳转回工作人员页面的公告管理模块
+                    window.location.href = 'staff.html#announcements';
+                } else {
+                    const errorData = await response.text();
+                    alert('发布失败：' + errorData);
+                }
+            } catch (error) {
+                console.error('发布公告失败:', error);
+                alert('发布失败，请稍后重试');
+            } finally {
+                // 恢复按钮状态
+                submitBtn.innerHTML = originalText;
+                submitBtn.disabled = false;
+                loadingOverlay.style.display = 'none';
+            }
+        });
+
+        // 返回按钮处理
+        function goBack() {
+            if (confirm('确定要返回吗？未保存的公告内容将丢失。')) {
+                window.location.href = 'staff.html#announcements';
+            }
+        }
+
+        // 防止意外关闭页面
+        let formChanged = false;
+        
+        document.getElementById('announcementForm').addEventListener('input', function() {
+            formChanged = true;
+        });
+        
+        window.addEventListener('beforeunload', function(e) {
+            if (formChanged) {
+                e.preventDefault();
+                e.returnValue = '';
+            }
+        });
+    </script>
+</body>
+</html>
