@@ -65,7 +65,13 @@ CREATE TABLE ComplaintSuggestion (
     id INT AUTO_INCREMENT PRIMARY KEY,
     owner_id INT NOT NULL,
     content TEXT NOT NULL,
+    submitter_phone VARCHAR(20),
+    urgency_level ENUM('LOW', 'MEDIUM', 'HIGH', 'URGENT') DEFAULT 'LOW',
     processing_status ENUM('PENDING', 'PROCESSED') DEFAULT 'PENDING',
     submission_time DATETIME NOT NULL,
-    FOREIGN KEY (owner_id) REFERENCES App_User(id) ON DELETE CASCADE
+    processor_id INT,
+    processing_time DATETIME,
+    processor_response TEXT,
+    FOREIGN KEY (owner_id) REFERENCES App_User(id) ON DELETE CASCADE,
+    FOREIGN KEY (processor_id) REFERENCES App_User(id) ON DELETE SET NULL
 );

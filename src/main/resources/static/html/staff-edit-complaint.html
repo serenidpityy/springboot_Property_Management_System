@@ -1,0 +1,421 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>编辑投诉建议 - 物业管理系统</title>
+    <link href="../css/bootstrap.min.css" rel="stylesheet">
+    <link href="../css/dashboard.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        .loading-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(255, 255, 255, 0.9);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 9999;
+        }
+        .form-container {
+            max-width: 800px;
+            margin: 2rem auto;
+            padding: 0 1rem;
+        }
+        .btn-spinner {
+            display: none;
+            width: 1rem;
+            height: 1rem;
+            border: 2px solid transparent;
+            border-top: 2px solid #fff;
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+            margin-right: 0.5rem;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        .info-badge {
+            background: #e3f2fd;
+            color: #1976d2;
+            padding: 0.5rem 1rem;
+            border-radius: 8px;
+            border-left: 4px solid #1976d2;
+            margin-bottom: 1rem;
+        }
+    </style>
+</head>
+<body>
+    <div class="loading-overlay" id="loadingOverlay">
+        <div class="text-center">
+            <div class="spinner-border text-primary" role="status">
+                <span class="visually-hidden">Loading...</span>
+            </div>
+            <div class="mt-2">处理中...</div>
+        </div>
+    </div>
+
+    <div class="form-container">
+        <div class="card">
+            <div class="card-header">
+                <div class="d-flex justify-content-between align-items-center">
+                    <h2 class="mb-0">
+                        <i class="fas fa-edit text-primary me-2"></i>
+                        编辑投诉建议
+                    </h2>
+                    <button class="btn btn-outline-secondary" onclick="goBack()">
+                        <i class="fas fa-arrow-left"></i>
+                        返回
+                    </button>
+                </div>
+            </div>
+            <div class="card-body">
+                <div class="info-badge">
+                    <i class="fas fa-info-circle me-2"></i>
+                    正在加载投诉建议信息...
+                </div>
+                
+                <form id="editComplaintForm" style="display: none;">
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label for="complaintOwner" class="form-label">
+                                <i class="fas fa-user me-1"></i>
+                                业主姓名 <span class="text-danger">*</span>
+                            </label>
+                            <select class="form-control" id="complaintOwner" required>
+                                <option value="">请选择业主</option>
+                            </select>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label for="complaintStatus" class="form-label">
+                                <i class="fas fa-flag me-1"></i>
+                                处理状态
+                            </label>
+                            <select class="form-control" id="complaintStatus">
+                                <option value="PENDING">待处理</option>
+                                <option value="PROCESSED">已处理</option>
+                            </select>
+                        </div>
+                    </div>
+                    
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <label for="submissionTime" class="form-label">
+                                <i class="fas fa-calendar me-1"></i>
+                                提交时间
+                            </label>
+                            <input type="text" class="form-control" id="submissionTime" readonly>
+                        </div>
+                        <div class="col-md-6">
+                            <label for="processingTime" class="form-label">
+                                <i class="fas fa-clock me-1"></i>
+                                处理时间
+                            </label>
+                            <input type="text" class="form-control" id="processingTime" readonly>
+                        </div>
+                    </div>
+                    
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <label for="submitter" class="form-label">
+                                <i class="fas fa-user me-1"></i>
+                                提交人
+                            </label>
+                            <input type="text" class="form-control" id="submitter" readonly>
+                        </div>
+                        <div class="col-md-6">
+                            <label for="processor" class="form-label">
+                                <i class="fas fa-user-tie me-1"></i>
+                                处理人
+                            </label>
+                            <input type="text" class="form-control" id="processor" readonly>
+                        </div>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="complaintContent" class="form-label">
+                            <i class="fas fa-comment me-1"></i>
+                            投诉建议内容
+                        </label>
+                        <textarea class="form-control" id="complaintContent" rows="6" readonly
+                                  style="background-color: #f8f9fa; resize: none;"></textarea>
+                        <div class="form-text text-muted">
+                            此内容不可修改
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="processorResponse" class="form-label">
+                            <i class="fas fa-reply me-1"></i>
+                            处理人回应
+                        </label>
+                        <textarea class="form-control" id="processorResponse" rows="4" 
+                                  placeholder="请输入处理回应..." 
+                                  oninput="updateResponseCharCount()"></textarea>
+                        <div class="form-text">
+                            字符数: <span id="responseCharCount">0</span> / 500
+                        </div>
+                    </div>
+                    
+                    <div class="d-flex justify-content-end gap-2">
+                        <button type="button" class="btn btn-secondary" onclick="goBack()">
+                            <i class="fas fa-times"></i>
+                            取消
+                        </button>
+                        <button type="submit" class="btn btn-primary" id="submitBtn">
+                            <div class="btn-spinner" id="btnSpinner"></div>
+                            <i class="fas fa-save" id="btnIcon"></i>
+                            保存修改
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script src="../js/bootstrap.min.js"></script>
+    <script>
+        let complaintId = null;
+
+        // 页面加载时初始化
+        document.addEventListener('DOMContentLoaded', function() {
+            complaintId = getComplaintIdFromUrl();
+            if (!complaintId) {
+                alert('缺少投诉建议ID参数');
+                goBack();
+                return;
+            }
+            
+            loadOwnerOptions().then(() => {
+                loadComplaintData();
+            });
+            setupFormValidation();
+            setupCharacterCount();
+        });
+
+        // 从URL获取投诉建议ID
+        function getComplaintIdFromUrl() {
+            const urlParams = new URLSearchParams(window.location.search);
+            return urlParams.get('id');
+        }
+
+        // 加载业主选项
+        async function loadOwnerOptions() {
+            try {
+                const response = await fetch('/api/users/type/OWNER');
+                if (response.ok) {
+                    const owners = await response.json();
+                    const select = document.getElementById('complaintOwner');
+                    select.innerHTML = '<option value="">请选择业主</option>' +
+                        owners.map(owner => `<option value="${owner.id}">${owner.name || owner.username}</option>`).join('');
+                } else {
+                    throw new Error('加载业主列表失败');
+                }
+            } catch (error) {
+                console.error('加载业主选项失败:', error);
+                alert('加载业主列表失败，请刷新页面重试');
+            }
+        }
+
+        // 加载投诉建议数据
+        async function loadComplaintData() {
+            try {
+                const response = await fetch(`/api/complaints/${complaintId}`);
+                if (response.ok) {
+                    const complaint = await response.json();
+                    populateForm(complaint);
+                    showForm();
+                } else if (response.status === 404) {
+                    alert('投诉建议不存在');
+                    goBack();
+                } else {
+                    throw new Error('加载投诉建议失败');
+                }
+            } catch (error) {
+                console.error('加载投诉建议失败:', error);
+                alert('加载投诉建议失败，请稍后重试');
+                goBack();
+            }
+        }
+
+        // 填充表单数据
+        function populateForm(complaint) {
+            document.getElementById('complaintOwner').value = complaint.owner ? complaint.owner.id : '';
+            document.getElementById('complaintStatus').value = complaint.processingStatus || 'PENDING';
+            document.getElementById('complaintContent').value = complaint.content || '';
+            document.getElementById('submissionTime').value = complaint.submissionTime ? 
+                new Date(complaint.submissionTime).toLocaleString('zh-CN') : '';
+            document.getElementById('processingTime').value = complaint.processingTime ? 
+                new Date(complaint.processingTime).toLocaleString('zh-CN') : '';
+            document.getElementById('submitter').value = complaint.owner ? 
+                (complaint.owner.name || complaint.owner.username) : '';
+            document.getElementById('processor').value = complaint.processor ? 
+                (complaint.processor.name || complaint.processor.username) : '';
+            document.getElementById('processorResponse').value = complaint.processorResponse || '';
+            
+            // 更新字符计数
+            updateResponseCharCount();
+        }
+
+        // 显示表单
+        function showForm() {
+            document.querySelector('.info-badge').style.display = 'none';
+            document.getElementById('editComplaintForm').style.display = 'block';
+        }
+
+        // 设置表单验证
+        function setupFormValidation() {
+            const form = document.getElementById('editComplaintForm');
+            form.addEventListener('submit', handleSubmit);
+        }
+
+        // 设置字符计数
+        function setupCharacterCount() {
+            const textarea = document.getElementById('complaintContent');
+            const counter = document.getElementById('contentLength');
+            
+            textarea.addEventListener('input', function() {
+                const length = this.value.length;
+                counter.textContent = length;
+                
+                if (length > 1000) {
+                    counter.parentElement.classList.add('text-danger');
+                    this.value = this.value.substring(0, 1000);
+                    counter.textContent = 1000;
+                } else {
+                    counter.parentElement.classList.remove('text-danger');
+                }
+            });
+        }
+
+        // 处理表单提交
+        async function handleSubmit(event) {
+            event.preventDefault();
+            
+            // 验证表单
+            if (!validateForm()) {
+                return;
+            }
+            
+            // 显示加载状态
+            showLoading(true);
+            
+            try {
+                const formData = collectFormData();
+                const response = await fetch(`/api/complaints/${complaintId}`, {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(formData)
+                });
+                
+                if (response.ok) {
+                    alert('投诉建议修改成功！');
+                    // 跳转回工作人员页面
+                    window.location.href = 'staff.html#complaints';
+                } else {
+                    const error = await response.text();
+                    throw new Error(error || '修改失败');
+                }
+            } catch (error) {
+                console.error('保存投诉建议失败:', error);
+                alert('保存失败：' + error.message);
+            } finally {
+                showLoading(false);
+            }
+        }
+
+        // 验证表单
+        function validateForm() {
+            const complaintOwner = document.getElementById('complaintOwner').value;
+            const processorResponse = document.getElementById('processorResponse').value.trim();
+            
+            if (!complaintOwner) {
+                alert('请选择业主');
+                document.getElementById('complaintOwner').focus();
+                return false;
+            }
+            
+            if (processorResponse.length > 500) {
+                alert('处理人回应不能超过500个字符');
+                document.getElementById('processorResponse').focus();
+                return false;
+            }
+            
+            return true;
+        }
+
+        // 收集表单数据
+        function collectFormData() {
+            const currentStatus = document.getElementById('complaintStatus').value;
+            const currentUser = JSON.parse(localStorage.getItem('currentUser'));
+            const processorResponse = document.getElementById('processorResponse').value.trim();
+            
+            const formData = {
+                owner: { 
+                    id: parseInt(document.getElementById('complaintOwner').value) 
+                },
+                content: document.getElementById('complaintContent').value.trim(),
+                processingStatus: currentStatus,
+                processorResponse: processorResponse || null
+            };
+            
+            // 如果状态改为已处理或有回应内容，设置处理人和处理时间
+            if ((currentStatus === 'PROCESSED' || processorResponse) && currentUser) {
+                formData.processor = { id: currentUser.id };
+                formData.processingTime = new Date().toISOString();
+            }
+            
+            return formData;
+        }
+
+        // 更新处理人回应字符计数
+        function updateResponseCharCount() {
+            const textarea = document.getElementById('processorResponse');
+            const counter = document.getElementById('responseCharCount');
+            if (textarea && counter) {
+                counter.textContent = textarea.value.length;
+            }
+        }
+
+        // 显示/隐藏加载状态
+        function showLoading(show) {
+            const overlay = document.getElementById('loadingOverlay');
+            const submitBtn = document.getElementById('submitBtn');
+            const btnSpinner = document.getElementById('btnSpinner');
+            const btnIcon = document.getElementById('btnIcon');
+            
+            if (show) {
+                overlay.style.display = 'flex';
+                submitBtn.disabled = true;
+                btnSpinner.style.display = 'inline-block';
+                btnIcon.style.display = 'none';
+            } else {
+                overlay.style.display = 'none';
+                submitBtn.disabled = false;
+                btnSpinner.style.display = 'none';
+                btnIcon.style.display = 'inline';
+            }
+        }
+
+        // 返回上一页
+        function goBack() {
+            if (confirm('确定要返回吗？未保存的修改将丢失。')) {
+                window.location.href = 'staff.html#complaints';
+            }
+        }
+
+        // ESC键返回
+        document.addEventListener('keydown', function(event) {
+            if (event.key === 'Escape') {
+                goBack();
+            }
+        });
+    </script>
+</body>
+</html>
