@@ -353,124 +353,7 @@
         <!-- 移动端侧边栏覆盖层 -->
         <div class="sidebar-overlay" id="sidebarOverlay"></div>
 
-        <!-- 业主添加房产模态框 -->
-        <div class="modal fade" id="ownerAddPropertyModal" tabindex="-1">
-            <div class="modal-dialog modal-lg">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h5 class="modal-title">
-                            <i class="fas fa-plus"></i>
-                            申请添加房产信息
-                        </h5>
-                        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-                    </div>
-                    <div class="modal-body">
-                        <div class="alert alert-info">
-                            <i class="fas fa-info-circle"></i>
-                            请填写您的房产信息，提交后将添加到您的名下。
-                        </div>
-                        <form id="ownerAddPropertyForm">
-                            <div class="row">
-                                <div class="col-md-6 mb-3">
-                                    <label for="ownerPropertyHouseNumber" class="form-label">房屋号 *</label>
-                                    <input type="text" class="form-control" id="ownerPropertyHouseNumber" required placeholder="例如：1-101">
-                                </div>
-                                <div class="col-md-6 mb-3">
-                                    <label for="ownerPropertyBuilding" class="form-label">楼栋 *</label>
-                                    <input type="text" class="form-control" id="ownerPropertyBuilding" required placeholder="例如：1栋">
-                                </div>
-                            </div>
-                            <div class="row">
-                                <div class="col-md-6 mb-3">
-                                    <label for="ownerPropertyUnit" class="form-label">单元 *</label>
-                                    <input type="text" class="form-control" id="ownerPropertyUnit" required placeholder="例如：1单元">
-                                </div>
-                                <div class="col-md-6 mb-3">
-                                    <label for="ownerPropertyArea" class="form-label">面积(㎡)</label>
-                                    <input type="number" class="form-control" id="ownerPropertyArea" step="0.01" placeholder="例如：120.5">
-                                </div>
-                            </div>
-                            <div class="row">
-                                <div class="col-md-6 mb-3">
-                                    <label for="ownerPropertyType" class="form-label">房型</label>
-                                    <select class="form-control" id="ownerPropertyType">
-                                        <option value="">请选择房型</option>
-                                        <option value="一室一厅">一室一厅</option>
-                                        <option value="两室一厅">两室一厅</option>
-                                        <option value="两室两厅">两室两厅</option>
-                                        <option value="三室一厅">三室一厅</option>
-                                        <option value="三室两厅">三室两厅</option>
-                                        <option value="四室两厅">四室两厅</option>
-                                        <option value="其他">其他</option>
-                                    </select>
-                                </div>
-                                <div class="col-md-6 mb-3">
-                                    <label for="ownerPropertyOccupancy" class="form-label">入住信息</label>
-                                    <select class="form-control" id="ownerPropertyOccupancy">
-                                        <option value="">请选择入住状态</option>
-                                        <option value="已入住">已入住</option>
-                                        <option value="未入住">未入住</option>
-                                        <option value="装修中">装修中</option>
-                                        <option value="出租中">出租中</option>
-                                    </select>
-                                </div>
-                            </div>
-                            <div class="mb-3">
-                                <label for="ownerPropertyDescription" class="form-label">附加说明</label>
-                                <textarea class="form-control" id="ownerPropertyDescription" rows="3" placeholder="请输入房产附加说明..."></textarea>
-                            </div>
-                        </form>
-                    </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">取消</button>
-                        <button type="button" class="btn btn-primary" onclick="submitOwnerProperty()">
-                            <i class="fas fa-save"></i>
-                            提交申请
-                        </button>
-                    </div>
-                </div>
-            </div>
-        </div>
 
-        <!-- 业主添加车位模态框 -->
-        <div class="modal fade" id="ownerAddParkingModal" tabindex="-1">
-            <div class="modal-dialog">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h5 class="modal-title">
-                            <i class="fas fa-plus"></i>
-                            申请添加车位信息
-                        </h5>
-                        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-                    </div>
-                    <div class="modal-body">
-                        <div class="alert alert-info">
-                            <i class="fas fa-info-circle"></i>
-                            请填写您的车位信息，提交后将添加到您的名下。
-                        </div>
-                        <form id="ownerAddParkingForm">
-                            <div class="mb-3">
-                                <label for="ownerParkingId" class="form-label">车位编号 *</label>
-                                <input type="text" class="form-control" id="ownerParkingId" required placeholder="例如：P-001、A区-15号">
-                                <div class="form-text">请输入您购买或租赁的车位编号</div>
-                            </div>
-                            <div class="mb-3">
-                                <label for="ownerParkingLocation" class="form-label">车位位置</label>
-                                <input type="text" class="form-control" id="ownerParkingLocation" placeholder="例如：地下一层A区">
-                                <div class="form-text">可选：车位的具体位置描述</div>
-                            </div>
-                        </form>
-                    </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">取消</button>
-                        <button type="button" class="btn btn-primary" onclick="submitOwnerParking()">
-                            <i class="fas fa-save"></i>
-                            提交申请
-                        </button>
-                    </div>
-                </div>
-            </div>
-        </div>
 
         <!-- 充值功能已简化为跳转页面 -->
     </div>
@@ -822,16 +705,10 @@
                 <div class="dashboard-card">
                     <div class="card-header">
                         <h2 class="card-title">房产列表</h2>
-                        <div>
-                            <button class="btn btn-primary me-2" onclick="showOwnerAddPropertyModal()">
-                                <i class="fas fa-plus"></i>
-                                申请添加房产
-                            </button>
-                            <button class="btn btn-secondary" onclick="refreshOwnerPropertyList()">
-                                <i class="fas fa-refresh"></i>
-                                刷新
-                            </button>
-                        </div>
+                        <button class="btn btn-secondary" onclick="refreshOwnerPropertyList()">
+                            <i class="fas fa-refresh"></i>
+                            刷新
+                        </button>
                     </div>
                     <div class="card-body">
                         <div id="ownerPropertyList">
@@ -859,16 +736,10 @@
                 <div class="dashboard-card">
                     <div class="card-header">
                         <h2 class="card-title">车位信息</h2>
-                        <div>
-                            <button class="btn btn-primary me-2" onclick="showOwnerAddParkingModal()">
-                                <i class="fas fa-plus"></i>
-                                申请添加车位
-                            </button>
-                            <button class="btn btn-secondary" onclick="refreshOwnerParkingList()">
-                                <i class="fas fa-refresh"></i>
-                                刷新
-                            </button>
-                        </div>
+                        <button class="btn btn-secondary" onclick="refreshOwnerParkingList()">
+                            <i class="fas fa-refresh"></i>
+                            刷新
+                        </button>
                     </div>
                     <div class="card-body">
                         <div id="ownerParkingList">
@@ -1228,110 +1099,7 @@
 
         // 简化充值函数已移除，现在使用独立充值页面
 
-        // === 业主房产和车位添加功能 ===
-        function showOwnerAddPropertyModal() {
-            const modal = new bootstrap.Modal(document.getElementById('ownerAddPropertyModal'));
-            modal.show();
-        }
 
-        function showOwnerAddParkingModal() {
-            const modal = new bootstrap.Modal(document.getElementById('ownerAddParkingModal'));
-            modal.show();
-        }
-
-        async function submitOwnerProperty() {
-            const form = document.getElementById('ownerAddPropertyForm');
-            if (!form.checkValidity()) {
-                form.reportValidity();
-                return;
-            }
-
-            if (!currentUser) {
-                alert('请先登录');
-                return;
-            }
-
-            const propertyData = {
-                houseNumber: document.getElementById('ownerPropertyHouseNumber').value,
-                owner: { id: currentUser.id },
-                building: document.getElementById('ownerPropertyBuilding').value,
-                unit: document.getElementById('ownerPropertyUnit').value,
-                area: parseFloat(document.getElementById('ownerPropertyArea').value) || null,
-                houseType: document.getElementById('ownerPropertyType').value || null,
-                occupancyInfo: document.getElementById('ownerPropertyOccupancy').value || null,
-                additionalDescription: document.getElementById('ownerPropertyDescription').value || null
-            };
-
-            if (!propertyData.houseNumber || !propertyData.building || !propertyData.unit) {
-                alert('请填写必填字段：房屋号、楼栋、单元');
-                return;
-            }
-
-            try {
-                const response = await fetch('/api/properties', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(propertyData)
-                });
-
-                if (response.ok) {
-                    alert('房产信息添加成功！');
-                    bootstrap.Modal.getInstance(document.getElementById('ownerAddPropertyModal')).hide();
-                    form.reset();
-                    refreshOwnerPropertyList();
-                } else {
-                    const error = await response.text();
-                    alert('添加失败：' + error);
-                }
-            } catch (error) {
-                console.error('保存房产失败:', error);
-                alert('保存失败，请稍后重试');
-            }
-        }
-
-        async function submitOwnerParking() {
-            const form = document.getElementById('ownerAddParkingForm');
-            if (!form.checkValidity()) {
-                form.reportValidity();
-                return;
-            }
-
-            if (!currentUser) {
-                alert('请先登录');
-                return;
-            }
-
-            const parkingData = {
-                parkingId: document.getElementById('ownerParkingId').value,
-                owner: { id: currentUser.id }
-            };
-
-            if (!parkingData.parkingId) {
-                alert('请填写车位编号');
-                return;
-            }
-
-            try {
-                const response = await fetch('/api/parking', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(parkingData)
-                });
-
-                if (response.ok) {
-                    alert('车位信息添加成功！');
-                    bootstrap.Modal.getInstance(document.getElementById('ownerAddParkingModal')).hide();
-                    form.reset();
-                    refreshOwnerParkingList();
-                } else {
-                    const error = await response.text();
-                    alert('添加失败：' + error);
-                }
-            } catch (error) {
-                console.error('保存车位失败:', error);
-                alert('保存失败，请稍后重试');
-            }
-        }
 
         // === 个人信息管理相关函数 ===
         function enableEditProfile() {

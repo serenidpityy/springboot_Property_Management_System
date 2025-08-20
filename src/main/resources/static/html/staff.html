@@ -663,89 +663,7 @@
 
 
 
-                <!-- 编辑房产模态框 -->
-                <div class="modal fade" id="editPropertyModal" tabindex="-1">
-                    <div class="modal-dialog modal-lg">
-                        <div class="modal-content">
-                            <div class="modal-header">
-                                <h5 class="modal-title">
-                                    <i class="fas fa-edit"></i>
-                                    编辑房产信息
-                                </h5>
-                                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-                            </div>
-                            <div class="modal-body">
-                                <form id="editPropertyForm">
-                                    <input type="hidden" id="editPropertyId">
-                                    <div class="row">
-                                        <div class="col-md-6 mb-3">
-                                            <label for="editPropertyHouseNumber" class="form-label">房屋号 *</label>
-                                            <input type="text" class="form-control" id="editPropertyHouseNumber" required>
-                                        </div>
-                                        <div class="col-md-6 mb-3">
-                                            <label for="editPropertyOwner" class="form-label">业主 *</label>
-                                            <select class="form-control" id="editPropertyOwner" required>
-                                                <option value="">请选择业主</option>
-                                            </select>
-                                        </div>
-                                    </div>
-                                    <div class="row">
-                                        <div class="col-md-4 mb-3">
-                                            <label for="editPropertyBuilding" class="form-label">楼栋 *</label>
-                                            <input type="text" class="form-control" id="editPropertyBuilding" required>
-                                        </div>
-                                        <div class="col-md-4 mb-3">
-                                            <label for="editPropertyUnit" class="form-label">单元 *</label>
-                                            <input type="text" class="form-control" id="editPropertyUnit" required>
-                                        </div>
-                                        <div class="col-md-4 mb-3">
-                                            <label for="editPropertyArea" class="form-label">面积(㎡)</label>
-                                            <input type="number" class="form-control" id="editPropertyArea" step="0.01">
-                                        </div>
-                                    </div>
-                                    <div class="row">
-                                        <div class="col-md-6 mb-3">
-                                            <label for="editPropertyType" class="form-label">房型</label>
-                                            <select class="form-control" id="editPropertyType">
-                                                <option value="">请选择房型</option>
-                                                <option value="一室一厅">一室一厅</option>
-                                                <option value="两室一厅">两室一厅</option>
-                                                <option value="两室两厅">两室两厅</option>
-                                                <option value="三室一厅">三室一厅</option>
-                                                <option value="三室两厅">三室两厅</option>
-                                                <option value="四室两厅">四室两厅</option>
-                                                <option value="五室两厅">五室两厅</option>
-                                                <option value="其他">其他</option>
-                                            </select>
-                                        </div>
-                                        <div class="col-md-6 mb-3">
-                                            <label for="editPropertyOccupancy" class="form-label">入住信息</label>
-                                            <select class="form-control" id="editPropertyOccupancy">
-                                                <option value="">请选择入住状态</option>
-                                                <option value="已入住">已入住</option>
-                                                <option value="未入住">未入住</option>
-                                                <option value="装修中">装修中</option>
-                                                <option value="出租中">出租中</option>
-                                                <option value="空置">空置</option>
-                                            </select>
-                                        </div>
-                                    </div>
-                                    <div class="mb-3">
-                                        <label for="editPropertyDescription" class="form-label">附加说明</label>
-                                        <textarea class="form-control" id="editPropertyDescription" rows="3" placeholder="请输入房产附加说明..."></textarea>
-                                    </div>
-                                </form>
-                            </div>
-                            <div class="modal-footer">
-                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">取消</button>
-                                <button type="button" class="btn btn-primary" onclick="saveEditedProperty()">
-                                    <i class="fas fa-save"></i>
-                                    保存修改
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+
             `;
         }
 
@@ -1045,108 +963,11 @@
         }
 
         // 编辑房产信息
-        async function editProperty(propertyId) {
-            try {
-                const response = await fetch(`/api/properties/${propertyId}`);
-                if (response.ok) {
-                    const property = await response.json();
-                    showEditPropertyModal(property);
-                } else {
-                    alert('获取房产信息失败');
-                }
-            } catch (error) {
-                console.error('获取房产信息失败:', error);
-                alert('获取房产信息失败，请稍后重试');
-            }
+        function editProperty(propertyId) {
+            window.location.href = `staff-edit-property.html?id=${propertyId}`;
         }
 
-        // 显示编辑房产模态框
-        function showEditPropertyModal(property) {
-            // 填充表单数据
-            document.getElementById('editPropertyId').value = property.id;
-            document.getElementById('editPropertyHouseNumber').value = property.houseNumber;
-            document.getElementById('editPropertyBuilding').value = property.building;
-            document.getElementById('editPropertyUnit').value = property.unit;
-            document.getElementById('editPropertyArea').value = property.area || '';
-            document.getElementById('editPropertyType').value = property.houseType || '';
-            document.getElementById('editPropertyOccupancy').value = property.occupancyInfo || '';
-            document.getElementById('editPropertyDescription').value = property.additionalDescription || '';
-            
-            // 加载业主选项并设置当前选中的业主
-            loadEditOwnerOptions(property.owner ? property.owner.id : null);
-            
-            // 显示模态框
-            const modal = new bootstrap.Modal(document.getElementById('editPropertyModal'));
-            modal.show();
-        }
 
-        // 加载编辑时的业主选项
-        async function loadEditOwnerOptions(selectedOwnerId) {
-            try {
-                const response = await fetch('/api/users/type/OWNER');
-                if (response.ok) {
-                    const owners = await response.json();
-                    const select = document.getElementById('editPropertyOwner');
-                    select.innerHTML = '<option value="">请选择业主</option>' +
-                        owners.map(owner => 
-                            `<option value="${owner.id}" ${owner.id === selectedOwnerId ? 'selected' : ''}>
-                                ${owner.name || owner.username} (${owner.phone || '无手机号'})
-                            </option>`
-                        ).join('');
-                } else {
-                    console.error('获取业主列表失败');
-                }
-            } catch (error) {
-                console.error('加载业主选项失败:', error);
-            }
-        }
-
-        // 保存编辑的房产信息
-        async function saveEditedProperty() {
-            const form = document.getElementById('editPropertyForm');
-            if (!form.checkValidity()) {
-                form.reportValidity();
-                return;
-            }
-
-            const propertyData = {
-                id: parseInt(document.getElementById('editPropertyId').value),
-                houseNumber: document.getElementById('editPropertyHouseNumber').value,
-                owner: { id: parseInt(document.getElementById('editPropertyOwner').value) },
-                building: document.getElementById('editPropertyBuilding').value,
-                unit: document.getElementById('editPropertyUnit').value,
-                area: parseFloat(document.getElementById('editPropertyArea').value) || null,
-                houseType: document.getElementById('editPropertyType').value || null,
-                occupancyInfo: document.getElementById('editPropertyOccupancy').value || null,
-                additionalDescription: document.getElementById('editPropertyDescription').value || null
-            };
-
-            if (!propertyData.houseNumber || !propertyData.owner.id || 
-                !propertyData.building || !propertyData.unit) {
-                alert('请填写必填字段');
-                return;
-            }
-
-            try {
-                const response = await fetch(`/api/properties/${propertyData.id}`, {
-                    method: 'PUT',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(propertyData)
-                });
-
-                if (response.ok) {
-                    alert('房产信息更新成功！');
-                    bootstrap.Modal.getInstance(document.getElementById('editPropertyModal')).hide();
-                    refreshPropertyList();
-                } else {
-                    const error = await response.text();
-                    alert('更新失败：' + error);
-                }
-            } catch (error) {
-                console.error('保存房产失败:', error);
-                alert('保存失败，请稍后重试');
-            }
-        }
 
         // 删除房产信息
         async function deleteProperty(propertyId, houseNumber) {
@@ -1267,31 +1088,9 @@
             }
         }
 
-        function editProperty(propertyId) {
-            alert('编辑房产功能开发中...');
-        }
 
-        async function deleteProperty(propertyId, houseNumber) {
-            if (!confirm(`确定要删除房产 "${houseNumber}" 吗？此操作不可撤销。`)) {
-                return;
-            }
 
-            try {
-                const response = await fetch(`/api/properties/${propertyId}`, {
-                    method: 'DELETE'
-                });
 
-                if (response.ok) {
-                    alert('房产删除成功！');
-                    refreshPropertyList();
-                } else {
-                    alert('删除失败，请稍后重试');
-                }
-            } catch (error) {
-                console.error('删除房产失败:', error);
-                alert('删除失败，请稍后重试');
-            }
-        }
 
         // 在模块加载时自动加载数据
         const originalLoadModuleContent = loadModuleContent;
