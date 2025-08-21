@@ -54,6 +54,19 @@
                     </ul>
                 </div>
 
+                <!-- 个人中心 -->
+                <div class="sidebar-section">
+                    <div class="sidebar-title">个人中心</div>
+                    <ul class="nav-menu">
+                        <li class="nav-item">
+                            <a href="#" class="nav-link" data-module="profile">
+                                <i class="nav-icon fas fa-user-circle"></i>
+                                <span>个人信息</span>
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+
                 <!-- 用户管理 -->
                 <div class="sidebar-section">
                     <div class="sidebar-title">用户管理</div>
@@ -74,44 +87,6 @@
                             <a href="#" class="nav-link" data-module="owner-users">
                                 <i class="nav-icon fas fa-users"></i>
                                 <span>业主管理</span>
-                            </a>
-                        </li>
-                    </ul>
-                </div>
-
-                <!-- 系统管理 -->
-                <div class="sidebar-section">
-                    <div class="sidebar-title">系统管理</div>
-                    <ul class="nav-menu">
-                        <li class="nav-item">
-                            <a href="#" class="nav-link" data-module="system-settings">
-                                <i class="nav-icon fas fa-cogs"></i>
-                                <span>系统设置</span>
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a href="#" class="nav-link" data-module="system-logs">
-                                <i class="nav-icon fas fa-list-alt"></i>
-                                <span>系统日志</span>
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a href="#" class="nav-link" data-module="backup-restore">
-                                <i class="nav-icon fas fa-database"></i>
-                                <span>备份恢复</span>
-                            </a>
-                        </li>
-                    </ul>
-                </div>
-
-                <!-- 个人中心 -->
-                <div class="sidebar-section">
-                    <div class="sidebar-title">个人中心</div>
-                    <ul class="nav-menu">
-                        <li class="nav-item">
-                            <a href="#" class="nav-link" data-module="profile">
-                                <i class="nav-icon fas fa-user-circle"></i>
-                                <span>个人信息</span>
                             </a>
                         </li>
                     </ul>
@@ -219,9 +194,9 @@
                                         </button>
                                     </div>
                                     <div class="col-md-4 mb-3">
-                                        <button class="btn btn-info w-100" onclick="loadModule('system-settings')">
-                                            <i class="fas fa-cogs"></i>
-                                            系统设置
+                                        <button class="btn btn-info w-100" onclick="loadModule('owner-users')">
+                                            <i class="fas fa-users"></i>
+                                            管理业主
                                         </button>
                                     </div>
                                 </div>
@@ -445,15 +420,6 @@
                 case 'owner-users':
                     content = getOwnerUsersContent();
                     break;
-                case 'system-settings':
-                    content = getSystemSettingsContent();
-                    break;
-                case 'system-logs':
-                    content = getSystemLogsContent();
-                    break;
-                case 'backup-restore':
-                    content = getBackupRestoreContent();
-                    break;
                 case 'profile':
                     content = getProfileContent();
                     break;
@@ -477,18 +443,34 @@
                 <div class="dashboard-card">
                     <div class="card-header">
                         <h2 class="card-title">管理员列表</h2>
-                        <button class="btn btn-primary">
+                        <button class="btn btn-primary" onclick="goToAddAdmin()">
                             <i class="fas fa-plus"></i>
                             添加管理员
                         </button>
                     </div>
                     <div class="card-body">
-                        <div class="empty-state">
-                            <div class="empty-state-icon">
-                                <i class="fas fa-users"></i>
-                            </div>
-                            <h3 class="empty-state-title">管理员管理功能</h3>
-                            <p class="empty-state-description">此功能正在开发中，敬请期待...</p>
+                        <div class="table-container">
+                            <table class="table">
+                                <thead>
+                                    <tr>
+                                        <th>用户名</th>
+                                        <th>真实姓名</th>
+                                        <th>手机号</th>
+                                        <th>创建时间</th>
+                                        <th>操作</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="adminUsersTableBody">
+                                    <tr>
+                                        <td colspan="5" class="text-center">
+                                            <div class="loading">
+                                                <div class="spinner"></div>
+                                                <span class="ms-2">加载管理员信息中...</span>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
                         </div>
                     </div>
                 </div>
@@ -507,18 +489,34 @@
                 <div class="dashboard-card">
                     <div class="card-header">
                         <h2 class="card-title">工作人员列表</h2>
-                        <button class="btn btn-primary">
+                        <button class="btn btn-primary" onclick="goToAddStaff()">
                             <i class="fas fa-plus"></i>
                             添加工作人员
                         </button>
                     </div>
                     <div class="card-body">
-                        <div class="empty-state">
-                            <div class="empty-state-icon">
-                                <i class="fas fa-user-tie"></i>
-                            </div>
-                            <h3 class="empty-state-title">工作人员管理功能</h3>
-                            <p class="empty-state-description">此功能正在开发中，敬请期待...</p>
+                        <div class="table-container">
+                            <table class="table">
+                                <thead>
+                                    <tr>
+                                        <th>用户名</th>
+                                        <th>真实姓名</th>
+                                        <th>手机号</th>
+                                        <th>创建时间</th>
+                                        <th>操作</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="staffUsersTableBody">
+                                    <tr>
+                                        <td colspan="5" class="text-center">
+                                            <div class="loading">
+                                                <div class="spinner"></div>
+                                                <span class="ms-2">加载工作人员信息中...</span>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
                         </div>
                     </div>
                 </div>
@@ -537,122 +535,101 @@
                 <div class="dashboard-card">
                     <div class="card-header">
                         <h2 class="card-title">业主列表</h2>
-                        <button class="btn btn-primary">
+                        <button class="btn btn-primary" onclick="goToAddOwner()">
                             <i class="fas fa-plus"></i>
                             添加业主
                         </button>
                     </div>
                     <div class="card-body">
-                        <div class="empty-state">
-                            <div class="empty-state-icon">
-                                <i class="fas fa-home"></i>
-                            </div>
-                            <h3 class="empty-state-title">业主管理功能</h3>
-                            <p class="empty-state-description">此功能正在开发中，敬请期待...</p>
+                        <div class="table-container">
+                            <table class="table">
+                                <thead>
+                                    <tr>
+                                        <th>用户名</th>
+                                        <th>真实姓名</th>
+                                        <th>手机号</th>
+                                        <th>账户余额</th>
+                                        <th>创建时间</th>
+                                        <th>操作</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="ownerUsersTableBody">
+                                    <tr>
+                                        <td colspan="6" class="text-center">
+                                            <div class="loading">
+                                                <div class="spinner"></div>
+                                                <span class="ms-2">加载业主信息中...</span>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
                         </div>
                     </div>
                 </div>
             `;
         }
 
-        function getSystemSettingsContent() {
-            return `
-                <div class="page-header">
-                    <h1 class="page-title">
-                        <i class="fas fa-cogs me-3"></i>
-                        系统设置
-                    </h1>
-                    <p class="page-subtitle">配置系统参数和选项</p>
-                </div>
-                <div class="dashboard-card">
-                    <div class="card-header">
-                        <h2 class="card-title">系统配置</h2>
-                    </div>
-                    <div class="card-body">
-                        <div class="empty-state">
-                            <div class="empty-state-icon">
-                                <i class="fas fa-cogs"></i>
-                            </div>
-                            <h3 class="empty-state-title">系统设置功能</h3>
-                            <p class="empty-state-description">此功能正在开发中，敬请期待...</p>
-                        </div>
-                    </div>
-                </div>
-            `;
-        }
 
-        function getSystemLogsContent() {
-            return `
-                <div class="page-header">
-                    <h1 class="page-title">
-                        <i class="fas fa-list-alt me-3"></i>
-                        系统日志
-                    </h1>
-                    <p class="page-subtitle">查看系统操作日志和错误记录</p>
-                </div>
-                <div class="dashboard-card">
-                    <div class="card-header">
-                        <h2 class="card-title">日志记录</h2>
-                    </div>
-                    <div class="card-body">
-                        <div class="empty-state">
-                            <div class="empty-state-icon">
-                                <i class="fas fa-file-alt"></i>
-                            </div>
-                            <h3 class="empty-state-title">系统日志功能</h3>
-                            <p class="empty-state-description">此功能正在开发中，敬请期待...</p>
-                        </div>
-                    </div>
-                </div>
-            `;
-        }
-
-        function getBackupRestoreContent() {
-            return `
-                <div class="page-header">
-                    <h1 class="page-title">
-                        <i class="fas fa-database me-3"></i>
-                        备份恢复
-                    </h1>
-                    <p class="page-subtitle">系统数据备份和恢复管理</p>
-                </div>
-                <div class="dashboard-card">
-                    <div class="card-header">
-                        <h2 class="card-title">数据管理</h2>
-                    </div>
-                    <div class="card-body">
-                        <div class="empty-state">
-                            <div class="empty-state-icon">
-                                <i class="fas fa-database"></i>
-                            </div>
-                            <h3 class="empty-state-title">备份恢复功能</h3>
-                            <p class="empty-state-description">此功能正在开发中，敬请期待...</p>
-                        </div>
-                    </div>
-                </div>
-            `;
-        }
 
         function getProfileContent() {
             return `
                 <div class="page-header">
                     <h1 class="page-title">
                         <i class="fas fa-user-circle me-3"></i>
-                        个人信息
+                        个人信息管理
                     </h1>
-                    <p class="page-subtitle">管理您的个人账户信息</p>
+                    <p class="page-subtitle">管理您的个人资料和管理员设置</p>
                 </div>
-                <div class="dashboard-card">
-                    <div class="card-header">
-                        <h2 class="card-title">账户设置</h2>
-                    </div>
-                    <div class="card-body">
-                        <div class="empty-state">
-                            <div class="empty-state-icon">
-                                <i class="fas fa-user"></i>
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="dashboard-card">
+                            <div class="card-header">
+                                <h2 class="card-title">基本信息</h2>
+                                <button class="btn btn-primary" onclick="enableEditAdminProfile()">
+                                    <i class="fas fa-edit"></i>
+                                    编辑信息
+                                </button>
                             </div>
-                            <h3 class="empty-state-title">个人信息管理</h3>
-                            <p class="empty-state-description">此功能正在开发中，敬请期待...</p>
+                            <div class="card-body">
+                                <form id="adminProfileForm">
+                                    <div class="row">
+                                        <div class="col-md-6 mb-3">
+                                            <label for="adminProfileUsername" class="form-label">用户名</label>
+                                            <input type="text" class="form-control" id="adminProfileUsername" readonly>
+                                        </div>
+                                        <div class="col-md-6 mb-3">
+                                            <label for="adminProfileName" class="form-label">真实姓名</label>
+                                            <input type="text" class="form-control" id="adminProfileName" readonly>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-md-6 mb-3">
+                                            <label for="adminProfilePhone" class="form-label">手机号码</label>
+                                            <input type="tel" class="form-control" id="adminProfilePhone" readonly>
+                                        </div>
+                                        <div class="col-md-6 mb-3">
+                                            <label for="adminProfileUserType" class="form-label">用户类型</label>
+                                            <input type="text" class="form-control" id="adminProfileUserType" value="系统管理员" readonly>
+                                        </div>
+                                    </div>
+                                    <div class="mb-3" id="adminPasswordSection" style="display: none;">
+                                        <label for="adminProfilePassword" class="form-label">新密码</label>
+                                        <input type="password" class="form-control" id="adminProfilePassword" placeholder="如不修改密码请留空">
+                                        <div class="form-text">留空表示不修改密码</div>
+                                    </div>
+                                    <div class="d-none" id="adminEditButtons">
+                                        <button type="button" class="btn btn-success me-2" onclick="saveAdminProfile()">
+                                            <i class="fas fa-save"></i>
+                                            保存修改
+                                        </button>
+                                        <button type="button" class="btn btn-secondary" onclick="cancelEditAdminProfile()">
+                                            <i class="fas fa-times"></i>
+                                            取消
+                                        </button>
+                                    </div>
+                                </form>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -681,6 +658,410 @@
                 window.location.href = 'login.html';
             }
         }
+
+        // === 用户管理相关函数 ===
+        
+        // 管理员管理函数
+        function goToAddAdmin() {
+            window.location.href = 'admin-add-user.html?type=admin';
+        }
+
+        function goToAddStaff() {
+            window.location.href = 'admin-add-user.html?type=staff';
+        }
+
+        function goToAddOwner() {
+            window.location.href = 'admin-add-user.html?type=owner';
+        }
+
+        function editUser(userId, userType) {
+            window.location.href = `admin-edit-user.html?id=${userId}&type=${userType}`;
+        }
+
+        async function deleteUser(userId, username, userType) {
+            if (!confirm(`确定要删除${userType === 'ADMIN' ? '管理员' : userType === 'STAFF' ? '工作人员' : '业主'} "${username}" 吗？此操作不可撤销。`)) {
+                return;
+            }
+
+            try {
+                const response = await fetch(`/api/users/${userId}`, {
+                    method: 'DELETE'
+                });
+
+                if (response.ok) {
+                    alert('用户删除成功！');
+                    // 重新加载当前模块的数据
+                    if (userType === 'ADMIN') {
+                        loadAdminUsers();
+                    } else if (userType === 'STAFF') {
+                        loadStaffUsers();
+                    } else if (userType === 'OWNER') {
+                        loadOwnerUsers();
+                    }
+                } else {
+                    const error = await response.text();
+                    alert('删除失败：' + error);
+                }
+            } catch (error) {
+                console.error('删除用户失败:', error);
+                alert('删除失败，请稍后重试');
+            }
+        }
+
+        // 加载管理员列表
+        async function loadAdminUsers() {
+            const tbody = document.getElementById('adminUsersTableBody');
+            if (!tbody) return;
+            
+            tbody.innerHTML = `
+                <tr>
+                    <td colspan="5" class="text-center">
+                        <div class="loading">
+                            <div class="spinner"></div>
+                            <span class="ms-2">加载管理员信息中...</span>
+                        </div>
+                    </td>
+                </tr>
+            `;
+
+            try {
+                const response = await fetch('/api/users/type/ADMIN');
+                if (response.ok) {
+                    const admins = await response.json();
+                    displayAdminUsers(admins);
+                } else {
+                    throw new Error('获取管理员信息失败');
+                }
+            } catch (error) {
+                console.error('加载管理员列表失败:', error);
+                tbody.innerHTML = `
+                    <tr>
+                        <td colspan="5" class="text-center text-danger">
+                            <i class="fas fa-exclamation-triangle"></i>
+                            加载管理员信息失败，请稍后重试
+                        </td>
+                    </tr>
+                `;
+            }
+        }
+
+        function displayAdminUsers(admins) {
+            const tbody = document.getElementById('adminUsersTableBody');
+            if (admins.length === 0) {
+                tbody.innerHTML = `
+                    <tr>
+                        <td colspan="5" class="text-center text-muted">
+                            <i class="fas fa-inbox"></i>
+                            暂无管理员信息
+                        </td>
+                    </tr>
+                `;
+                return;
+            }
+
+            tbody.innerHTML = admins.map(admin => `
+                <tr>
+                    <td>${admin.username}</td>
+                    <td>${admin.name || '-'}</td>
+                    <td>${admin.phone || '-'}</td>
+                    <td>近期创建</td>
+                    <td>
+                        <button class="btn btn-sm btn-info me-1" onclick="editUser(${admin.id}, 'ADMIN')">
+                            <i class="fas fa-edit"></i>
+                            编辑
+                        </button>
+                        ${admin.id !== currentUser?.id ? `
+                            <button class="btn btn-sm btn-danger" onclick="deleteUser(${admin.id}, '${admin.username}', 'ADMIN')">
+                                <i class="fas fa-trash"></i>
+                                删除
+                            </button>
+                        ` : `
+                            <span class="text-muted">当前用户</span>
+                        `}
+                    </td>
+                </tr>
+            `).join('');
+        }
+
+        // 加载工作人员列表
+        async function loadStaffUsers() {
+            const tbody = document.getElementById('staffUsersTableBody');
+            if (!tbody) return;
+            
+            tbody.innerHTML = `
+                <tr>
+                    <td colspan="5" class="text-center">
+                        <div class="loading">
+                            <div class="spinner"></div>
+                            <span class="ms-2">加载工作人员信息中...</span>
+                        </div>
+                    </td>
+                </tr>
+            `;
+
+            try {
+                const response = await fetch('/api/users/type/STAFF');
+                if (response.ok) {
+                    const staff = await response.json();
+                    displayStaffUsers(staff);
+                } else {
+                    throw new Error('获取工作人员信息失败');
+                }
+            } catch (error) {
+                console.error('加载工作人员列表失败:', error);
+                tbody.innerHTML = `
+                    <tr>
+                        <td colspan="5" class="text-center text-danger">
+                            <i class="fas fa-exclamation-triangle"></i>
+                            加载工作人员信息失败，请稍后重试
+                        </td>
+                    </tr>
+                `;
+            }
+        }
+
+        function displayStaffUsers(staff) {
+            const tbody = document.getElementById('staffUsersTableBody');
+            if (staff.length === 0) {
+                tbody.innerHTML = `
+                    <tr>
+                        <td colspan="5" class="text-center text-muted">
+                            <i class="fas fa-inbox"></i>
+                            暂无工作人员信息
+                        </td>
+                    </tr>
+                `;
+                return;
+            }
+
+            tbody.innerHTML = staff.map(member => `
+                <tr>
+                    <td>${member.username}</td>
+                    <td>${member.name || '-'}</td>
+                    <td>${member.phone || '-'}</td>
+                    <td>近期创建</td>
+                    <td>
+                        <button class="btn btn-sm btn-info me-1" onclick="editUser(${member.id}, 'STAFF')">
+                            <i class="fas fa-edit"></i>
+                            编辑
+                        </button>
+                        <button class="btn btn-sm btn-danger" onclick="deleteUser(${member.id}, '${member.username}', 'STAFF')">
+                            <i class="fas fa-trash"></i>
+                            删除
+                        </button>
+                    </td>
+                </tr>
+            `).join('');
+        }
+
+        // 加载业主列表
+        async function loadOwnerUsers() {
+            const tbody = document.getElementById('ownerUsersTableBody');
+            if (!tbody) return;
+            
+            tbody.innerHTML = `
+                <tr>
+                    <td colspan="6" class="text-center">
+                        <div class="loading">
+                            <div class="spinner"></div>
+                            <span class="ms-2">加载业主信息中...</span>
+                        </div>
+                    </td>
+                </tr>
+            `;
+
+            try {
+                const response = await fetch('/api/users/type/OWNER');
+                if (response.ok) {
+                    const owners = await response.json();
+                    displayOwnerUsers(owners);
+                } else {
+                    throw new Error('获取业主信息失败');
+                }
+            } catch (error) {
+                console.error('加载业主列表失败:', error);
+                tbody.innerHTML = `
+                    <tr>
+                        <td colspan="6" class="text-center text-danger">
+                            <i class="fas fa-exclamation-triangle"></i>
+                            加载业主信息失败，请稍后重试
+                        </td>
+                    </tr>
+                `;
+            }
+        }
+
+        function displayOwnerUsers(owners) {
+            const tbody = document.getElementById('ownerUsersTableBody');
+            if (owners.length === 0) {
+                tbody.innerHTML = `
+                    <tr>
+                        <td colspan="6" class="text-center text-muted">
+                            <i class="fas fa-inbox"></i>
+                            暂无业主信息
+                        </td>
+                    </tr>
+                `;
+                return;
+            }
+
+            tbody.innerHTML = owners.map(owner => `
+                <tr>
+                    <td>${owner.username}</td>
+                    <td>${owner.name || '-'}</td>
+                    <td>${owner.phone || '-'}</td>
+                    <td>¥${(owner.accountBalance || 0).toFixed(2)}</td>
+                    <td>近期创建</td>
+                    <td>
+                        <button class="btn btn-sm btn-info me-1" onclick="editUser(${owner.id}, 'OWNER')">
+                            <i class="fas fa-edit"></i>
+                            编辑
+                        </button>
+                        <button class="btn btn-sm btn-danger" onclick="deleteUser(${owner.id}, '${owner.username}', 'OWNER')">
+                            <i class="fas fa-trash"></i>
+                            删除
+                        </button>
+                    </td>
+                </tr>
+            `).join('');
+        }
+
+        // === 管理员个人信息管理相关函数 ===
+        function enableEditAdminProfile() {
+            // 加载当前用户信息到表单
+            loadAdminProfileData();
+            
+            // 使表单可编辑
+            document.getElementById('adminProfileUsername').readOnly = false;
+            document.getElementById('adminProfileName').readOnly = false;
+            document.getElementById('adminProfilePhone').readOnly = false;
+            
+            // 显示密码修改区域和操作按钮
+            document.getElementById('adminPasswordSection').style.display = 'block';
+            document.getElementById('adminEditButtons').classList.remove('d-none');
+        }
+
+        function cancelEditAdminProfile() {
+            // 重新加载用户信息
+            loadAdminProfileData();
+            
+            // 设置为只读
+            document.getElementById('adminProfileUsername').readOnly = true;
+            document.getElementById('adminProfileName').readOnly = true;
+            document.getElementById('adminProfilePhone').readOnly = true;
+            
+            // 隐藏密码修改区域和操作按钮
+            document.getElementById('adminPasswordSection').style.display = 'none';
+            document.getElementById('adminEditButtons').classList.add('d-none');
+            
+            // 清空密码字段
+            document.getElementById('adminProfilePassword').value = '';
+        }
+
+        function loadAdminProfileData() {
+            if (currentUser) {
+                document.getElementById('adminProfileUsername').value = currentUser.username || '';
+                document.getElementById('adminProfileName').value = currentUser.name || '';
+                document.getElementById('adminProfilePhone').value = currentUser.phone || '';
+                document.getElementById('adminProfileUserType').value = '系统管理员';
+            }
+        }
+
+        async function saveAdminProfile() {
+            const newUsername = document.getElementById('adminProfileUsername').value;
+            const profileData = {
+                username: newUsername,
+                name: document.getElementById('adminProfileName').value,
+                phone: document.getElementById('adminProfilePhone').value || null
+            };
+
+            const password = document.getElementById('adminProfilePassword').value;
+            if (password) {
+                profileData.password = password;
+            }
+
+            if (!profileData.username) {
+                alert('请填写用户名');
+                return;
+            }
+
+            if (!profileData.name) {
+                alert('请填写真实姓名');
+                return;
+            }
+
+            // 检查用户名是否已存在（如果修改了用户名）
+            if (newUsername !== currentUser.username) {
+                try {
+                    const checkResponse = await fetch(`/api/users/check-username?username=${encodeURIComponent(newUsername)}`);
+                    if (checkResponse.ok) {
+                        const exists = await checkResponse.json();
+                        if (exists) {
+                            alert('该用户名已存在，请选择其他用户名');
+                            return;
+                        }
+                    }
+                } catch (error) {
+                    console.error('检查用户名失败:', error);
+                }
+            }
+
+            try {
+                const response = await fetch(`/api/users/${currentUser.id}`, {
+                    method: 'PUT',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(profileData)
+                });
+
+                if (response.ok) {
+                    const updatedUser = await response.json();
+                    
+                    // 更新本地存储的用户信息
+                    currentUser.username = updatedUser.username;
+                    currentUser.name = updatedUser.name;
+                    currentUser.phone = updatedUser.phone;
+                    localStorage.setItem('currentUser', JSON.stringify(currentUser));
+                    
+                    // 更新页面显示
+                    loadUserInfo();
+                    
+                    alert('个人信息更新成功！');
+                    cancelEditAdminProfile();
+                } else {
+                    const error = await response.text();
+                    alert('更新失败：' + error);
+                }
+            } catch (error) {
+                console.error('更新个人信息失败:', error);
+                alert('更新失败，请稍后重试');
+            }
+        }
+
+        // 扩展模块加载函数以自动加载数据
+        const originalLoadModuleContent = loadModuleContent;
+        loadModuleContent = function(module) {
+            const result = originalLoadModuleContent(module);
+            
+            // 加载完内容后，根据模块类型加载数据
+            setTimeout(() => {
+                switch (module) {
+                    case 'admin-users':
+                        loadAdminUsers();
+                        break;
+                    case 'staff-users':
+                        loadStaffUsers();
+                        break;
+                    case 'owner-users':
+                        loadOwnerUsers();
+                        break;
+                    case 'profile':
+                        loadAdminProfileData();
+                        break;
+                }
+            }, 100);
+            
+            return result;
+        };
     </script>
 </body>
 </html>

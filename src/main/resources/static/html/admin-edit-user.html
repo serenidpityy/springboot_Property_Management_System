@@ -1,0 +1,411 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>编辑用户 - 物业管理系统</title>
+    <link href="../css/bootstrap.min.css" rel="stylesheet">
+    <link href="../css/dashboard.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+</head>
+<body>
+    <div class="dashboard-container">
+        <!-- 顶部导航栏 -->
+        <header class="dashboard-header">
+            <div class="header-left">
+                <a href="admin.html" class="brand-logo">
+                    <i class="fas fa-arrow-left"></i>
+                    <span>返回管理员控制台</span>
+                </a>
+            </div>
+            <div class="header-right">
+                <div class="user-info">
+                    <div class="user-avatar" id="userAvatar">A</div>
+                    <div class="user-details">
+                        <h4 id="userName">管理员</h4>
+                        <p id="userRole">系统管理员</p>
+                    </div>
+                </div>
+                <button class="logout-btn" onclick="logout()">
+                    <i class="fas fa-sign-out-alt"></i>
+                    退出登录
+                </button>
+            </div>
+        </header>
+
+        <!-- 主内容区域 -->
+        <main class="dashboard-main" style="margin-left: 0;">
+            <div class="main-content">
+                <!-- 面包屑导航 -->
+                <div class="breadcrumb">
+                    <span class="breadcrumb-item">管理员控制台</span>
+                    <span class="breadcrumb-separator">/</span>
+                    <span class="breadcrumb-item">用户管理</span>
+                    <span class="breadcrumb-separator">/</span>
+                    <span class="breadcrumb-item active" id="currentPage">编辑用户</span>
+                </div>
+
+                <!-- 页面内容区域 -->
+                <div class="page-header">
+                    <h1 class="page-title">
+                        <i class="fas fa-user-edit me-3"></i>
+                        <span id="pageTitle">编辑用户</span>
+                    </h1>
+                    <p class="page-subtitle" id="pageSubtitle">修改用户账户信息</p>
+                </div>
+
+                <div class="row justify-content-center">
+                    <div class="col-md-8">
+                        <div class="dashboard-card">
+                            <div class="card-header">
+                                <h2 class="card-title">用户信息</h2>
+                            </div>
+                            <div class="card-body">
+                                <div id="loadingState">
+                                    <div class="text-center">
+                                        <div class="spinner"></div>
+                                        <span class="ms-2">加载用户信息中...</span>
+                                    </div>
+                                </div>
+                                
+                                <form id="editUserForm" style="display: none;">
+                                    <div class="row">
+                                        <div class="col-md-6 mb-3">
+                                            <label for="username" class="form-label">用户名 <span class="text-danger">*</span></label>
+                                            <input type="text" class="form-control" id="username" required>
+                                            <div class="form-text">用户登录时使用的用户名</div>
+                                        </div>
+                                        <div class="col-md-6 mb-3">
+                                            <label for="name" class="form-label">真实姓名 <span class="text-danger">*</span></label>
+                                            <input type="text" class="form-control" id="name" required>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-md-6 mb-3">
+                                            <label for="phone" class="form-label">手机号码</label>
+                                            <input type="tel" class="form-control" id="phone">
+                                            <div class="form-text">用于接收通知和联系</div>
+                                        </div>
+                                        <div class="col-md-6 mb-3">
+                                            <label for="userType" class="form-label">用户类型 <span class="text-danger">*</span></label>
+                                            <input type="text" class="form-control" id="userType" readonly>
+                                        </div>
+                                    </div>
+                                    <div class="row" id="balanceSection" style="display: none;">
+                                        <div class="col-md-6 mb-3">
+                                            <label for="accountBalance" class="form-label">账户余额</label>
+                                            <div class="input-group">
+                                                <span class="input-group-text">¥</span>
+                                                <input type="number" class="form-control" id="accountBalance" min="0" step="0.01">
+                                            </div>
+                                            <div class="form-text">仅业主账户可以修改余额</div>
+                                        </div>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label for="password" class="form-label">新密码</label>
+                                        <input type="password" class="form-control" id="password">
+                                        <div class="form-text">留空表示不修改密码</div>
+                                    </div>
+                                    <div class="mb-3" id="confirmPasswordSection" style="display: none;">
+                                        <label for="confirmPassword" class="form-label">确认新密码</label>
+                                        <input type="password" class="form-control" id="confirmPassword">
+                                    </div>
+
+                                    <div class="d-flex justify-content-between">
+                                        <button type="button" class="btn btn-secondary" onclick="goBack()">
+                                            <i class="fas fa-arrow-left"></i>
+                                            返回
+                                        </button>
+                                        <button type="submit" class="btn btn-primary">
+                                            <i class="fas fa-save"></i>
+                                            保存修改
+                                        </button>
+                                    </div>
+                                </form>
+
+                                <div id="errorState" style="display: none;">
+                                    <div class="text-center text-danger">
+                                        <i class="fas fa-exclamation-triangle"></i>
+                                        <p class="mt-2">加载用户信息失败</p>
+                                        <button class="btn btn-secondary" onclick="goBack()">返回</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script src="../js/jquery.min.js"></script>
+    <script src="../js/bootstrap.min.js"></script>
+    <script>
+        let currentUser = null;
+        let editingUser = null;
+        let userId = null;
+        let userType = '';
+
+        // 页面加载完成后初始化
+        document.addEventListener('DOMContentLoaded', function() {
+            initializePage();
+            loadUserInfo();
+            bindEventListeners();
+            loadEditingUser();
+        });
+
+        // 初始化页面
+        function initializePage() {
+            // 检查用户登录状态
+            const userData = localStorage.getItem('currentUser');
+            if (!userData) {
+                window.location.href = 'login.html';
+                return;
+            }
+
+            try {
+                currentUser = JSON.parse(userData);
+                if (currentUser.userType !== 'ADMIN') {
+                    alert('权限不足，无法访问此页面');
+                    window.location.href = 'login.html';
+                    return;
+                }
+            } catch (e) {
+                console.error('用户数据解析失败:', e);
+                window.location.href = 'login.html';
+                return;
+            }
+
+            // 获取URL参数
+            const urlParams = new URLSearchParams(window.location.search);
+            userId = urlParams.get('id');
+            userType = urlParams.get('type');
+            
+            if (!userId || !userType) {
+                alert('缺少必要的参数');
+                window.location.href = 'admin.html';
+                return;
+            }
+        }
+
+        // 加载当前登录用户信息
+        function loadUserInfo() {
+            if (currentUser) {
+                document.getElementById('userName').textContent = currentUser.name || currentUser.username;
+                
+                // 设置头像
+                const avatar = document.getElementById('userAvatar');
+                avatar.textContent = (currentUser.name || currentUser.username).charAt(0).toUpperCase();
+            }
+        }
+
+        // 加载要编辑的用户信息
+        async function loadEditingUser() {
+            try {
+                const response = await fetch(`/api/users/${userId}`);
+                if (response.ok) {
+                    editingUser = await response.json();
+                    displayUserInfo();
+                } else {
+                    throw new Error('用户不存在');
+                }
+            } catch (error) {
+                console.error('加载用户信息失败:', error);
+                document.getElementById('loadingState').style.display = 'none';
+                document.getElementById('errorState').style.display = 'block';
+            }
+        }
+
+        // 显示用户信息
+        function displayUserInfo() {
+            if (!editingUser) return;
+
+            const pageTitle = document.getElementById('pageTitle');
+            const pageSubtitle = document.getElementById('pageSubtitle');
+            const balanceSection = document.getElementById('balanceSection');
+            
+            // 设置页面标题
+            const userTypeName = editingUser.userType === 'ADMIN' ? '管理员' : 
+                               editingUser.userType === 'STAFF' ? '工作人员' : '业主';
+            pageTitle.textContent = `编辑${userTypeName}`;
+            pageSubtitle.textContent = `修改 ${editingUser.name || editingUser.username} 的账户信息`;
+
+            // 填充表单
+            document.getElementById('username').value = editingUser.username || '';
+            document.getElementById('name').value = editingUser.name || '';
+            document.getElementById('phone').value = editingUser.phone || '';
+            document.getElementById('userType').value = userTypeName;
+
+            // 业主显示余额字段
+            if (editingUser.userType === 'OWNER') {
+                balanceSection.style.display = 'block';
+                document.getElementById('accountBalance').value = (editingUser.accountBalance || 0).toFixed(2);
+            } else {
+                balanceSection.style.display = 'none';
+            }
+
+            // 隐藏加载状态，显示表单
+            document.getElementById('loadingState').style.display = 'none';
+            document.getElementById('editUserForm').style.display = 'block';
+        }
+
+        // 绑定事件监听器
+        function bindEventListeners() {
+            document.getElementById('editUserForm').addEventListener('submit', handleSubmit);
+            
+            // 密码输入监听
+            document.getElementById('password').addEventListener('input', function() {
+                const confirmSection = document.getElementById('confirmPasswordSection');
+                const confirmPassword = document.getElementById('confirmPassword');
+                
+                if (this.value) {
+                    confirmSection.style.display = 'block';
+                    confirmPassword.required = true;
+                } else {
+                    confirmSection.style.display = 'none';
+                    confirmPassword.required = false;
+                    confirmPassword.value = '';
+                }
+            });
+            
+            // 密码确认验证
+            document.getElementById('confirmPassword').addEventListener('blur', validatePasswordMatch);
+        }
+
+        // 验证密码匹配
+        function validatePasswordMatch() {
+            const password = document.getElementById('password').value;
+            const confirmPassword = document.getElementById('confirmPassword').value;
+            const confirmPasswordField = document.getElementById('confirmPassword');
+            
+            if (confirmPassword && password !== confirmPassword) {
+                confirmPasswordField.classList.add('is-invalid');
+                if (!confirmPasswordField.nextElementSibling || !confirmPasswordField.nextElementSibling.classList.contains('invalid-feedback')) {
+                    const feedback = document.createElement('div');
+                    feedback.className = 'invalid-feedback';
+                    feedback.textContent = '两次输入的密码不一致';
+                    confirmPasswordField.parentNode.appendChild(feedback);
+                }
+            } else {
+                confirmPasswordField.classList.remove('is-invalid');
+                const feedback = confirmPasswordField.parentNode.querySelector('.invalid-feedback');
+                if (feedback) {
+                    feedback.remove();
+                }
+            }
+        }
+
+        // 处理表单提交
+        async function handleSubmit(event) {
+            event.preventDefault();
+            
+            const formData = {
+                username: document.getElementById('username').value.trim(),
+                name: document.getElementById('name').value.trim(),
+                phone: document.getElementById('phone').value.trim() || null
+            };
+
+            const password = document.getElementById('password').value;
+            const confirmPassword = document.getElementById('confirmPassword').value;
+
+            // 表单验证
+            if (!formData.username) {
+                alert('请填写用户名');
+                return;
+            }
+
+            if (!formData.name) {
+                alert('请填写真实姓名');
+                return;
+            }
+
+            // 密码验证
+            if (password) {
+                if (password.length < 6) {
+                    alert('密码长度至少6位');
+                    return;
+                }
+                
+                if (password !== confirmPassword) {
+                    alert('两次输入的密码不一致');
+                    return;
+                }
+                
+                formData.password = password;
+            }
+
+            try {
+                // 检查用户名是否已存在（如果修改了用户名）
+                if (formData.username !== editingUser.username) {
+                    const checkResponse = await fetch(`/api/users/check-username?username=${encodeURIComponent(formData.username)}`);
+                    if (checkResponse.ok) {
+                        const exists = await checkResponse.json();
+                        if (exists) {
+                            alert('该用户名已存在，请选择其他用户名');
+                            return;
+                        }
+                    }
+                }
+
+                // 更新用户信息
+                const response = await fetch(`/api/users/${userId}`, {
+                    method: 'PUT',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(formData)
+                });
+
+                if (response.ok) {
+                    // 如果是业主且修改了余额，需要单独更新余额
+                    if (editingUser.userType === 'OWNER') {
+                        const newBalance = parseFloat(document.getElementById('accountBalance').value);
+                        if (newBalance !== (editingUser.accountBalance || 0)) {
+                            await updateUserBalance(newBalance);
+                        }
+                    }
+
+                    const userTypeName = editingUser.userType === 'ADMIN' ? '管理员' : 
+                                        editingUser.userType === 'STAFF' ? '工作人员' : '业主';
+                    alert(`${userTypeName}信息更新成功！`);
+                    goBack();
+                } else {
+                    const error = await response.text();
+                    alert('更新失败：' + error);
+                }
+            } catch (error) {
+                console.error('更新用户失败:', error);
+                alert('更新失败，请稍后重试');
+            }
+        }
+
+        // 更新用户余额
+        async function updateUserBalance(newBalance) {
+            try {
+                const response = await fetch(`/api/users/${userId}/balance`, {
+                    method: 'PUT',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ amount: newBalance })
+                });
+
+                if (!response.ok) {
+                    console.warn('余额更新失败');
+                }
+            } catch (error) {
+                console.error('更新余额失败:', error);
+            }
+        }
+
+        // 返回上一页
+        function goBack() {
+            window.location.href = 'admin.html';
+        }
+
+        // 退出登录
+        function logout() {
+            if (confirm('确定要退出登录吗？')) {
+                localStorage.removeItem('currentUser');
+                window.location.href = 'login.html';
+            }
+        }
+    </script>
+</body>
+</html>

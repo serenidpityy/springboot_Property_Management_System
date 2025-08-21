@@ -1,0 +1,279 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>工作人员个人信息功能测试</title>
+    <link href="css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        .test-container {
+            max-width: 800px;
+            margin: 2rem auto;
+            padding: 2rem;
+        }
+        .test-result {
+            margin: 1rem 0;
+            padding: 1rem;
+            border-radius: 5px;
+        }
+        .test-success {
+            background-color: #d4edda;
+            border: 1px solid #c3e6cb;
+            color: #155724;
+        }
+        .test-error {
+            background-color: #f8d7da;
+            border: 1px solid #f5c6cb;
+            color: #721c24;
+        }
+        .test-info {
+            background-color: #d1ecf1;
+            border: 1px solid #bee5eb;
+            color: #0c5460;
+        }
+    </style>
+</head>
+<body>
+    <div class="test-container">
+        <h1>工作人员个人信息功能测试</h1>
+        <p>此页面用于测试工作人员个人信息管理模块的功能</p>
+        
+        <div class="mb-4">
+            <h3>测试步骤</h3>
+            <ol>
+                <li>首先创建一个测试工作人员账户</li>
+                <li>测试个人信息显示功能</li>
+                <li>测试个人信息编辑功能</li>
+                <li>测试个人信息保存功能</li>
+            </ol>
+        </div>
+
+        <div class="mb-4">
+            <h3>1. 创建测试工作人员账户</h3>
+            <button class="btn btn-primary" onclick="createTestStaffUser()">创建测试工作人员</button>
+            <div id="createResult"></div>
+        </div>
+
+        <div class="mb-4">
+            <h3>2. 测试登录功能</h3>
+            <button class="btn btn-info" onclick="testStaffLogin()">登录测试工作人员</button>
+            <div id="loginResult"></div>
+        </div>
+
+        <div class="mb-4">
+            <h3>3. 测试个人信息API</h3>
+            <button class="btn btn-success" onclick="testUserInfoUpdate()">测试信息更新API</button>
+            <div id="updateResult"></div>
+        </div>
+
+        <div class="mb-4">
+            <h3>4. 打开工作人员页面</h3>
+            <p>在新窗口中打开工作人员页面，测试个人信息管理功能：</p>
+            <button class="btn btn-warning" onclick="openStaffPage()">打开工作人员页面</button>
+        </div>
+
+        <div class="mb-4">
+            <h3>5. 清理测试数据</h3>
+            <button class="btn btn-danger" onclick="cleanupTestData()">删除测试账户</button>
+            <div id="cleanupResult"></div>
+        </div>
+    </div>
+
+    <script src="js/jquery.min.js"></script>
+    <script>
+        let testStaffUser = null;
+
+        async function createTestStaffUser() {
+            const resultDiv = document.getElementById('createResult');
+            resultDiv.innerHTML = '<div class="test-info">正在创建测试工作人员账户...</div>';
+
+            const testUserData = {
+                username: 'test_staff_' + Date.now(),
+                password: 'test123',
+                name: '测试工作人员',
+                phone: '13800138001',
+                userType: 'STAFF'
+            };
+
+            try {
+                const response = await fetch('/api/users/register', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(testUserData)
+                });
+
+                if (response.ok) {
+                    testStaffUser = await response.json();
+                    resultDiv.innerHTML = `
+                        <div class="test-success">
+                            ✅ 测试工作人员账户创建成功！<br>
+                            用户名: ${testStaffUser.username}<br>
+                            姓名: ${testStaffUser.name}<br>
+                            电话: ${testStaffUser.phone}<br>
+                            用户类型: ${testStaffUser.userType}
+                        </div>
+                    `;
+                } else {
+                    const error = await response.text();
+                    resultDiv.innerHTML = `<div class="test-error">❌ 创建失败: ${error}</div>`;
+                }
+            } catch (error) {
+                resultDiv.innerHTML = `<div class="test-error">❌ 网络错误: ${error.message}</div>`;
+            }
+        }
+
+        async function testStaffLogin() {
+            const resultDiv = document.getElementById('loginResult');
+            
+            if (!testStaffUser) {
+                resultDiv.innerHTML = '<div class="test-error">❌ 请先创建测试工作人员账户</div>';
+                return;
+            }
+
+            resultDiv.innerHTML = '<div class="test-info">正在测试登录...</div>';
+
+            const loginData = {
+                username: testStaffUser.username,
+                password: 'test123',
+                userType: 'STAFF'
+            };
+
+            try {
+                const response = await fetch('/api/users/login', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(loginData)
+                });
+
+                if (response.ok) {
+                    const loginResult = await response.json();
+                    
+                    // 将用户信息存储到localStorage
+                    localStorage.setItem('currentUser', JSON.stringify(loginResult));
+                    
+                    resultDiv.innerHTML = `
+                        <div class="test-success">
+                            ✅ 登录成功！用户信息已保存到localStorage<br>
+                            用户ID: ${loginResult.id}<br>
+                            用户名: ${loginResult.username}<br>
+                            姓名: ${loginResult.name}
+                        </div>
+                    `;
+                } else {
+                    resultDiv.innerHTML = `<div class="test-error">❌ 登录失败</div>`;
+                }
+            } catch (error) {
+                resultDiv.innerHTML = `<div class="test-error">❌ 登录错误: ${error.message}</div>`;
+            }
+        }
+
+        async function testUserInfoUpdate() {
+            const resultDiv = document.getElementById('updateResult');
+            
+            if (!testStaffUser) {
+                resultDiv.innerHTML = '<div class="test-error">❌ 请先创建并登录测试工作人员账户</div>';
+                return;
+            }
+
+            resultDiv.innerHTML = '<div class="test-info">正在测试用户信息更新API...</div>';
+
+            const updateData = {
+                username: testStaffUser.username,
+                name: '测试工作人员(已更新)',
+                phone: '13800138002'
+            };
+
+            try {
+                const response = await fetch(`/api/users/${testStaffUser.id}`, {
+                    method: 'PUT',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(updateData)
+                });
+
+                if (response.ok) {
+                    const updatedUser = await response.json();
+                    
+                    // 更新本地testStaffUser
+                    testStaffUser = updatedUser;
+                    
+                    // 更新localStorage中的用户信息
+                    localStorage.setItem('currentUser', JSON.stringify(updatedUser));
+                    
+                    resultDiv.innerHTML = `
+                        <div class="test-success">
+                            ✅ 用户信息更新成功！<br>
+                            新姓名: ${updatedUser.name}<br>
+                            新电话: ${updatedUser.phone}
+                        </div>
+                    `;
+                } else {
+                    const error = await response.text();
+                    resultDiv.innerHTML = `<div class="test-error">❌ 更新失败: ${error}</div>`;
+                }
+            } catch (error) {
+                resultDiv.innerHTML = `<div class="test-error">❌ 更新错误: ${error.message}</div>`;
+            }
+        }
+
+        function openStaffPage() {
+            if (!testStaffUser) {
+                alert('请先创建并登录测试工作人员账户');
+                return;
+            }
+            
+            // 确保localStorage中有用户信息
+            localStorage.setItem('currentUser', JSON.stringify(testStaffUser));
+            
+            // 在新窗口打开工作人员页面
+            window.open('html/staff.html', '_blank');
+        }
+
+        async function cleanupTestData() {
+            const resultDiv = document.getElementById('cleanupResult');
+            
+            if (!testStaffUser) {
+                resultDiv.innerHTML = '<div class="test-info">无需清理，没有测试数据</div>';
+                return;
+            }
+
+            resultDiv.innerHTML = '<div class="test-info">正在删除测试账户...</div>';
+
+            try {
+                const response = await fetch(`/api/users/${testStaffUser.id}`, {
+                    method: 'DELETE'
+                });
+
+                if (response.ok) {
+                    localStorage.removeItem('currentUser');
+                    testStaffUser = null;
+                    resultDiv.innerHTML = '<div class="test-success">✅ 测试账户已删除</div>';
+                } else {
+                    resultDiv.innerHTML = `<div class="test-error">❌ 删除失败</div>`;
+                }
+            } catch (error) {
+                resultDiv.innerHTML = `<div class="test-error">❌ 删除错误: ${error.message}</div>`;
+            }
+        }
+
+        // 页面加载时检查是否有现有的测试用户
+        window.addEventListener('load', function() {
+            const currentUser = localStorage.getItem('currentUser');
+            if (currentUser) {
+                try {
+                    const user = JSON.parse(currentUser);
+                    if (user.userType === 'STAFF' && user.username.startsWith('test_staff_')) {
+                        testStaffUser = user;
+                        document.getElementById('createResult').innerHTML = `
+                            <div class="test-info">
+                                检测到现有测试工作人员账户: ${user.username}
+                            </div>
+                        `;
+                    }
+                } catch (e) {
+                    console.error('解析用户数据失败:', e);
+                }
+            }
+        });
+    </script>
+</body>
+</html>

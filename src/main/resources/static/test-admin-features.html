@@ -1,0 +1,340 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>管理员功能测试</title>
+    <link href="css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        .test-container {
+            max-width: 800px;
+            margin: 2rem auto;
+            padding: 2rem;
+        }
+        .test-result {
+            margin: 1rem 0;
+            padding: 1rem;
+            border-radius: 5px;
+        }
+        .test-success {
+            background-color: #d4edda;
+            border: 1px solid #c3e6cb;
+            color: #155724;
+        }
+        .test-error {
+            background-color: #f8d7da;
+            border: 1px solid #f5c6cb;
+            color: #721c24;
+        }
+        .test-info {
+            background-color: #d1ecf1;
+            border: 1px solid #bee5eb;
+            color: #0c5460;
+        }
+    </style>
+</head>
+<body>
+    <div class="test-container">
+        <h1>管理员功能测试</h1>
+        <p>此页面用于测试管理员页面的各项功能</p>
+        
+        <div class="mb-4">
+            <h3>测试步骤</h3>
+            <ol>
+                <li>创建测试管理员账户</li>
+                <li>测试用户管理功能</li>
+                <li>测试添加/编辑/删除用户功能</li>
+                <li>清理测试数据</li>
+            </ol>
+        </div>
+
+        <div class="mb-4">
+            <h3>1. 创建测试管理员账户</h3>
+            <button class="btn btn-primary" onclick="createTestAdmin()">创建测试管理员</button>
+            <div id="createAdminResult"></div>
+        </div>
+
+        <div class="mb-4">
+            <h3>2. 测试登录功能</h3>
+            <button class="btn btn-info" onclick="testAdminLogin()">登录测试管理员</button>
+            <div id="loginResult"></div>
+        </div>
+
+        <div class="mb-4">
+            <h3>3. 创建测试用户（各类型）</h3>
+            <button class="btn btn-success me-2" onclick="createTestUser('ADMIN')">创建测试管理员</button>
+            <button class="btn btn-warning me-2" onclick="createTestUser('STAFF')">创建测试工作人员</button>
+            <button class="btn btn-info" onclick="createTestUser('OWNER')">创建测试业主</button>
+            <div id="createUserResult"></div>
+        </div>
+
+        <div class="mb-4">
+            <h3>4. 测试用户管理API</h3>
+            <button class="btn btn-secondary me-2" onclick="testGetUsersByType('ADMIN')">获取管理员列表</button>
+            <button class="btn btn-secondary me-2" onclick="testGetUsersByType('STAFF')">获取工作人员列表</button>
+            <button class="btn btn-secondary" onclick="testGetUsersByType('OWNER')">获取业主列表</button>
+            <div id="getUsersResult"></div>
+        </div>
+
+        <div class="mb-4">
+            <h3>5. 打开管理员页面</h3>
+            <p>在新窗口中打开管理员页面，测试用户管理功能：</p>
+            <button class="btn btn-primary" onclick="openAdminPage()">打开管理员页面</button>
+        </div>
+
+        <div class="mb-4">
+            <h3>6. 清理测试数据</h3>
+            <button class="btn btn-danger" onclick="cleanupTestData()">删除所有测试账户</button>
+            <div id="cleanupResult"></div>
+        </div>
+    </div>
+
+    <script src="js/jquery.min.js"></script>
+    <script>
+        let testAdmin = null;
+        let testUsers = [];
+
+        async function createTestAdmin() {
+            const resultDiv = document.getElementById('createAdminResult');
+            resultDiv.innerHTML = '<div class="test-info">正在创建测试管理员账户...</div>';
+
+            const testAdminData = {
+                username: 'test_admin_' + Date.now(),
+                password: 'admin123',
+                name: '测试管理员',
+                phone: '13900139001',
+                userType: 'ADMIN'
+            };
+
+            try {
+                const response = await fetch('/api/users/register', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(testAdminData)
+                });
+
+                if (response.ok) {
+                    testAdmin = await response.json();
+                    resultDiv.innerHTML = `
+                        <div class="test-success">
+                            ✅ 测试管理员账户创建成功！<br>
+                            用户名: ${testAdmin.username}<br>
+                            姓名: ${testAdmin.name}<br>
+                            用户类型: ${testAdmin.userType}
+                        </div>
+                    `;
+                } else {
+                    const error = await response.text();
+                    resultDiv.innerHTML = `<div class="test-error">❌ 创建失败: ${error}</div>`;
+                }
+            } catch (error) {
+                resultDiv.innerHTML = `<div class="test-error">❌ 网络错误: ${error.message}</div>`;
+            }
+        }
+
+        async function testAdminLogin() {
+            const resultDiv = document.getElementById('loginResult');
+            
+            if (!testAdmin) {
+                resultDiv.innerHTML = '<div class="test-error">❌ 请先创建测试管理员账户</div>';
+                return;
+            }
+
+            resultDiv.innerHTML = '<div class="test-info">正在测试登录...</div>';
+
+            const loginData = {
+                username: testAdmin.username,
+                password: 'admin123',
+                userType: 'ADMIN'
+            };
+
+            try {
+                const response = await fetch('/api/users/login', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(loginData)
+                });
+
+                if (response.ok) {
+                    const loginResult = await response.json();
+                    
+                    // 将用户信息存储到localStorage
+                    localStorage.setItem('currentUser', JSON.stringify(loginResult));
+                    
+                    resultDiv.innerHTML = `
+                        <div class="test-success">
+                            ✅ 管理员登录成功！用户信息已保存到localStorage<br>
+                            用户ID: ${loginResult.id}<br>
+                            用户名: ${loginResult.username}<br>
+                            姓名: ${loginResult.name}
+                        </div>
+                    `;
+                } else {
+                    resultDiv.innerHTML = `<div class="test-error">❌ 登录失败</div>`;
+                }
+            } catch (error) {
+                resultDiv.innerHTML = `<div class="test-error">❌ 登录错误: ${error.message}</div>`;
+            }
+        }
+
+        async function createTestUser(userType) {
+            const resultDiv = document.getElementById('createUserResult');
+            
+            const userTypeNames = {
+                'ADMIN': '管理员',
+                'STAFF': '工作人员', 
+                'OWNER': '业主'
+            };
+
+            resultDiv.innerHTML = `<div class="test-info">正在创建测试${userTypeNames[userType]}...</div>`;
+
+            const userData = {
+                username: `test_${userType.toLowerCase()}_` + Date.now(),
+                password: 'test123',
+                name: `测试${userTypeNames[userType]}`,
+                phone: '138' + String(Math.random()).substr(2, 8),
+                userType: userType
+            };
+
+            if (userType === 'OWNER') {
+                userData.accountBalance = 1000.00;
+            }
+
+            try {
+                const response = await fetch('/api/users/register', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(userData)
+                });
+
+                if (response.ok) {
+                    const newUser = await response.json();
+                    testUsers.push(newUser);
+                    
+                    resultDiv.innerHTML = `
+                        <div class="test-success">
+                            ✅ 测试${userTypeNames[userType]}创建成功！<br>
+                            用户名: ${newUser.username}<br>
+                            姓名: ${newUser.name}<br>
+                            ${userType === 'OWNER' ? `余额: ¥${(newUser.accountBalance || 0).toFixed(2)}<br>` : ''}
+                            总计测试用户: ${testUsers.length}
+                        </div>
+                    `;
+                } else {
+                    const error = await response.text();
+                    resultDiv.innerHTML = `<div class="test-error">❌ 创建${userTypeNames[userType]}失败: ${error}</div>`;
+                }
+            } catch (error) {
+                resultDiv.innerHTML = `<div class="test-error">❌ 网络错误: ${error.message}</div>`;
+            }
+        }
+
+        async function testGetUsersByType(userType) {
+            const resultDiv = document.getElementById('getUsersResult');
+            
+            const userTypeNames = {
+                'ADMIN': '管理员',
+                'STAFF': '工作人员', 
+                'OWNER': '业主'
+            };
+
+            resultDiv.innerHTML = `<div class="test-info">正在获取${userTypeNames[userType]}列表...</div>`;
+
+            try {
+                const response = await fetch(`/api/users/type/${userType}`);
+                
+                if (response.ok) {
+                    const users = await response.json();
+                    
+                    resultDiv.innerHTML = `
+                        <div class="test-success">
+                            ✅ 获取${userTypeNames[userType]}列表成功！<br>
+                            找到 ${users.length} 个${userTypeNames[userType]}<br>
+                            ${users.slice(0, 3).map(u => `- ${u.name || u.username} (${u.username})`).join('<br>')}
+                            ${users.length > 3 ? '<br>...' : ''}
+                        </div>
+                    `;
+                } else {
+                    resultDiv.innerHTML = `<div class="test-error">❌ 获取${userTypeNames[userType]}列表失败</div>`;
+                }
+            } catch (error) {
+                resultDiv.innerHTML = `<div class="test-error">❌ 网络错误: ${error.message}</div>`;
+            }
+        }
+
+        function openAdminPage() {
+            if (!testAdmin) {
+                alert('请先创建并登录测试管理员账户');
+                return;
+            }
+            
+            // 确保localStorage中有管理员信息
+            localStorage.setItem('currentUser', JSON.stringify(testAdmin));
+            
+            // 在新窗口打开管理员页面
+            window.open('html/admin.html', '_blank');
+        }
+
+        async function cleanupTestData() {
+            const resultDiv = document.getElementById('cleanupResult');
+            
+            let deletedCount = 0;
+            const allTestUsers = [...testUsers];
+            if (testAdmin) {
+                allTestUsers.push(testAdmin);
+            }
+
+            if (allTestUsers.length === 0) {
+                resultDiv.innerHTML = '<div class="test-info">无需清理，没有测试数据</div>';
+                return;
+            }
+
+            resultDiv.innerHTML = '<div class="test-info">正在删除测试账户...</div>';
+
+            for (const user of allTestUsers) {
+                try {
+                    const response = await fetch(`/api/users/${user.id}`, {
+                        method: 'DELETE'
+                    });
+
+                    if (response.ok) {
+                        deletedCount++;
+                    }
+                } catch (error) {
+                    console.error('删除用户失败:', error);
+                }
+            }
+
+            localStorage.removeItem('currentUser');
+            testAdmin = null;
+            testUsers = [];
+            
+            resultDiv.innerHTML = `
+                <div class="test-success">
+                    ✅ 清理完成！删除了 ${deletedCount} 个测试账户
+                </div>
+            `;
+        }
+
+        // 页面加载时检查是否有现有的测试用户
+        window.addEventListener('load', function() {
+            const currentUser = localStorage.getItem('currentUser');
+            if (currentUser) {
+                try {
+                    const user = JSON.parse(currentUser);
+                    if (user.userType === 'ADMIN' && user.username.startsWith('test_admin_')) {
+                        testAdmin = user;
+                        document.getElementById('createAdminResult').innerHTML = `
+                            <div class="test-info">
+                                检测到现有测试管理员账户: ${user.username}
+                            </div>
+                        `;
+                    }
+                } catch (e) {
+                    console.error('解析用户数据失败:', e);
+                }
+            }
+        });
+    </script>
+</body>
+</html>
