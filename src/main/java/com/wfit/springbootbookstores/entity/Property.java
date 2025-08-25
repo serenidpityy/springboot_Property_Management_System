@@ -6,6 +6,7 @@ import lombok.NoArgsConstructor;
 
 import jakarta.persistence.*;
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
 
 @Data
 @NoArgsConstructor
@@ -42,4 +43,7 @@ public class Property {
 
     @Column(name = "occupancy_info", length = 255)
     private String occupancyInfo;
+
+    @Column(name = "move_in_time")
+    private LocalDateTime moveInTime;
 }

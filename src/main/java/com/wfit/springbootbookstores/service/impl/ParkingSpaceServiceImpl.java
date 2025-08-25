@@ -7,6 +7,7 @@ import com.wfit.springbootbookstores.service.ParkingSpaceService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -19,6 +20,8 @@ public class ParkingSpaceServiceImpl implements ParkingSpaceService {
     @Override
     public ParkingSpace saveParkingSpace(ParkingSpace parkingSpace) {
         // You might want to add business logic here, e.g., check for duplicate parking IDs
+        // 设置分配时间为当前时间
+        parkingSpace.setAllocationTime(LocalDateTime.now());
         return parkingSpaceRepository.save(parkingSpace);
     }
 

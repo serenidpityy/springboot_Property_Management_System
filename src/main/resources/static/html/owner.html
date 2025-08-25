@@ -73,25 +73,13 @@
         <!-- 侧边栏 -->
         <nav class="dashboard-sidebar" id="sidebar">
             <div class="sidebar-content">
-                <!-- 概览 -->
-                <div class="sidebar-section">
-                    <div class="sidebar-title">概览</div>
-                    <ul class="nav-menu">
-                        <li class="nav-item">
-                            <a href="#" class="nav-link active" data-module="dashboard">
-                                <i class="nav-icon fas fa-tachometer-alt"></i>
-                                <span>个人中心</span>
-                            </a>
-                        </li>
-                    </ul>
-                </div>
 
                 <!-- 个人信息 -->
                 <div class="sidebar-section">
                     <div class="sidebar-title">个人信息</div>
                     <ul class="nav-menu">
                         <li class="nav-item">
-                            <a href="#" class="nav-link" data-module="profile">
+                            <a href="#" class="nav-link active" data-module="profile">
                                 <i class="nav-icon fas fa-user-circle"></i>
                                 <span>个人信息管理</span>
                             </a>
@@ -164,183 +152,7 @@
 
                 <!-- 页面内容区域 -->
                 <div id="pageContent">
-                    <!-- 默认显示个人中心 -->
-                    <div id="dashboard-content">
-                        <div class="page-header">
-                            <h1 class="page-title">
-                                <i class="fas fa-home me-3"></i>
-                                业主个人中心
-                            </h1>
-                            <p class="page-subtitle">欢迎回来，这里是您的个人服务中心</p>
-                        </div>
 
-                        <!-- 账户概览 -->
-                        <div class="stats-grid">
-                            <div class="stat-card">
-                                <div class="stat-header">
-                                    <h3 class="stat-title">账户余额</h3>
-                                    <div class="stat-icon primary">
-                                        <i class="fas fa-wallet"></i>
-                                    </div>
-                                </div>
-                                <div class="stat-value" id="dashboardBalance">¥0.00</div>
-                                <div class="stat-change">
-                                    <button class="btn btn-primary btn-sm" onclick="goToRecharge()">
-                                        <i class="fas fa-plus"></i> 立即充值
-                                    </button>
-                                </div>
-                            </div>
-
-                            <div class="stat-card">
-                                <div class="stat-header">
-                                    <h3 class="stat-title">待缴费用</h3>
-                                    <div class="stat-icon warning">
-                                        <i class="fas fa-credit-card"></i>
-                                    </div>
-                                </div>
-                                <div class="stat-value">¥1,250</div>
-                                <div class="stat-change negative">
-                                    <i class="fas fa-exclamation-triangle"></i> 3笔待缴费
-                                </div>
-                            </div>
-
-                            <div class="stat-card">
-                                <div class="stat-header">
-                                    <h3 class="stat-title">我的房屋</h3>
-                                    <div class="stat-icon info">
-                                        <i class="fas fa-home"></i>
-                                    </div>
-                                </div>
-                                <div class="stat-value">2套</div>
-                                <div class="stat-change positive">
-                                    <i class="fas fa-check"></i> 均已入住
-                                </div>
-                            </div>
-
-                            <div class="stat-card">
-                                <div class="stat-header">
-                                    <h3 class="stat-title">我的车位</h3>
-                                    <div class="stat-icon success">
-                                        <i class="fas fa-car"></i>
-                                    </div>
-                                </div>
-                                <div class="stat-value">1个</div>
-                                <div class="stat-change positive">
-                                    <i class="fas fa-check"></i> 使用中
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- 快速操作 -->
-                        <div class="dashboard-card">
-                            <div class="card-header">
-                                <h2 class="card-title">
-                                    <i class="fas fa-bolt"></i>
-                                    快速操作
-                                </h2>
-                            </div>
-                            <div class="card-body">
-                                <div class="row">
-                                    <div class="col-md-3 mb-3">
-                                        <button class="btn btn-primary w-100" onclick="loadModule('my-charges')">
-                                            <i class="fas fa-credit-card"></i>
-                                            缴费中心
-                                        </button>
-                                    </div>
-                                    <div class="col-md-3 mb-3">
-                                        <button class="btn btn-success w-100" onclick="goToRecharge()">
-                                            <i class="fas fa-plus"></i>
-                                            账户充值
-                                        </button>
-                                    </div>
-                                    <div class="col-md-3 mb-3">
-                                        <button class="btn btn-info w-100" onclick="loadModule('complaints')">
-                                            <i class="fas fa-comments"></i>
-                                            提交建议
-                                        </button>
-                                    </div>
-                                    <div class="col-md-3 mb-3">
-                                        <button class="btn btn-warning w-100" onclick="loadModule('announcements')">
-                                            <i class="fas fa-bullhorn"></i>
-                                            查看公告
-                                        </button>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- 最新公告 -->
-                        <div class="dashboard-card">
-                            <div class="card-header">
-                                <h2 class="card-title">
-                                    <i class="fas fa-bullhorn"></i>
-                                    最新公告
-                                </h2>
-                                <a href="#" class="btn btn-sm btn-secondary" onclick="loadModule('announcements')">
-                                    查看全部
-                                </a>
-                            </div>
-                            <div class="card-body">
-                                <div class="list-group">
-                                    <div class="list-group-item d-flex justify-content-between align-items-center">
-                                        <div>
-                                            <h6 class="mb-1">关于电梯维护的通知</h6>
-                                            <p class="mb-1 text-muted">定期维护将于本周六进行，请业主提前安排出行。</p>
-                                            <small class="text-muted">2024-01-15 09:00</small>
-                                        </div>
-                                        <span class="badge badge-info">重要</span>
-                                    </div>
-                                    <div class="list-group-item d-flex justify-content-between align-items-center">
-                                        <div>
-                                            <h6 class="mb-1">春节期间物业服务安排</h6>
-                                            <p class="mb-1 text-muted">春节假期物业服务时间调整通知。</p>
-                                            <small class="text-muted">2024-01-10 14:30</small>
-                                        </div>
-                                        <span class="badge badge-secondary">通知</span>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- 我的投诉建议 -->
-                        <div class="dashboard-card">
-                            <div class="card-header">
-                                <h2 class="card-title">
-                                    <i class="fas fa-comments"></i>
-                                    我的投诉建议
-                                </h2>
-                                <button class="btn btn-primary btn-sm" onclick="loadModule('complaints')">
-                                    <i class="fas fa-plus"></i>
-                                    提交新建议
-                                </button>
-                            </div>
-                            <div class="card-body">
-                                <div class="table-container">
-                                    <table class="table">
-                                        <thead>
-                                            <tr>
-                                                <th>提交时间</th>
-                                                <th>内容摘要</th>
-                                                <th>处理状态</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody>
-                                            <tr>
-                                                <td>2024-01-10</td>
-                                                <td>楼道灯光昏暗，建议更换LED灯</td>
-                                                <td><span class="badge badge-success">已处理</span></td>
-                                            </tr>
-                                            <tr>
-                                                <td>2024-01-08</td>
-                                                <td>地下车库排水系统异常</td>
-                                                <td><span class="badge badge-warning">处理中</span></td>
-                                            </tr>
-                                        </tbody>
-                                    </table>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
 
                     <!-- 其他模块内容将在这里动态加载 -->
                     <div id="dynamic-content" style="display: none;">
@@ -366,7 +178,27 @@
     <script>
         // 全局变量
         let currentUser = null;
-        let currentModule = 'dashboard';
+        let currentModule = 'profile';
+        
+        // 安全获取用户数据
+        function getCurrentUserSafely() {
+            try {
+                const userData = localStorage.getItem('currentUser');
+                if (!userData) return null;
+                
+                const user = JSON.parse(userData);
+                if (!user || typeof user !== 'object' || !user.userType) {
+                    localStorage.removeItem('currentUser');
+                    return null;
+                }
+                return user;
+            } catch (e) {
+                localStorage.removeItem('currentUser');
+                return null;
+            }
+        }
+
+
 
         // 页面加载完成后初始化
         document.addEventListener('DOMContentLoaded', function() {
@@ -377,25 +209,25 @@
 
         // 初始化页面
         function initializePage() {
-            // 检查用户登录状态
-            const userData = localStorage.getItem('currentUser');
-            if (!userData) {
+            // 使用安全方法获取用户数据
+            currentUser = getCurrentUserSafely();
+            
+            if (!currentUser) {
                 window.location.href = 'login.html';
                 return;
             }
-
-            try {
-                currentUser = JSON.parse(userData);
-                if (currentUser.userType !== 'OWNER') {
-                    alert('权限不足，无法访问业主页面');
-                    window.location.href = 'login.html';
-                    return;
-                }
-            } catch (e) {
-                console.error('用户数据解析失败:', e);
+            
+            if (currentUser.userType !== 'OWNER') {
+                alert('权限不足，无法访问业主页面');
+                localStorage.removeItem('currentUser');
                 window.location.href = 'login.html';
                 return;
             }
+            
+            // 自动加载profile模块
+            setTimeout(() => {
+                loadModule('profile');
+            }, 100);
         }
 
         // 加载用户信息
@@ -415,10 +247,7 @@
                     userBalanceElement.textContent = `余额: ¥${formattedBalance}`;
                 }
                 
-                const dashboardBalanceElement = document.getElementById('dashboardBalance');
-                if (dashboardBalanceElement) {
-                    dashboardBalanceElement.textContent = `¥${formattedBalance}`;
-                }
+
                 
                 const sidebarBalanceElement = document.getElementById('sidebarBalance');
                 if (sidebarBalanceElement) {
@@ -544,16 +373,7 @@
         function loadModule(module) {
             currentModule = module;
             
-            // 隐藏默认内容
-            document.getElementById('dashboard-content').style.display = 
-                module === 'dashboard' ? 'block' : 'none';
-            
             const dynamicContent = document.getElementById('dynamic-content');
-            
-            if (module === 'dashboard') {
-                dynamicContent.style.display = 'none';
-                return;
-            }
             
             // 显示加载状态
             dynamicContent.style.display = 'block';
@@ -647,10 +467,17 @@
                                             <div class="form-text">余额只能通过充值增加</div>
                                         </div>
                                     </div>
-                                    <div class="mb-3" id="passwordSection" style="display: none;">
-                                        <label for="profilePassword" class="form-label">新密码</label>
-                                        <input type="password" class="form-control" id="profilePassword" placeholder="如不修改密码请留空">
-                                        <div class="form-text">留空表示不修改密码</div>
+                                    <div id="passwordSection" style="display: none;">
+                                        <div class="mb-3">
+                                            <label for="profilePassword" class="form-label">新密码</label>
+                                            <input type="password" class="form-control" id="profilePassword" placeholder="如不修改密码请留空">
+                                            <div class="form-text">建议使用8位以上包含字母和数字的密码</div>
+                                        </div>
+                                        <div class="mb-3" id="confirmPasswordSection" style="display: none;">
+                                            <label for="confirmPassword" class="form-label">确认新密码</label>
+                                            <input type="password" class="form-control" id="confirmPassword" placeholder="请再次输入新密码">
+                                            <div class="form-text">请再次输入相同的密码</div>
+                                        </div>
                                     </div>
                                     <div class="d-none" id="editButtons">
                                         <button type="button" class="btn btn-success me-2" onclick="saveProfile()">
@@ -971,8 +798,8 @@
                     </div>
                     <h3 class="empty-state-title">页面未找到</h3>
                     <p class="empty-state-description">您访问的功能模块不存在或正在开发中</p>
-                    <button class="btn btn-primary" onclick="loadModule('dashboard')">
-                        返回个人中心
+                    <button class="btn btn-primary" onclick="loadModule('profile')">
+                        返回个人信息
                     </button>
                 </div>
             `;
@@ -1035,6 +862,10 @@
             // 显示密码修改区域和操作按钮
             document.getElementById('passwordSection').style.display = 'block';
             document.getElementById('editButtons').classList.remove('d-none');
+            
+            // 绑定密码输入事件
+            document.getElementById('profilePassword').addEventListener('input', handlePasswordInput);
+            document.getElementById('confirmPassword').addEventListener('blur', validatePasswordMatch);
         }
 
         function cancelEditProfile() {
@@ -1048,10 +879,15 @@
             
             // 隐藏密码修改区域和操作按钮
             document.getElementById('passwordSection').style.display = 'none';
+            document.getElementById('confirmPasswordSection').style.display = 'none';
             document.getElementById('editButtons').classList.add('d-none');
             
             // 清空密码字段
             document.getElementById('profilePassword').value = '';
+            document.getElementById('confirmPassword').value = '';
+            
+            // 清除密码验证样式
+            clearPasswordValidation();
         }
 
         function loadProfileData() {
@@ -1064,6 +900,53 @@
             }
         }
 
+        // 处理密码输入
+        function handlePasswordInput() {
+            const password = document.getElementById('profilePassword').value;
+            const confirmSection = document.getElementById('confirmPasswordSection');
+            
+            if (password) {
+                confirmSection.style.display = 'block';
+            } else {
+                confirmSection.style.display = 'none';
+                document.getElementById('confirmPassword').value = '';
+                clearPasswordValidation();
+            }
+        }
+
+        // 验证密码匹配
+        function validatePasswordMatch() {
+            const password = document.getElementById('profilePassword').value;
+            const confirmPassword = document.getElementById('confirmPassword').value;
+            const confirmPasswordField = document.getElementById('confirmPassword');
+            
+            if (confirmPassword && password !== confirmPassword) {
+                confirmPasswordField.classList.add('is-invalid');
+                if (!confirmPasswordField.nextElementSibling || !confirmPasswordField.nextElementSibling.classList.contains('invalid-feedback')) {
+                    const feedback = document.createElement('div');
+                    feedback.className = 'invalid-feedback';
+                    feedback.textContent = '两次输入的密码不一致';
+                    confirmPasswordField.parentNode.appendChild(feedback);
+                }
+            } else {
+                confirmPasswordField.classList.remove('is-invalid');
+                const feedback = confirmPasswordField.parentNode.querySelector('.invalid-feedback');
+                if (feedback) {
+                    feedback.remove();
+                }
+            }
+        }
+
+        // 清除密码验证状态
+        function clearPasswordValidation() {
+            const confirmPasswordField = document.getElementById('confirmPassword');
+            confirmPasswordField.classList.remove('is-invalid');
+            const feedback = confirmPasswordField.parentNode.querySelector('.invalid-feedback');
+            if (feedback) {
+                feedback.remove();
+            }
+        }
+
         async function saveProfile() {
             const newUsername = document.getElementById('profileUsername').value;
             const profileData = {
@@ -1073,9 +956,7 @@
             };
 
             const password = document.getElementById('profilePassword').value;
-            if (password) {
-                profileData.password = password;
-            }
+            const confirmPassword = document.getElementById('confirmPassword').value;
 
             if (!profileData.username) {
                 alert('请填写用户名');
@@ -1085,6 +966,21 @@
             if (!profileData.name) {
                 alert('请填写真实姓名');
                 return;
+            }
+
+            // 密码验证
+            if (password) {
+                if (password.length < 6) {
+                    alert('密码长度至少6位');
+                    return;
+                }
+                
+                if (password !== confirmPassword) {
+                    alert('两次输入的密码不一致');
+                    return;
+                }
+                
+                profileData.password = password;
             }
 
             // 检查用户名是否已存在（如果修改了用户名）
@@ -1633,7 +1529,15 @@
                             ${charge.paymentStatus === 'PAID' ? '已缴费' : '未缴费'}
                         </span>
                     </td>
-                    <td>${charge.paymentTime ? new Date(charge.paymentTime).toLocaleDateString() : '-'}</td>
+                    <td>${charge.paymentTime ? (() => {
+                        const paymentDate = new Date(charge.paymentTime);
+                        return paymentDate.getFullYear() + '/' + 
+                               (paymentDate.getMonth() + 1).toString().padStart(2, '0') + '/' + 
+                               paymentDate.getDate().toString().padStart(2, '0') + ' ' + 
+                               paymentDate.getHours().toString().padStart(2, '0') + ':' + 
+                               paymentDate.getMinutes().toString().padStart(2, '0') + ':' + 
+                               paymentDate.getSeconds().toString().padStart(2, '0');
+                    })() : '-'}</td>
                     <td>
                         ${charge.paymentStatus === 'UNPAID' ? 
                             `<button class="btn btn-sm btn-primary" onclick="goToPayCharge(${charge.id})">

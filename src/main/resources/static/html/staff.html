@@ -42,27 +42,16 @@
         <!-- 侧边栏 -->
         <nav class="dashboard-sidebar" id="sidebar">
             <div class="sidebar-content">
-                <!-- 个人信息 -->
+
+
                 <div class="sidebar-section">
                     <div class="sidebar-title">个人信息</div>
                     <ul class="nav-menu">
+
                         <li class="nav-item">
-                            <a href="#" class="nav-link" data-module="profile">
+                            <a href="#" class="nav-link active" data-module="profile">
                                 <i class="nav-icon fas fa-user-circle"></i>
                                 <span>个人信息管理</span>
-                            </a>
-                        </li>
-                    </ul>
-                </div>
-
-                <!-- 概览 -->
-                <div class="sidebar-section">
-                    <div class="sidebar-title">概览</div>
-                    <ul class="nav-menu">
-                        <li class="nav-item">
-                            <a href="#" class="nav-link active" data-module="dashboard">
-                                <i class="nav-icon fas fa-tachometer-alt"></i>
-                                <span>工作台</span>
                             </a>
                         </li>
                     </ul>
@@ -148,199 +137,7 @@
 
                 <!-- 页面内容区域 -->
                 <div id="pageContent">
-                    <!-- 默认显示工作台 -->
-                    <div id="dashboard-content">
-                        <div class="page-header">
-                            <h1 class="page-title">
-                                <i class="fas fa-tachometer-alt me-3"></i>
-                                工作人员工作台
-                            </h1>
-                            <p class="page-subtitle">欢迎回来，这里是今日工作概览和待办事项</p>
-                        </div>
 
-                        <!-- 统计卡片 -->
-                        <div class="stats-grid">
-                            <div class="stat-card">
-                                <div class="stat-header">
-                                    <h3 class="stat-title">管理业主数</h3>
-                                    <div class="stat-icon primary">
-                                        <i class="fas fa-users"></i>
-                                    </div>
-                                </div>
-                                <div class="stat-value">156</div>
-                                <div class="stat-change positive">
-                                    <i class="fas fa-arrow-up"></i> +3 本周
-                                </div>
-                            </div>
-
-                            <div class="stat-card">
-                                <div class="stat-header">
-                                    <h3 class="stat-title">管理房产数</h3>
-                                    <div class="stat-icon success">
-                                        <i class="fas fa-home"></i>
-                                    </div>
-                                </div>
-                                <div class="stat-value">89</div>
-                                <div class="stat-change positive">
-                                    <i class="fas fa-arrow-up"></i> +2 本周
-                                </div>
-                            </div>
-
-                            <div class="stat-card">
-                                <div class="stat-header">
-                                    <h3 class="stat-title">待处理投诉</h3>
-                                    <div class="stat-icon warning">
-                                        <i class="fas fa-exclamation-triangle"></i>
-                                    </div>
-                                </div>
-                                <div class="stat-value">12</div>
-                                <div class="stat-change negative">
-                                    <i class="fas fa-arrow-up"></i> +5 今日
-                                </div>
-                            </div>
-
-                            <div class="stat-card">
-                                <div class="stat-header">
-                                    <h3 class="stat-title">今日收费</h3>
-                                    <div class="stat-icon info">
-                                        <i class="fas fa-money-bill-wave"></i>
-                                    </div>
-                                </div>
-                                <div class="stat-value">¥5,680</div>
-                                <div class="stat-change positive">
-                                    <i class="fas fa-arrow-up"></i> +15% 昨日
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- 今日任务 -->
-                        <div class="dashboard-card">
-                            <div class="card-header">
-                                <h2 class="card-title">
-                                    <i class="fas fa-tasks"></i>
-                                    今日任务
-                                </h2>
-                                <button class="btn btn-primary btn-sm">
-                                    <i class="fas fa-plus"></i>
-                                    添加任务
-                                </button>
-                            </div>
-                            <div class="card-body">
-                                <div class="row">
-                                    <div class="col-md-6 mb-3">
-                                        <div class="card border-left-primary">
-                                            <div class="card-body">
-                                                <h5 class="card-title">处理投诉建议</h5>
-                                                <p class="card-text">12条待处理的业主投诉需要及时回复</p>
-                                                <button class="btn btn-primary btn-sm" onclick="loadModule('complaints')">
-                                                    立即处理
-                                                </button>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="col-md-6 mb-3">
-                                        <div class="card border-left-success">
-                                            <div class="card-body">
-                                                <h5 class="card-title">发布社区公告</h5>
-                                                <p class="card-text">本周物业费缴费通知需要发布</p>
-                                                <button class="btn btn-success btn-sm" onclick="loadModule('announcements')">
-                                                    发布公告
-                                                </button>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- 快速操作 -->
-                        <div class="dashboard-card">
-                            <div class="card-header">
-                                <h2 class="card-title">
-                                    <i class="fas fa-bolt"></i>
-                                    快速操作
-                                </h2>
-                            </div>
-                            <div class="card-body">
-                                <div class="row">
-                                    <div class="col-md-3 mb-3">
-                                        <button class="btn btn-primary w-100" onclick="loadModule('property-management')">
-                                            <i class="fas fa-home"></i>
-                                            房产管理
-                                        </button>
-                                    </div>
-                                    <div class="col-md-3 mb-3">
-                                        <button class="btn btn-success w-100" onclick="loadModule('charge-management')">
-                                            <i class="fas fa-credit-card"></i>
-                                            收费管理
-                                        </button>
-                                    </div>
-                                    <div class="col-md-3 mb-3">
-                                        <button class="btn btn-info w-100" onclick="loadModule('parking-management')">
-                                            <i class="fas fa-car"></i>
-                                            车位管理
-                                        </button>
-                                    </div>
-                                    <div class="col-md-3 mb-3">
-                                        <button class="btn btn-warning w-100" onclick="loadModule('announcements')">
-                                            <i class="fas fa-bullhorn"></i>
-                                            发布公告
-                                        </button>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- 最近活动 -->
-                        <div class="dashboard-card">
-                            <div class="card-header">
-                                <h2 class="card-title">
-                                    <i class="fas fa-clock"></i>
-                                    最近活动
-                                </h2>
-                            </div>
-                            <div class="card-body">
-                                <div class="table-container">
-                                    <table class="table">
-                                        <thead>
-                                            <tr>
-                                                <th>时间</th>
-                                                <th>操作</th>
-                                                <th>对象</th>
-                                                <th>状态</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody>
-                                            <tr>
-                                                <td>14:30</td>
-                                                <td>处理投诉</td>
-                                                <td>A栋101室 - 噪音问题</td>
-                                                <td><span class="badge badge-success">已处理</span></td>
-                                            </tr>
-                                            <tr>
-                                                <td>12:15</td>
-                                                <td>添加收费记录</td>
-                                                <td>B栋205室 - 物业费</td>
-                                                <td><span class="badge badge-success">已完成</span></td>
-                                            </tr>
-                                            <tr>
-                                                <td>10:45</td>
-                                                <td>更新车位信息</td>
-                                                <td>地下车库 P-156</td>
-                                                <td><span class="badge badge-info">已更新</span></td>
-                                            </tr>
-                                            <tr>
-                                                <td>09:30</td>
-                                                <td>发布公告</td>
-                                                <td>电梯维护通知</td>
-                                                <td><span class="badge badge-success">已发布</span></td>
-                                            </tr>
-                                        </tbody>
-                                    </table>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
 
                     <!-- 其他模块内容将在这里动态加载 -->
                     <div id="dynamic-content" style="display: none;">
@@ -360,7 +157,27 @@
     <script>
         // 全局变量
         let currentUser = null;
-        let currentModule = 'dashboard';
+        let currentModule = 'profile';
+        
+        // 安全获取用户数据
+        function getCurrentUserSafely() {
+            try {
+                const userData = localStorage.getItem('currentUser');
+                if (!userData) return null;
+                
+                const user = JSON.parse(userData);
+                if (!user || typeof user !== 'object' || !user.userType) {
+                    localStorage.removeItem('currentUser');
+                    return null;
+                }
+                return user;
+            } catch (e) {
+                localStorage.removeItem('currentUser');
+                return null;
+            }
+        }
+
+
 
         // 页面加载完成后初始化
         document.addEventListener('DOMContentLoaded', function() {
@@ -371,25 +188,25 @@
 
         // 初始化页面
         function initializePage() {
-            // 检查用户登录状态
-            const userData = localStorage.getItem('currentUser');
-            if (!userData) {
+            // 使用安全方法获取用户数据
+            currentUser = getCurrentUserSafely();
+            
+            if (!currentUser) {
                 window.location.href = 'login.html';
                 return;
             }
 
-            try {
-                currentUser = JSON.parse(userData);
                 if (currentUser.userType !== 'STAFF') {
                     alert('权限不足，无法访问工作人员页面');
+                localStorage.removeItem('currentUser');
                     window.location.href = 'login.html';
                     return;
                 }
-            } catch (e) {
-                console.error('用户数据解析失败:', e);
-                window.location.href = 'login.html';
-                return;
-            }
+            
+            // 自动加载profile模块
+            setTimeout(() => {
+                loadModule('profile');
+            }, 100);
         }
 
         // 加载用户信息
@@ -474,16 +291,7 @@
         function loadModule(module) {
             currentModule = module;
             
-            // 隐藏默认内容
-            document.getElementById('dashboard-content').style.display = 
-                module === 'dashboard' ? 'block' : 'none';
-            
             const dynamicContent = document.getElementById('dynamic-content');
-            
-            if (module === 'dashboard') {
-                dynamicContent.style.display = 'none';
-                return;
-            }
             
             // 显示加载状态
             dynamicContent.style.display = 'block';
@@ -548,10 +356,6 @@
                     <div class="card-header">
                         <h2 class="card-title">业主列表</h2>
                         <div>
-                            <button class="btn btn-primary me-2" onclick="searchOwners()">
-                                <i class="fas fa-search"></i>
-                                搜索业主
-                            </button>
                             <button class="btn btn-success" onclick="refreshOwnerList()">
                                 <i class="fas fa-refresh"></i>
                                 刷新
@@ -559,25 +363,7 @@
                         </div>
                     </div>
                     <div class="card-body">
-                        <div id="ownerSearchForm" class="mb-3" style="display: none;">
-                            <div class="row">
-                                <div class="col-md-4">
-                                    <input type="text" class="form-control" id="searchOwnerName" placeholder="搜索业主姓名...">
-                                </div>
-                                <div class="col-md-4">
-                                    <input type="text" class="form-control" id="searchOwnerPhone" placeholder="搜索手机号...">
-                                </div>
-                                <div class="col-md-4">
-                                    <button class="btn btn-primary" onclick="performOwnerSearch()">
-                                        <i class="fas fa-search"></i>
-                                        搜索
-                                    </button>
-                                    <button class="btn btn-secondary ms-2" onclick="clearOwnerSearch()">
-                                        清空
-                                    </button>
-                                </div>
-                            </div>
-                        </div>
+
                         <div class="table-container">
                             <table class="table">
                                 <thead>
@@ -587,12 +373,11 @@
                                         <th>手机号</th>
                                         <th>账户余额</th>
                                         <th>注册时间</th>
-                                        <th>操作</th>
                                     </tr>
                                 </thead>
                                 <tbody id="ownerTableBody">
                                     <tr>
-                                        <td colspan="6" class="text-center">
+                                        <td colspan="5" class="text-center">
                                             <div class="loading">
                                                 <div class="spinner"></div>
                                                 <span class="ms-2">加载业主信息中...</span>
@@ -624,10 +409,6 @@
                                 <i class="fas fa-plus"></i>
                                 添加房产
                             </button>
-                            <button class="btn btn-secondary me-2" onclick="exportPropertyData()">
-                                <i class="fas fa-download"></i>
-                                导出数据
-                            </button>
                             <button class="btn btn-success" onclick="refreshPropertyList()">
                                 <i class="fas fa-refresh"></i>
                                 刷新
@@ -646,12 +427,14 @@
                                         <th>面积(㎡)</th>
                                         <th>房型</th>
                                         <th>入住信息</th>
+                                        <th>入住时间</th>
+                                        <th>业主手机号</th>
                                         <th>操作</th>
                                     </tr>
                                 </thead>
                                 <tbody id="propertyTableBody">
                                     <tr>
-                                        <td colspan="8" class="text-center">
+                                        <td colspan="10" class="text-center">
                                             <div class="loading">
                                                 <div class="spinner"></div>
                                                 <span class="ms-2">加载房产信息中...</span>
@@ -739,10 +522,6 @@
                                 <i class="fas fa-plus"></i>
                                 新增收费记录
                             </button>
-                            <button class="btn btn-success me-2" onclick="exportChargeData()">
-                                <i class="fas fa-download"></i>
-                                导出账单
-                            </button>
                             <button class="btn btn-info" onclick="refreshChargeList()">
                                 <i class="fas fa-refresh"></i>
                                 刷新
@@ -750,20 +529,7 @@
                         </div>
                     </div>
                     <div class="card-body">
-                        <div class="mb-3">
-                            <div class="row">
-                                <div class="col-md-3">
-                                    <select class="form-control" id="chargeStatusFilter" onchange="filterCharges()">
-                                        <option value="">全部状态</option>
-                                        <option value="UNPAID">未缴费</option>
-                                        <option value="PAID">已缴费</option>
-                                    </select>
-                                </div>
-                                <div class="col-md-9">
-                                    <input type="text" class="form-control" id="chargeSearchInput" placeholder="搜索业主姓名或收费项目..." onkeyup="searchCharges()">
-                                </div>
-                            </div>
-                        </div>
+
                         <div class="table-container">
                             <table class="table">
                                 <thead>
@@ -774,12 +540,13 @@
                                         <th>收费说明</th>
                                         <th>缴费状态</th>
                                         <th>缴费时间</th>
+                                        <th>发布时间</th>
                                         <th>操作</th>
                                     </tr>
                                 </thead>
                                 <tbody id="chargeTableBody">
                                     <tr>
-                                        <td colspan="7" class="text-center">
+                                        <td colspan="8" class="text-center">
                                             <div class="loading">
                                                 <div class="spinner"></div>
                                                 <span class="ms-2">加载收费信息中...</span>
@@ -950,10 +717,17 @@
                                             <input type="text" class="form-control" id="staffProfileUserType" value="工作人员" readonly>
                                         </div>
                                     </div>
-                                    <div class="mb-3" id="staffPasswordSection" style="display: none;">
-                                        <label for="staffProfilePassword" class="form-label">新密码</label>
-                                        <input type="password" class="form-control" id="staffProfilePassword" placeholder="如不修改密码请留空">
-                                        <div class="form-text">留空表示不修改密码</div>
+                                    <div id="staffPasswordSection" style="display: none;">
+                                        <div class="mb-3">
+                                            <label for="staffProfilePassword" class="form-label">新密码</label>
+                                            <input type="password" class="form-control" id="staffProfilePassword" placeholder="如不修改密码请留空">
+                                            <div class="form-text">建议使用8位以上包含字母和数字的密码</div>
+                                        </div>
+                                        <div class="mb-3" id="staffConfirmPasswordSection" style="display: none;">
+                                            <label for="staffConfirmPassword" class="form-label">确认新密码</label>
+                                            <input type="password" class="form-control" id="staffConfirmPassword" placeholder="请再次输入新密码">
+                                            <div class="form-text">请再次输入相同的密码</div>
+                                        </div>
                                     </div>
                                     <div class="d-none" id="staffEditButtons">
                                         <button type="button" class="btn btn-success me-2" onclick="saveStaffProfile()">
@@ -981,8 +755,8 @@
                     </div>
                     <h3 class="empty-state-title">页面未找到</h3>
                     <p class="empty-state-description">您访问的功能模块不存在或正在开发中</p>
-                    <button class="btn btn-primary" onclick="loadModule('dashboard')">
-                        返回工作台
+                    <button class="btn btn-primary" onclick="loadModule('profile')">
+                        返回个人信息
                     </button>
                 </div>
             `;
@@ -997,24 +771,6 @@
         }
 
         // === 业主信息管理相关函数 ===
-        function searchOwners() {
-            const searchForm = document.getElementById('ownerSearchForm');
-            searchForm.style.display = searchForm.style.display === 'none' ? 'block' : 'none';
-        }
-
-        function performOwnerSearch() {
-            const name = document.getElementById('searchOwnerName').value;
-            const phone = document.getElementById('searchOwnerPhone').value;
-            console.log('搜索业主:', { name, phone });
-            loadOwnerList({ name, phone });
-        }
-
-        function clearOwnerSearch() {
-            document.getElementById('searchOwnerName').value = '';
-            document.getElementById('searchOwnerPhone').value = '';
-            loadOwnerList();
-        }
-
         function refreshOwnerList() {
             loadOwnerList();
         }
@@ -1067,26 +823,35 @@
                 return;
             }
 
-            tbody.innerHTML = owners.map(owner => `
+            tbody.innerHTML = owners.map(owner => {
+                // 使用数据库中的真实注册时间
+                let registrationTime;
+                if (owner.registrationTime) {
+                    registrationTime = new Date(owner.registrationTime);
+                } else {
+                    // 如果没有注册时间，使用默认时间
+                    registrationTime = new Date('2023-01-01T00:00:00');
+                }
+                const formattedTime = registrationTime.getFullYear() + '/' + 
+                                    (registrationTime.getMonth() + 1).toString().padStart(2, '0') + '/' + 
+                                    registrationTime.getDate().toString().padStart(2, '0') + ' ' + 
+                                    registrationTime.getHours().toString().padStart(2, '0') + ':' + 
+                                    registrationTime.getMinutes().toString().padStart(2, '0') + ':' + 
+                                    registrationTime.getSeconds().toString().padStart(2, '0');
+                
+                return `
                 <tr>
                     <td>${owner.username}</td>
                     <td>${owner.name || '-'}</td>
                     <td>${owner.phone || '-'}</td>
                     <td>¥${(owner.accountBalance || 0).toFixed(2)}</td>
-                    <td>近期注册</td>
-                    <td>
-                        <button class="btn btn-sm btn-info me-1" onclick="viewOwnerDetails(${owner.id})">
-                            <i class="fas fa-eye"></i>
-                            查看
-                        </button>
-                    </td>
+                        <td>${formattedTime}</td>
                 </tr>
-            `).join('');
+                `;
+            }).join('');
         }
 
-        function viewOwnerDetails(ownerId) {
-            alert('查看业主详情功能开发中...');
-        }
+
 
         // === 房产管理相关函数 ===
         function goToAddProperty() {
@@ -1130,15 +895,13 @@
             loadPropertyList();
         }
 
-        function exportPropertyData() {
-            alert('导出房产数据功能开发中...');
-        }
+
 
         async function loadPropertyList() {
             const tbody = document.getElementById('propertyTableBody');
             tbody.innerHTML = `
                 <tr>
-                    <td colspan="8" class="text-center">
+                    <td colspan="10" class="text-center">
                         <div class="loading">
                             <div class="spinner"></div>
                             <span class="ms-2">加载房产信息中...</span>
@@ -1159,7 +922,7 @@
                 console.error('加载房产列表失败:', error);
                 tbody.innerHTML = `
                     <tr>
-                        <td colspan="8" class="text-center text-danger">
+                        <td colspan="10" class="text-center text-danger">
                             <i class="fas fa-exclamation-triangle"></i>
                             加载房产信息失败，请稍后重试
                         </td>
@@ -1173,7 +936,7 @@
             if (properties.length === 0) {
                 tbody.innerHTML = `
                     <tr>
-                        <td colspan="8" class="text-center text-muted">
+                        <td colspan="10" class="text-center text-muted">
                             <i class="fas fa-inbox"></i>
                             暂无房产信息
                         </td>
@@ -1182,7 +945,29 @@
                 return;
             }
 
-            tbody.innerHTML = properties.map(property => `
+            tbody.innerHTML = properties.map(property => {
+                const isOccupied = property.occupancyInfo === '已入住';
+                let moveInTime = '-';
+                let ownerPhone = '-';
+                
+                if (isOccupied) {
+                    // 使用数据库中的真实入住时间
+                    if (property.moveInTime) {
+                        const moveInDate = new Date(property.moveInTime);
+                        moveInTime = moveInDate.getFullYear() + '/' + 
+                                   (moveInDate.getMonth() + 1).toString().padStart(2, '0') + '/' + 
+                                   moveInDate.getDate().toString().padStart(2, '0') + ' ' + 
+                                   moveInDate.getHours().toString().padStart(2, '0') + ':' + 
+                                   moveInDate.getMinutes().toString().padStart(2, '0') + ':' + 
+                                   moveInDate.getSeconds().toString().padStart(2, '0');
+                    } else {
+                        moveInTime = '-';
+                    }
+                    
+                    ownerPhone = property.owner?.phone || '-';
+                }
+                
+                return `
                 <tr>
                     <td>${property.houseNumber}</td>
                     <td>${property.owner ? (property.owner.name || property.owner.username) : '-'}</td>
@@ -1195,6 +980,8 @@
                             ${property.occupancyInfo || '未设置'}
                         </span>
                     </td>
+                        <td>${moveInTime}</td>
+                        <td>${ownerPhone}</td>
                     <td>
                         <button class="btn btn-sm btn-info me-1" onclick="editProperty(${property.id})">
                             <i class="fas fa-edit"></i>
@@ -1206,7 +993,8 @@
                         </button>
                     </td>
                 </tr>
-            `).join('');
+                `;
+            }).join('');
         }
 
         function getOccupancyBadgeClass(occupancy) {
@@ -1319,12 +1107,29 @@
                 return;
             }
 
-            tbody.innerHTML = parkingSpaces.map(parking => `
+            tbody.innerHTML = parkingSpaces.map(parking => {
+                // 使用数据库中的真实分配时间
+                let allocationTime;
+                if (parking.allocationTime) {
+                    allocationTime = new Date(parking.allocationTime);
+                } else {
+                    // 如果没有分配时间，使用默认时间
+                    allocationTime = new Date('2023-09-01T00:00:00');
+                }
+                
+                const formattedTime = allocationTime.getFullYear() + '/' + 
+                                    (allocationTime.getMonth() + 1).toString().padStart(2, '0') + '/' + 
+                                    allocationTime.getDate().toString().padStart(2, '0') + ' ' + 
+                                    allocationTime.getHours().toString().padStart(2, '0') + ':' + 
+                                    allocationTime.getMinutes().toString().padStart(2, '0') + ':' + 
+                                    allocationTime.getSeconds().toString().padStart(2, '0');
+                
+                return `
                 <tr>
                     <td>${parking.parkingId}</td>
                     <td>${parking.owner ? (parking.owner.name || parking.owner.username) : '-'}</td>
                     <td>${parking.owner ? (parking.owner.phone || '-') : '-'}</td>
-                    <td>近期分配</td>
+                        <td>${formattedTime}</td>
                     <td>
                         <button class="btn btn-sm btn-info me-1" onclick="editParking(${parking.id})">
                             <i class="fas fa-edit"></i>
@@ -1336,7 +1141,8 @@
                         </button>
                     </td>
                 </tr>
-            `).join('');
+                `;
+            }).join('');
         }
 
         // 在模块加载时自动加载数据
@@ -1700,17 +1506,7 @@
             loadChargeList();
         }
 
-        function exportChargeData() {
-            alert('导出账单功能开发中...');
-        }
 
-        function filterCharges() {
-            loadChargeList();
-        }
-
-        function searchCharges() {
-            loadChargeList();
-        }
 
         async function loadChargeList() {
             const tbody = document.getElementById('chargeTableBody');
@@ -1718,7 +1514,7 @@
             
             tbody.innerHTML = `
                 <tr>
-                    <td colspan="7" class="text-center">
+                    <td colspan="8" class="text-center">
                         <div class="loading">
                             <div class="spinner"></div>
                             <span class="ms-2">加载收费信息中...</span>
@@ -1739,7 +1535,7 @@
                 console.error('加载收费列表失败:', error);
                 tbody.innerHTML = `
                     <tr>
-                        <td colspan="7" class="text-center text-danger">
+                        <td colspan="8" class="text-center text-danger">
                             <i class="fas fa-exclamation-triangle"></i>
                             加载收费信息失败，请稍后重试
                         </td>
@@ -1753,7 +1549,7 @@
             if (charges.length === 0) {
                 tbody.innerHTML = `
                     <tr>
-                        <td colspan="7" class="text-center text-muted">
+                        <td colspan="8" class="text-center text-muted">
                             <i class="fas fa-inbox"></i>
                             暂无收费记录
                         </td>
@@ -1762,7 +1558,37 @@
                 return;
             }
 
-            tbody.innerHTML = charges.map(charge => `
+            tbody.innerHTML = charges.map(charge => {
+                // 使用数据库中的真实时间数据
+                let publishTime, paymentTime;
+                
+                // 发布时间
+                if (charge.publishTime) {
+                    publishTime = new Date(charge.publishTime);
+                } else {
+                    // 如果没有发布时间，使用默认时间
+                    publishTime = new Date('2023-12-01T00:00:00');
+                }
+                const formattedPublishTime = publishTime.getFullYear() + '/' + 
+                                           (publishTime.getMonth() + 1).toString().padStart(2, '0') + '/' + 
+                                           publishTime.getDate().toString().padStart(2, '0') + ' ' + 
+                                           publishTime.getHours().toString().padStart(2, '0') + ':' + 
+                                           publishTime.getMinutes().toString().padStart(2, '0') + ':' + 
+                                           publishTime.getSeconds().toString().padStart(2, '0');
+                
+                // 缴费时间（如果已缴费）
+                let formattedPaymentTime = '-';
+                if (charge.paymentStatus === 'PAID' && charge.paymentTime) {
+                    paymentTime = new Date(charge.paymentTime);
+                    formattedPaymentTime = paymentTime.getFullYear() + '/' + 
+                                         (paymentTime.getMonth() + 1).toString().padStart(2, '0') + '/' + 
+                                         paymentTime.getDate().toString().padStart(2, '0') + ' ' + 
+                                         paymentTime.getHours().toString().padStart(2, '0') + ':' + 
+                                         paymentTime.getMinutes().toString().padStart(2, '0') + ':' + 
+                                         paymentTime.getSeconds().toString().padStart(2, '0');
+                }
+                
+                return `
                 <tr>
                     <td>${charge.chargeItem}</td>
                     <td>${charge.owner ? (charge.owner.name || charge.owner.username) : '-'}</td>
@@ -1773,7 +1599,8 @@
                             ${charge.paymentStatus === 'PAID' ? '已缴费' : '未缴费'}
                         </span>
                     </td>
-                    <td>${charge.paymentTime ? new Date(charge.paymentTime).toLocaleDateString() : '-'}</td>
+                        <td>${formattedPaymentTime}</td>
+                        <td>${formattedPublishTime}</td>
                     <td>
                         <button class="btn btn-sm btn-info me-1" onclick="editCharge(${charge.id})">
                             <i class="fas fa-edit"></i>
@@ -1785,7 +1612,8 @@
                         </button>
                     </td>
                 </tr>
-            `).join('');
+                `;
+            }).join('');
         }
 
         function editCharge(chargeId) {
@@ -1827,6 +1655,10 @@
             // 显示密码修改区域和操作按钮
             document.getElementById('staffPasswordSection').style.display = 'block';
             document.getElementById('staffEditButtons').classList.remove('d-none');
+            
+            // 绑定密码输入事件
+            document.getElementById('staffProfilePassword').addEventListener('input', handleStaffPasswordInput);
+            document.getElementById('staffConfirmPassword').addEventListener('blur', validateStaffPasswordMatch);
         }
 
         function cancelEditStaffProfile() {
@@ -1840,10 +1672,15 @@
             
             // 隐藏密码修改区域和操作按钮
             document.getElementById('staffPasswordSection').style.display = 'none';
+            document.getElementById('staffConfirmPasswordSection').style.display = 'none';
             document.getElementById('staffEditButtons').classList.add('d-none');
             
             // 清空密码字段
             document.getElementById('staffProfilePassword').value = '';
+            document.getElementById('staffConfirmPassword').value = '';
+            
+            // 清除密码验证样式
+            clearStaffPasswordValidation();
         }
 
         function loadStaffProfileData() {
@@ -1852,6 +1689,53 @@
                 document.getElementById('staffProfileName').value = currentUser.name || '';
                 document.getElementById('staffProfilePhone').value = currentUser.phone || '';
                 document.getElementById('staffProfileUserType').value = '工作人员';
+            }
+        }
+
+        // 处理工作人员密码输入
+        function handleStaffPasswordInput() {
+            const password = document.getElementById('staffProfilePassword').value;
+            const confirmSection = document.getElementById('staffConfirmPasswordSection');
+            
+            if (password) {
+                confirmSection.style.display = 'block';
+            } else {
+                confirmSection.style.display = 'none';
+                document.getElementById('staffConfirmPassword').value = '';
+                clearStaffPasswordValidation();
+            }
+        }
+
+        // 验证工作人员密码匹配
+        function validateStaffPasswordMatch() {
+            const password = document.getElementById('staffProfilePassword').value;
+            const confirmPassword = document.getElementById('staffConfirmPassword').value;
+            const confirmPasswordField = document.getElementById('staffConfirmPassword');
+            
+            if (confirmPassword && password !== confirmPassword) {
+                confirmPasswordField.classList.add('is-invalid');
+                if (!confirmPasswordField.nextElementSibling || !confirmPasswordField.nextElementSibling.classList.contains('invalid-feedback')) {
+                    const feedback = document.createElement('div');
+                    feedback.className = 'invalid-feedback';
+                    feedback.textContent = '两次输入的密码不一致';
+                    confirmPasswordField.parentNode.appendChild(feedback);
+                }
+            } else {
+                confirmPasswordField.classList.remove('is-invalid');
+                const feedback = confirmPasswordField.parentNode.querySelector('.invalid-feedback');
+                if (feedback) {
+                    feedback.remove();
+                }
+            }
+        }
+
+        // 清除工作人员密码验证状态
+        function clearStaffPasswordValidation() {
+            const confirmPasswordField = document.getElementById('staffConfirmPassword');
+            confirmPasswordField.classList.remove('is-invalid');
+            const feedback = confirmPasswordField.parentNode.querySelector('.invalid-feedback');
+            if (feedback) {
+                feedback.remove();
             }
         }
 
@@ -1864,9 +1748,7 @@
             };
 
             const password = document.getElementById('staffProfilePassword').value;
-            if (password) {
-                profileData.password = password;
-            }
+            const confirmPassword = document.getElementById('staffConfirmPassword').value;
 
             if (!profileData.username) {
                 alert('请填写用户名');
@@ -1876,6 +1758,21 @@
             if (!profileData.name) {
                 alert('请填写真实姓名');
                 return;
+            }
+
+            // 密码验证
+            if (password) {
+                if (password.length < 6) {
+                    alert('密码长度至少6位');
+                    return;
+                }
+                
+                if (password !== confirmPassword) {
+                    alert('两次输入的密码不一致');
+                    return;
+                }
+                
+                profileData.password = password;
             }
 
             // 检查用户名是否已存在（如果修改了用户名）

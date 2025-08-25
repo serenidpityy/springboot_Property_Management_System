@@ -41,25 +41,13 @@
         <!-- 侧边栏 -->
         <nav class="dashboard-sidebar" id="sidebar">
             <div class="sidebar-content">
-                <!-- 概览 -->
-                <div class="sidebar-section">
-                    <div class="sidebar-title">概览</div>
-                    <ul class="nav-menu">
-                        <li class="nav-item">
-                            <a href="#" class="nav-link active" data-module="dashboard">
-                                <i class="nav-icon fas fa-tachometer-alt"></i>
-                                <span>控制台</span>
-                            </a>
-                        </li>
-                    </ul>
-                </div>
 
                 <!-- 个人中心 -->
                 <div class="sidebar-section">
                     <div class="sidebar-title">个人中心</div>
                     <ul class="nav-menu">
                         <li class="nav-item">
-                            <a href="#" class="nav-link" data-module="profile">
+                            <a href="#" class="nav-link active" data-module="profile">
                                 <i class="nav-icon fas fa-user-circle"></i>
                                 <span>个人信息</span>
                             </a>
@@ -106,147 +94,7 @@
 
                 <!-- 页面内容区域 -->
                 <div id="pageContent">
-                    <!-- 默认显示控制台 -->
-                    <div id="dashboard-content">
-                        <div class="page-header">
-                            <h1 class="page-title">
-                                <i class="fas fa-tachometer-alt me-3"></i>
-                                管理员控制台
-                            </h1>
-                            <p class="page-subtitle">欢迎回来，这里是系统概览和快速操作面板</p>
-                        </div>
 
-                        <!-- 统计卡片 -->
-                        <div class="stats-grid">
-                            <div class="stat-card">
-                                <div class="stat-header">
-                                    <h3 class="stat-title">总用户数</h3>
-                                    <div class="stat-icon primary">
-                                        <i class="fas fa-users"></i>
-                                    </div>
-                                </div>
-                                <div class="stat-value">1,234</div>
-                                <div class="stat-change positive">
-                                    <i class="fas fa-arrow-up"></i> +12% 本月
-                                </div>
-                            </div>
-
-                            <div class="stat-card">
-                                <div class="stat-header">
-                                    <h3 class="stat-title">业主数量</h3>
-                                    <div class="stat-icon success">
-                                        <i class="fas fa-home"></i>
-                                    </div>
-                                </div>
-                                <div class="stat-value">856</div>
-                                <div class="stat-change positive">
-                                    <i class="fas fa-arrow-up"></i> +8% 本月
-                                </div>
-                            </div>
-
-                            <div class="stat-card">
-                                <div class="stat-header">
-                                    <h3 class="stat-title">工作人员</h3>
-                                    <div class="stat-icon info">
-                                        <i class="fas fa-user-tie"></i>
-                                    </div>
-                                </div>
-                                <div class="stat-value">24</div>
-                                <div class="stat-change positive">
-                                    <i class="fas fa-arrow-up"></i> +2 本月
-                                </div>
-                            </div>
-
-                            <div class="stat-card">
-                                <div class="stat-header">
-                                    <h3 class="stat-title">系统状态</h3>
-                                    <div class="stat-icon success">
-                                        <i class="fas fa-server"></i>
-                                    </div>
-                                </div>
-                                <div class="stat-value">正常</div>
-                                <div class="stat-change positive">
-                                    <i class="fas fa-check"></i> 运行稳定
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- 快速操作 -->
-                        <div class="dashboard-card">
-                            <div class="card-header">
-                                <h2 class="card-title">
-                                    <i class="fas fa-bolt"></i>
-                                    快速操作
-                                </h2>
-                            </div>
-                            <div class="card-body">
-                                <div class="row">
-                                    <div class="col-md-4 mb-3">
-                                        <button class="btn btn-primary w-100" onclick="loadModule('admin-users')">
-                                            <i class="fas fa-user-plus"></i>
-                                            添加管理员
-                                        </button>
-                                    </div>
-                                    <div class="col-md-4 mb-3">
-                                        <button class="btn btn-success w-100" onclick="loadModule('staff-users')">
-                                            <i class="fas fa-user-tie"></i>
-                                            管理工作人员
-                                        </button>
-                                    </div>
-                                    <div class="col-md-4 mb-3">
-                                        <button class="btn btn-info w-100" onclick="loadModule('owner-users')">
-                                            <i class="fas fa-users"></i>
-                                            管理业主
-                                        </button>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- 最近活动 -->
-                        <div class="dashboard-card">
-                            <div class="card-header">
-                                <h2 class="card-title">
-                                    <i class="fas fa-clock"></i>
-                                    最近活动
-                                </h2>
-                            </div>
-                            <div class="card-body">
-                                <div class="table-container">
-                                    <table class="table">
-                                        <thead>
-                                            <tr>
-                                                <th>时间</th>
-                                                <th>操作</th>
-                                                <th>用户</th>
-                                                <th>状态</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody>
-                                            <tr>
-                                                <td>10:30</td>
-                                                <td>添加新用户</td>
-                                                <td>张三 (业主)</td>
-                                                <td><span class="badge badge-success">成功</span></td>
-                                            </tr>
-                                            <tr>
-                                                <td>09:15</td>
-                                                <td>修改用户信息</td>
-                                                <td>李四 (工作人员)</td>
-                                                <td><span class="badge badge-success">成功</span></td>
-                                            </tr>
-                                            <tr>
-                                                <td>08:45</td>
-                                                <td>系统备份</td>
-                                                <td>系统</td>
-                                                <td><span class="badge badge-info">完成</span></td>
-                                            </tr>
-                                        </tbody>
-                                    </table>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
 
                     <!-- 其他模块内容将在这里动态加载 -->
                     <div id="dynamic-content" style="display: none;">
@@ -265,7 +113,27 @@
     <script>
         // 全局变量
         let currentUser = null;
-        let currentModule = 'dashboard';
+        let currentModule = 'profile';
+        
+        // 安全获取用户数据
+        function getCurrentUserSafely() {
+            try {
+                const userData = localStorage.getItem('currentUser');
+                if (!userData) return null;
+                
+                const user = JSON.parse(userData);
+                if (!user || typeof user !== 'object' || !user.userType) {
+                    localStorage.removeItem('currentUser');
+                    return null;
+                }
+                return user;
+            } catch (e) {
+                localStorage.removeItem('currentUser');
+                return null;
+            }
+        }
+
+
 
         // 页面加载完成后初始化
         document.addEventListener('DOMContentLoaded', function() {
@@ -276,25 +144,25 @@
 
         // 初始化页面
         function initializePage() {
-            // 检查用户登录状态
-            const userData = localStorage.getItem('currentUser');
-            if (!userData) {
+            // 使用安全方法获取用户数据
+            currentUser = getCurrentUserSafely();
+            
+            if (!currentUser) {
                 window.location.href = 'login.html';
                 return;
             }
-
-            try {
-                currentUser = JSON.parse(userData);
-                if (currentUser.userType !== 'ADMIN') {
-                    alert('权限不足，无法访问管理员页面');
-                    window.location.href = 'login.html';
-                    return;
-                }
-            } catch (e) {
-                console.error('用户数据解析失败:', e);
+            
+            if (currentUser.userType !== 'ADMIN') {
+                alert('权限不足，无法访问管理员页面');
+                localStorage.removeItem('currentUser');
                 window.location.href = 'login.html';
                 return;
             }
+            
+            // 自动加载profile模块
+            setTimeout(() => {
+                loadModule('profile');
+            }, 100);
         }
 
         // 加载用户信息
@@ -379,16 +247,7 @@
         function loadModule(module) {
             currentModule = module;
             
-            // 隐藏默认内容
-            document.getElementById('dashboard-content').style.display = 
-                module === 'dashboard' ? 'block' : 'none';
-            
             const dynamicContent = document.getElementById('dynamic-content');
-            
-            if (module === 'dashboard') {
-                dynamicContent.style.display = 'none';
-                return;
-            }
             
             // 显示加载状态
             dynamicContent.style.display = 'block';
@@ -613,10 +472,17 @@
                                             <input type="text" class="form-control" id="adminProfileUserType" value="系统管理员" readonly>
                                         </div>
                                     </div>
-                                    <div class="mb-3" id="adminPasswordSection" style="display: none;">
-                                        <label for="adminProfilePassword" class="form-label">新密码</label>
-                                        <input type="password" class="form-control" id="adminProfilePassword" placeholder="如不修改密码请留空">
-                                        <div class="form-text">留空表示不修改密码</div>
+                                    <div id="adminPasswordSection" style="display: none;">
+                                        <div class="mb-3">
+                                            <label for="adminProfilePassword" class="form-label">新密码</label>
+                                            <input type="password" class="form-control" id="adminProfilePassword" placeholder="如不修改密码请留空">
+                                            <div class="form-text">建议使用8位以上包含字母和数字的密码</div>
+                                        </div>
+                                        <div class="mb-3" id="adminConfirmPasswordSection" style="display: none;">
+                                            <label for="adminConfirmPassword" class="form-label">确认新密码</label>
+                                            <input type="password" class="form-control" id="adminConfirmPassword" placeholder="请再次输入新密码">
+                                            <div class="form-text">请再次输入相同的密码</div>
+                                        </div>
                                     </div>
                                     <div class="d-none" id="adminEditButtons">
                                         <button type="button" class="btn btn-success me-2" onclick="saveAdminProfile()">
@@ -644,8 +510,8 @@
                     </div>
                     <h3 class="empty-state-title">页面未找到</h3>
                     <p class="empty-state-description">您访问的功能模块不存在或正在开发中</p>
-                    <button class="btn btn-primary" onclick="loadModule('dashboard')">
-                        返回控制台
+                    <button class="btn btn-primary" onclick="loadModule('profile')">
+                        返回个人信息
                     </button>
                 </div>
             `;
@@ -939,6 +805,10 @@
             // 显示密码修改区域和操作按钮
             document.getElementById('adminPasswordSection').style.display = 'block';
             document.getElementById('adminEditButtons').classList.remove('d-none');
+            
+            // 绑定密码输入事件
+            document.getElementById('adminProfilePassword').addEventListener('input', handleAdminPasswordInput);
+            document.getElementById('adminConfirmPassword').addEventListener('blur', validateAdminPasswordMatch);
         }
 
         function cancelEditAdminProfile() {
@@ -952,10 +822,15 @@
             
             // 隐藏密码修改区域和操作按钮
             document.getElementById('adminPasswordSection').style.display = 'none';
+            document.getElementById('adminConfirmPasswordSection').style.display = 'none';
             document.getElementById('adminEditButtons').classList.add('d-none');
             
             // 清空密码字段
             document.getElementById('adminProfilePassword').value = '';
+            document.getElementById('adminConfirmPassword').value = '';
+            
+            // 清除密码验证样式
+            clearAdminPasswordValidation();
         }
 
         function loadAdminProfileData() {
@@ -964,6 +839,53 @@
                 document.getElementById('adminProfileName').value = currentUser.name || '';
                 document.getElementById('adminProfilePhone').value = currentUser.phone || '';
                 document.getElementById('adminProfileUserType').value = '系统管理员';
+            }
+        }
+
+        // 处理管理员密码输入
+        function handleAdminPasswordInput() {
+            const password = document.getElementById('adminProfilePassword').value;
+            const confirmSection = document.getElementById('adminConfirmPasswordSection');
+            
+            if (password) {
+                confirmSection.style.display = 'block';
+            } else {
+                confirmSection.style.display = 'none';
+                document.getElementById('adminConfirmPassword').value = '';
+                clearAdminPasswordValidation();
+            }
+        }
+
+        // 验证管理员密码匹配
+        function validateAdminPasswordMatch() {
+            const password = document.getElementById('adminProfilePassword').value;
+            const confirmPassword = document.getElementById('adminConfirmPassword').value;
+            const confirmPasswordField = document.getElementById('adminConfirmPassword');
+            
+            if (confirmPassword && password !== confirmPassword) {
+                confirmPasswordField.classList.add('is-invalid');
+                if (!confirmPasswordField.nextElementSibling || !confirmPasswordField.nextElementSibling.classList.contains('invalid-feedback')) {
+                    const feedback = document.createElement('div');
+                    feedback.className = 'invalid-feedback';
+                    feedback.textContent = '两次输入的密码不一致';
+                    confirmPasswordField.parentNode.appendChild(feedback);
+                }
+            } else {
+                confirmPasswordField.classList.remove('is-invalid');
+                const feedback = confirmPasswordField.parentNode.querySelector('.invalid-feedback');
+                if (feedback) {
+                    feedback.remove();
+                }
+            }
+        }
+
+        // 清除管理员密码验证状态
+        function clearAdminPasswordValidation() {
+            const confirmPasswordField = document.getElementById('adminConfirmPassword');
+            confirmPasswordField.classList.remove('is-invalid');
+            const feedback = confirmPasswordField.parentNode.querySelector('.invalid-feedback');
+            if (feedback) {
+                feedback.remove();
             }
         }
 
@@ -976,9 +898,7 @@
             };
 
             const password = document.getElementById('adminProfilePassword').value;
-            if (password) {
-                profileData.password = password;
-            }
+            const confirmPassword = document.getElementById('adminConfirmPassword').value;
 
             if (!profileData.username) {
                 alert('请填写用户名');
@@ -988,6 +908,21 @@
             if (!profileData.name) {
                 alert('请填写真实姓名');
                 return;
+            }
+
+            // 密码验证
+            if (password) {
+                if (password.length < 6) {
+                    alert('密码长度至少6位');
+                    return;
+                }
+                
+                if (password !== confirmPassword) {
+                    alert('两次输入的密码不一致');
+                    return;
+                }
+                
+                profileData.password = password;
             }
 
             // 检查用户名是否已存在（如果修改了用户名）

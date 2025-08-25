@@ -6,6 +6,7 @@ import lombok.NoArgsConstructor;
 
 import jakarta.persistence.*;
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
 
 @Data
 @NoArgsConstructor
@@ -39,6 +40,9 @@ public class User {
 
     @Column(name = "account_balance", precision = 10, scale = 2)
     private BigDecimal accountBalance;
+
+    @Column(name = "registration_time")
+    private LocalDateTime registrationTime;
 
     public enum UserType {
         ADMIN,

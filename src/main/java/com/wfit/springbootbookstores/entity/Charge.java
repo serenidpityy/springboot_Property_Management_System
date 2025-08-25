@@ -39,6 +39,9 @@ public class Charge {
     @Column(name = "payment_time")
     private LocalDateTime paymentTime;
 
+    @Column(name = "publish_time")
+    private LocalDateTime publishTime;
+
     public enum PaymentStatus {
         UNPAID,
         PAID

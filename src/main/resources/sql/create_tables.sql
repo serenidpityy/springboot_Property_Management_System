@@ -15,7 +15,8 @@ CREATE TABLE App_User (
     phone VARCHAR(20),
     user_type ENUM('ADMIN', 'STAFF', 'OWNER') NOT NULL,
     display_name VARCHAR(100),
-    account_balance DECIMAL(10, 2) DEFAULT 0.00
+    account_balance DECIMAL(10, 2) DEFAULT 0.00,
+    registration_time DATETIME DEFAULT CURRENT_TIMESTAMP
 );
 
 -- Create Property Table
@@ -29,6 +30,7 @@ CREATE TABLE Property (
     house_type VARCHAR(50),
     additional_description TEXT,
     occupancy_info VARCHAR(255),
+    move_in_time DATETIME,
     FOREIGN KEY (owner_id) REFERENCES App_User(id) ON DELETE CASCADE
 );
 
@@ -37,6 +39,7 @@ CREATE TABLE ParkingSpace (
     id INT AUTO_INCREMENT PRIMARY KEY,
     parking_id VARCHAR(50) NOT NULL UNIQUE,
     owner_id INT NOT NULL,
+    allocation_time DATETIME DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (owner_id) REFERENCES App_User(id) ON DELETE CASCADE
 );
 
@@ -49,6 +52,7 @@ CREATE TABLE Charge (
     description TEXT,
     payment_status ENUM('UNPAID', 'PAID') DEFAULT 'UNPAID',
     payment_time DATETIME,
+    publish_time DATETIME DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (owner_id) REFERENCES App_User(id) ON DELETE CASCADE
 );
 

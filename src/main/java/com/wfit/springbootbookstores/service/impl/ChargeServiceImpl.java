@@ -7,6 +7,7 @@ import com.wfit.springbootbookstores.service.ChargeService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -18,6 +19,8 @@ public class ChargeServiceImpl implements ChargeService {
 
     @Override
     public Charge saveCharge(Charge charge) {
+        // 设置发布时间为当前时间
+        charge.setPublishTime(LocalDateTime.now());
         return chargeRepository.save(charge);
     }
 
@@ -46,6 +49,10 @@ public class ChargeServiceImpl implements ChargeService {
         Charge charge = chargeRepository.findById(chargeId)
                 .orElseThrow(() -> new RuntimeException("Charge not found"));
         charge.setPaymentStatus(status);
+        // 如果状态改为已缴费，设置缴费时间
+        if (status == Charge.PaymentStatus.PAID && charge.getPaymentTime() == null) {
+            charge.setPaymentTime(LocalDateTime.now());
+        }
         return chargeRepository.save(charge);
     }
 }
