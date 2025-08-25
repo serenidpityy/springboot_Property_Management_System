@@ -22,13 +22,29 @@ public class UserController {
     @PostMapping("/register")
     public ResponseEntity<?> registerUser(@RequestBody User user) {
         try {
+            // 验证必要字段
+            if (user.getUsername() == null || user.getUsername().trim().isEmpty()) {
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("用户名不能为空");
+            }
+            if (user.getName() == null || user.getName().trim().isEmpty()) {
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("姓名不能为空");
+            }
+            if (user.getPassword() == null || user.getPassword().trim().isEmpty()) {
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("密码不能为空");
+            }
+            if (user.getUserType() == null) {
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("用户类型不能为空");
+            }
+            
             if (userService.existsByUsername(user.getUsername())) {
-                return ResponseEntity.status(HttpStatus.CONFLICT).body("Username already exists");
+                return ResponseEntity.status(HttpStatus.CONFLICT).body("用户名已存在");
             }
             User registeredUser = userService.registerUser(user);
             return ResponseEntity.status(HttpStatus.CREATED).body(registeredUser);
         } catch (RuntimeException e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("注册失败: " + e.getMessage());
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("服务器内部错误: " + e.getMessage());
         }
     }
 

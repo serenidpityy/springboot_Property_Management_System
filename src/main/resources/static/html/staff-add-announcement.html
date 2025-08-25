@@ -97,6 +97,11 @@
             text-align: center;
         }
         
+        body {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+        }
+        
         .loading-overlay {
             position: fixed;
             top: 0;
@@ -305,9 +310,8 @@
                 
                 if (response.ok) {
                     const savedAnnouncement = await response.json();
-                    alert('公告发布成功！');
                     
-                    // 跳转回工作人员页面的公告管理模块
+                    // 直接跳转回工作人员页面的公告管理模块
                     window.location.href = 'staff.html#announcements';
                 } else {
                     const errorData = await response.text();
@@ -326,24 +330,8 @@
 
         // 返回按钮处理
         function goBack() {
-            if (confirm('确定要返回吗？未保存的公告内容将丢失。')) {
-                window.location.href = 'staff.html#announcements';
-            }
+            window.location.href = 'staff.html#announcements';
         }
-
-        // 防止意外关闭页面
-        let formChanged = false;
-        
-        document.getElementById('announcementForm').addEventListener('input', function() {
-            formChanged = true;
-        });
-        
-        window.addEventListener('beforeunload', function(e) {
-            if (formChanged) {
-                e.preventDefault();
-                e.returnValue = '';
-            }
-        });
     </script>
 </body>
 </html>

@@ -7,60 +7,112 @@
     <link href="../css/bootstrap.min.css" rel="stylesheet">
     <link href="../css/dashboard.css" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        body {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+        }
+        
+        .user-form-container {
+            max-width: 800px;
+            margin: 50px auto;
+            padding: 30px;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        }
+        
+        .form-header {
+            text-align: center;
+            margin-bottom: 30px;
+            padding-bottom: 20px;
+            border-bottom: 2px solid #f8f9fa;
+        }
+        
+        .form-header h1 {
+            color: #2c3e50;
+            font-weight: 600;
+            margin-bottom: 10px;
+        }
+        
+        .form-header p {
+            color: #6c757d;
+            margin: 0;
+        }
+        
+        .btn-back {
+            background: linear-gradient(135deg, #6c757d, #5a6268);
+            border: none;
+            color: white;
+            padding: 10px 20px;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+        }
+        
+        .btn-back:hover {
+            background: linear-gradient(135deg, #5a6268, #495057);
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+            color: white;
+        }
+        
+        .btn-submit {
+            background: linear-gradient(135deg, #007bff, #0056b3);
+            border: none;
+            color: white;
+            padding: 12px 30px;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+            font-weight: 500;
+        }
+        
+        .btn-submit:hover {
+            background: linear-gradient(135deg, #0056b3, #004085);
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0,123,255,0.3);
+            color: white;
+        }
+        
+        .form-control {
+            border: 2px solid #e9ecef;
+            border-radius: 8px;
+            padding: 12px 15px;
+            transition: all 0.3s ease;
+        }
+        
+        .form-control:focus {
+            border-color: #007bff;
+            box-shadow: 0 0 0 0.2rem rgba(0,123,255,0.25);
+        }
+        
+        .form-label {
+            font-weight: 500;
+            color: #495057;
+            margin-bottom: 8px;
+        }
+        
+        .required {
+            color: #dc3545;
+        }
+        
+        .form-actions {
+            margin-top: 30px;
+            padding-top: 20px;
+            border-top: 1px solid #e9ecef;
+            text-align: center;
+        }
+    </style>
 </head>
 <body>
-    <div class="dashboard-container">
-        <!-- 顶部导航栏 -->
-        <header class="dashboard-header">
-            <div class="header-left">
-                <a href="admin.html" class="brand-logo">
-                    <i class="fas fa-arrow-left"></i>
-                    <span>返回管理员控制台</span>
-                </a>
+    <div class="container">
+        <div class="user-form-container">
+            <div class="form-header">
+                <h1>
+                    <i class="fas fa-user-edit text-primary me-2"></i>
+                    <span id="pageTitle">编辑用户</span>
+                </h1>
+                <p id="pageSubtitle">修改用户账户信息</p>
             </div>
-            <div class="header-right">
-                <div class="user-info">
-                    <div class="user-avatar" id="userAvatar">A</div>
-                    <div class="user-details">
-                        <h4 id="userName">管理员</h4>
-                        <p id="userRole">系统管理员</p>
-                    </div>
-                </div>
-                <button class="logout-btn" onclick="logout()">
-                    <i class="fas fa-sign-out-alt"></i>
-                    退出登录
-                </button>
-            </div>
-        </header>
-
-        <!-- 主内容区域 -->
-        <main class="dashboard-main" style="margin-left: 0;">
-            <div class="main-content">
-                <!-- 面包屑导航 -->
-                <div class="breadcrumb">
-                    <span class="breadcrumb-item">管理员控制台</span>
-                    <span class="breadcrumb-separator">/</span>
-                    <span class="breadcrumb-item">用户管理</span>
-                    <span class="breadcrumb-separator">/</span>
-                    <span class="breadcrumb-item active" id="currentPage">编辑用户</span>
-                </div>
-
-                <!-- 页面内容区域 -->
-                <div class="page-header">
-                    <h1 class="page-title">
-                        <i class="fas fa-user-edit me-3"></i>
-                        <span id="pageTitle">编辑用户</span>
-                    </h1>
-                    <p class="page-subtitle" id="pageSubtitle">修改用户账户信息</p>
-                </div>
-
-                <div class="row justify-content-center">
-                    <div class="col-md-8">
-                        <div class="dashboard-card">
-                            <div class="card-header">
-                                <h2 class="card-title">用户信息</h2>
-                            </div>
-                            <div class="card-body">
                                 <div id="loadingState">
                                     <div class="text-center">
                                         <div class="spinner"></div>
@@ -71,12 +123,12 @@
                                 <form id="editUserForm" style="display: none;">
                                     <div class="row">
                                         <div class="col-md-6 mb-3">
-                                            <label for="username" class="form-label">用户名 <span class="text-danger">*</span></label>
+                                                                                         <label for="username" class="form-label">用户名 <span class="required">*</span></label>
                                             <input type="text" class="form-control" id="username" required>
                                             <div class="form-text">用户登录时使用的用户名</div>
                                         </div>
                                         <div class="col-md-6 mb-3">
-                                            <label for="name" class="form-label">真实姓名 <span class="text-danger">*</span></label>
+                                                                                         <label for="name" class="form-label">真实姓名 <span class="required">*</span></label>
                                             <input type="text" class="form-control" id="name" required>
                                         </div>
                                     </div>
@@ -87,7 +139,7 @@
                                             <div class="form-text">用于接收通知和联系</div>
                                         </div>
                                         <div class="col-md-6 mb-3">
-                                            <label for="userType" class="form-label">用户类型 <span class="text-danger">*</span></label>
+                                                                                         <label for="userType" class="form-label">用户类型 <span class="required">*</span></label>
                                             <input type="text" class="form-control" id="userType" readonly>
                                         </div>
                                     </div>
@@ -111,32 +163,28 @@
                                         <input type="password" class="form-control" id="confirmPassword">
                                     </div>
 
-                                    <div class="d-flex justify-content-between">
-                                        <button type="button" class="btn btn-secondary" onclick="goBack()">
-                                            <i class="fas fa-arrow-left"></i>
-                                            返回
-                                        </button>
-                                        <button type="submit" class="btn btn-primary">
-                                            <i class="fas fa-save"></i>
-                                            保存修改
-                                        </button>
-                                    </div>
-                                </form>
+                                                                         <div class="form-actions">
+                                         <button type="button" class="btn btn-back me-3" onclick="goBack()">
+                                             <i class="fas fa-arrow-left me-2"></i>
+                                             返回列表
+                                         </button>
+                                         <button type="submit" class="btn btn-submit">
+                                             <i class="fas fa-save me-2"></i>
+                                             保存修改
+                                         </button>
+                                     </div>
+                                 </form>
 
-                                <div id="errorState" style="display: none;">
-                                    <div class="text-center text-danger">
-                                        <i class="fas fa-exclamation-triangle"></i>
-                                        <p class="mt-2">加载用户信息失败</p>
-                                        <button class="btn btn-secondary" onclick="goBack()">返回</button>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </main>
-    </div>
+                                 <div id="errorState" style="display: none;">
+                                     <div class="text-center text-danger">
+                                         <i class="fas fa-exclamation-triangle"></i>
+                                         <p class="mt-2">加载用户信息失败</p>
+                                         <button class="btn btn-back" onclick="goBack()">返回</button>
+                                     </div>
+                                 </div>
+                             </div>
+                         </div>
+                     </div>
 
     <script src="../js/jquery.min.js"></script>
     <script src="../js/bootstrap.min.js"></script>
@@ -190,13 +238,8 @@
 
         // 加载当前登录用户信息
         function loadUserInfo() {
-            if (currentUser) {
-                document.getElementById('userName').textContent = currentUser.name || currentUser.username;
-                
-                // 设置头像
-                const avatar = document.getElementById('userAvatar');
-                avatar.textContent = (currentUser.name || currentUser.username).charAt(0).toUpperCase();
-            }
+            // 在新的布局中，我们不需要显示用户信息，因为已经移除了顶部导航栏
+            // 这个函数保留是为了保持代码结构的一致性
         }
 
         // 加载要编辑的用户信息
@@ -401,10 +444,8 @@
 
         // 退出登录
         function logout() {
-            if (confirm('确定要退出登录吗？')) {
-                localStorage.removeItem('currentUser');
-                window.location.href = 'login.html';
-            }
+            // 在新的布局中，我们不需要退出登录功能，因为已经移除了顶部导航栏
+            // 这个函数保留是为了保持代码结构的一致性
         }
     </script>
 </body>

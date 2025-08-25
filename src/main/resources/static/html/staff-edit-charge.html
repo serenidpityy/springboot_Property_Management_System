@@ -8,23 +8,121 @@
     <link href="../css/dashboard.css" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <style>
+        .charge-form-container {
+            max-width: 800px;
+            margin: 50px auto;
+            padding: 30px;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        }
+        
+        .form-header {
+            text-align: center;
+            margin-bottom: 30px;
+            padding-bottom: 20px;
+            border-bottom: 2px solid #f8f9fa;
+        }
+        
+        .form-header h1 {
+            color: #2c3e50;
+            font-weight: 600;
+            margin-bottom: 10px;
+        }
+        
+        .form-header p {
+            color: #6c757d;
+            margin: 0;
+        }
+        
+        .btn-back {
+            background: linear-gradient(135deg, #6c757d, #5a6268);
+            border: none;
+            color: white;
+            padding: 10px 20px;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+        }
+        
+        .btn-back:hover {
+            background: linear-gradient(135deg, #5a6268, #495057);
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+            color: white;
+        }
+        
+        .btn-submit {
+            background: linear-gradient(135deg, #28a745, #1e7e34);
+            border: none;
+            color: white;
+            padding: 12px 30px;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+            font-weight: 500;
+        }
+        
+        .btn-submit:hover {
+            background: linear-gradient(135deg, #1e7e34, #155724);
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(40,167,69,0.3);
+            color: white;
+        }
+        
+        .form-control {
+            border: 2px solid #e9ecef;
+            border-radius: 8px;
+            padding: 12px 15px;
+            transition: all 0.3s ease;
+        }
+        
+        .form-control:focus {
+            border-color: #28a745;
+            box-shadow: 0 0 0 0.2rem rgba(40,167,69,0.25);
+        }
+        
+        .form-label {
+            font-weight: 500;
+            color: #495057;
+            margin-bottom: 8px;
+        }
+        
+        .required {
+            color: #dc3545;
+        }
+        
+        .form-actions {
+            margin-top: 30px;
+            padding-top: 20px;
+            border-top: 1px solid #e9ecef;
+            text-align: center;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+        }
+        
         .loading-overlay {
             position: fixed;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
-            background: rgba(255, 255, 255, 0.9);
+            background-color: rgba(0, 0, 0, 0.5);
             display: none;
-            align-items: center;
-            justify-content: center;
             z-index: 9999;
+            justify-content: center;
+            align-items: center;
         }
-        .form-container {
-            max-width: 800px;
-            margin: 2rem auto;
-            padding: 0 1rem;
+        
+        .loading-content {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            text-align: center;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
         }
+        
         .btn-spinner {
             display: none;
             width: 1rem;
@@ -35,10 +133,12 @@
             animation: spin 0.8s linear infinite;
             margin-right: 0.5rem;
         }
+        
         @keyframes spin {
             0% { transform: rotate(0deg); }
             100% { transform: rotate(360deg); }
         }
+        
         .info-badge {
             background: #e3f2fd;
             color: #1976d2;
@@ -50,30 +150,25 @@
     </style>
 </head>
 <body>
+    <!-- 加载遮罩层 -->
     <div class="loading-overlay" id="loadingOverlay">
-        <div class="text-center">
+        <div class="loading-content">
             <div class="spinner-border text-primary" role="status">
-                <span class="visually-hidden">Loading...</span>
+                <span class="visually-hidden">加载中...</span>
             </div>
-            <div class="mt-2">处理中...</div>
+            <p class="mt-2 mb-0">正在加载收费记录...</p>
         </div>
     </div>
 
-    <div class="form-container">
-        <div class="card">
-            <div class="card-header">
-                <div class="d-flex justify-content-between align-items-center">
-                    <h2 class="mb-0">
-                        <i class="fas fa-edit text-primary me-2"></i>
-                        编辑收费记录
-                    </h2>
-                    <button class="btn btn-outline-secondary" onclick="goBack()">
-                        <i class="fas fa-arrow-left"></i>
-                        返回
-                    </button>
-                </div>
+    <div class="container">
+        <div class="charge-form-container">
+            <div class="form-header">
+                <h1>
+                    <i class="fas fa-edit text-success me-2"></i>
+                    编辑收费记录
+                </h1>
+                <p>修改收费记录的详细信息</p>
             </div>
-            <div class="card-body">
                 <div class="info-badge">
                     <i class="fas fa-info-circle me-2"></i>
                     正在加载收费记录信息...
@@ -84,7 +179,7 @@
                         <div class="col-md-6 mb-3">
                             <label for="chargeItem" class="form-label">
                                 <i class="fas fa-tag me-1"></i>
-                                收费项目 <span class="text-danger">*</span>
+                                收费项目 <span class="required">*</span>
                             </label>
                             <select class="form-control" id="chargeItem" required>
                                 <option value="">请选择收费项目</option>
@@ -102,7 +197,7 @@
                         <div class="col-md-6 mb-3">
                             <label for="chargeOwner" class="form-label">
                                 <i class="fas fa-user me-1"></i>
-                                业主姓名 <span class="text-danger">*</span>
+                                业主姓名 <span class="required">*</span>
                             </label>
                             <select class="form-control" id="chargeOwner" required>
                                 <option value="">请选择业主</option>
@@ -114,7 +209,7 @@
                         <div class="col-md-6 mb-3">
                             <label for="chargeAmount" class="form-label">
                                 <i class="fas fa-yen-sign me-1"></i>
-                                收费金额 <span class="text-danger">*</span>
+                                收费金额 <span class="required">*</span>
                             </label>
                             <div class="input-group">
                                 <span class="input-group-text">¥</span>
@@ -146,12 +241,12 @@
                         </div>
                     </div>
                     
-                    <div class="d-flex justify-content-end gap-2">
-                        <button type="button" class="btn btn-secondary" onclick="goBack()">
-                            <i class="fas fa-times"></i>
-                            取消
+                    <div class="form-actions">
+                        <button type="button" class="btn btn-back me-3" onclick="goBack()">
+                            <i class="fas fa-arrow-left me-2"></i>
+                            返回列表
                         </button>
-                        <button type="submit" class="btn btn-primary" id="submitBtn">
+                        <button type="submit" class="btn btn-submit" id="submitBtn">
                             <div class="btn-spinner" id="btnSpinner"></div>
                             <i class="fas fa-save" id="btnIcon"></i>
                             保存修改
@@ -295,8 +390,7 @@
                 });
                 
                 if (response.ok) {
-                    alert('收费记录修改成功！');
-                    // 跳转回工作人员页面
+                    // 直接跳转回工作人员页面的收费管理模块
                     window.location.href = 'staff.html#charge-management';
                 } else {
                     const error = await response.text();
@@ -375,9 +469,7 @@
 
         // 返回上一页
         function goBack() {
-            if (confirm('确定要返回吗？未保存的修改将丢失。')) {
-                window.location.href = 'staff.html#charge-management';
-            }
+            window.location.href = 'staff.html#charge-management';
         }
 
         // ESC键返回

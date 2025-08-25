@@ -8,23 +8,121 @@
     <link href="../css/dashboard.css" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <style>
+        .complaint-form-container {
+            max-width: 700px;
+            margin: 50px auto;
+            padding: 30px;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        }
+        
+        .form-header {
+            text-align: center;
+            margin-bottom: 30px;
+            padding-bottom: 20px;
+            border-bottom: 2px solid #f8f9fa;
+        }
+        
+        .form-header h1 {
+            color: #2c3e50;
+            font-weight: 600;
+            margin-bottom: 10px;
+        }
+        
+        .form-header p {
+            color: #6c757d;
+            margin: 0;
+        }
+        
+        .btn-back {
+            background: linear-gradient(135deg, #6c757d, #5a6268);
+            border: none;
+            color: white;
+            padding: 10px 20px;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+        }
+        
+        .btn-back:hover {
+            background: linear-gradient(135deg, #5a6268, #495057);
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+            color: white;
+        }
+        
+        .btn-submit {
+            background: linear-gradient(135deg, #007bff, #0056b3);
+            border: none;
+            color: white;
+            padding: 12px 30px;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+            font-weight: 500;
+        }
+        
+        .btn-submit:hover {
+            background: linear-gradient(135deg, #0056b3, #004085);
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0,123,255,0.3);
+            color: white;
+        }
+        
+        .form-control {
+            border: 2px solid #e9ecef;
+            border-radius: 8px;
+            padding: 12px 15px;
+            transition: all 0.3s ease;
+        }
+        
+        .form-control:focus {
+            border-color: #007bff;
+            box-shadow: 0 0 0 0.2rem rgba(0,123,255,0.25);
+        }
+        
+        .form-label {
+            font-weight: 500;
+            color: #495057;
+            margin-bottom: 8px;
+        }
+        
+        .required {
+            color: #dc3545;
+        }
+        
+        .form-actions {
+            margin-top: 30px;
+            padding-top: 20px;
+            border-top: 1px solid #e9ecef;
+            text-align: center;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+        }
+        
         .loading-overlay {
             position: fixed;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
-            background: rgba(255, 255, 255, 0.9);
+            background-color: rgba(0, 0, 0, 0.5);
             display: none;
-            align-items: center;
-            justify-content: center;
             z-index: 9999;
+            justify-content: center;
+            align-items: center;
         }
-        .form-container {
-            max-width: 700px;
-            margin: 2rem auto;
-            padding: 0 1rem;
+        
+        .loading-content {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            text-align: center;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
         }
+        
         .btn-spinner {
             display: none;
             width: 1rem;
@@ -35,10 +133,12 @@
             animation: spin 0.8s linear infinite;
             margin-right: 0.5rem;
         }
+        
         @keyframes spin {
             0% { transform: rotate(0deg); }
             100% { transform: rotate(360deg); }
         }
+        
         .info-box {
             background: #e3f2fd;
             border-left: 4px solid #2196f3;
@@ -49,30 +149,25 @@
     </style>
 </head>
 <body>
+    <!-- 加载遮罩层 -->
     <div class="loading-overlay" id="loadingOverlay">
-        <div class="text-center">
+        <div class="loading-content">
             <div class="spinner-border text-primary" role="status">
-                <span class="visually-hidden">Loading...</span>
+                <span class="visually-hidden">处理中...</span>
             </div>
-            <div class="mt-2">处理中...</div>
+            <p class="mt-2 mb-0">正在提交投诉建议...</p>
         </div>
     </div>
 
-    <div class="form-container">
-        <div class="card">
-            <div class="card-header">
-                <div class="d-flex justify-content-between align-items-center">
-                    <h2 class="mb-0">
-                        <i class="fas fa-comments text-primary me-2"></i>
-                        提交投诉建议
-                    </h2>
-                    <button class="btn btn-outline-secondary" onclick="goBack()">
-                        <i class="fas fa-arrow-left"></i>
-                        返回
-                    </button>
-                </div>
+    <div class="container">
+        <div class="complaint-form-container">
+            <div class="form-header">
+                <h1>
+                    <i class="fas fa-comments text-primary me-2"></i>
+                    提交投诉建议
+                </h1>
+                <p>请详细描述您遇到的问题或想要提出的建议</p>
             </div>
-            <div class="card-body">
                 <div class="info-box">
                     <h6><i class="fas fa-info-circle me-2"></i>温馨提示</h6>
                     <p class="mb-0">您的投诉建议对我们非常重要！请详细描述遇到的问题或提出的建议，我们会尽快处理并回复您。</p>
@@ -82,7 +177,7 @@
                     <div class="mb-3">
                         <label for="complaintContent" class="form-label">
                             <i class="fas fa-comment me-1"></i>
-                            投诉建议内容 <span class="text-danger">*</span>
+                            投诉建议内容 <span class="required">*</span>
                         </label>
                         <textarea class="form-control" id="complaintContent" rows="8" 
                                   placeholder="请详细描述您遇到的问题或想要提出的建议..." required></textarea>
@@ -103,7 +198,7 @@
                         <div class="col-md-6">
                             <label for="urgencyLevel" class="form-label">
                                 <i class="fas fa-exclamation-triangle me-1"></i>
-                                紧急程度 <span class="text-danger">*</span>
+                                紧急程度 <span class="required">*</span>
                             </label>
                             <select class="form-control" id="urgencyLevel" required>
                                 <option value="">请选择紧急程度</option>
@@ -127,12 +222,12 @@
                         </div>
                     </div>
                     
-                    <div class="d-flex justify-content-end gap-2">
-                        <button type="button" class="btn btn-secondary" onclick="goBack()">
-                            <i class="fas fa-times"></i>
-                            取消
+                    <div class="form-actions">
+                        <button type="button" class="btn btn-back me-3" onclick="goBack()">
+                            <i class="fas fa-arrow-left me-2"></i>
+                            返回列表
                         </button>
-                        <button type="submit" class="btn btn-primary" id="submitBtn">
+                        <button type="submit" class="btn btn-submit" id="submitBtn">
                             <div class="btn-spinner" id="btnSpinner"></div>
                             <i class="fas fa-paper-plane" id="btnIcon"></i>
                             提交投诉建议
@@ -227,8 +322,7 @@
                 });
                 
                 if (response.ok) {
-                    alert('投诉建议提交成功！我们会尽快处理并回复您。');
-                    // 跳转回业主页面
+                    // 直接跳转回业主页面的投诉建议模块
                     window.location.href = 'owner.html#complaints';
                 } else {
                     const errorText = await response.text();
@@ -319,19 +413,8 @@
 
         // 返回上一页
         function goBack() {
-            const content = document.getElementById('complaintContent').value.trim();
-            if (content && !confirm('确定要返回吗？已输入的内容将丢失。')) {
-                return;
-            }
             window.location.href = 'owner.html#complaints';
         }
-
-        // ESC键返回
-        document.addEventListener('keydown', function(event) {
-            if (event.key === 'Escape') {
-                goBack();
-            }
-        });
     </script>
 </body>
 </html>

@@ -539,14 +539,12 @@
                                         <th>收费金额</th>
                                         <th>收费说明</th>
                                         <th>缴费状态</th>
-                                        <th>缴费时间</th>
-                                        <th>发布时间</th>
                                         <th>操作</th>
                                     </tr>
                                 </thead>
                                 <tbody id="chargeTableBody">
                                     <tr>
-                                        <td colspan="8" class="text-center">
+                                        <td colspan="6" class="text-center">
                                             <div class="loading">
                                                 <div class="spinner"></div>
                                                 <span class="ms-2">加载收费信息中...</span>
@@ -1559,35 +1557,6 @@
             }
 
             tbody.innerHTML = charges.map(charge => {
-                // 使用数据库中的真实时间数据
-                let publishTime, paymentTime;
-                
-                // 发布时间
-                if (charge.publishTime) {
-                    publishTime = new Date(charge.publishTime);
-                } else {
-                    // 如果没有发布时间，使用默认时间
-                    publishTime = new Date('2023-12-01T00:00:00');
-                }
-                const formattedPublishTime = publishTime.getFullYear() + '/' + 
-                                           (publishTime.getMonth() + 1).toString().padStart(2, '0') + '/' + 
-                                           publishTime.getDate().toString().padStart(2, '0') + ' ' + 
-                                           publishTime.getHours().toString().padStart(2, '0') + ':' + 
-                                           publishTime.getMinutes().toString().padStart(2, '0') + ':' + 
-                                           publishTime.getSeconds().toString().padStart(2, '0');
-                
-                // 缴费时间（如果已缴费）
-                let formattedPaymentTime = '-';
-                if (charge.paymentStatus === 'PAID' && charge.paymentTime) {
-                    paymentTime = new Date(charge.paymentTime);
-                    formattedPaymentTime = paymentTime.getFullYear() + '/' + 
-                                         (paymentTime.getMonth() + 1).toString().padStart(2, '0') + '/' + 
-                                         paymentTime.getDate().toString().padStart(2, '0') + ' ' + 
-                                         paymentTime.getHours().toString().padStart(2, '0') + ':' + 
-                                         paymentTime.getMinutes().toString().padStart(2, '0') + ':' + 
-                                         paymentTime.getSeconds().toString().padStart(2, '0');
-                }
-                
                 return `
                 <tr>
                     <td>${charge.chargeItem}</td>
@@ -1599,8 +1568,6 @@
                             ${charge.paymentStatus === 'PAID' ? '已缴费' : '未缴费'}
                         </span>
                     </td>
-                        <td>${formattedPaymentTime}</td>
-                        <td>${formattedPublishTime}</td>
                     <td>
                         <button class="btn btn-sm btn-info me-1" onclick="editCharge(${charge.id})">
                             <i class="fas fa-edit"></i>

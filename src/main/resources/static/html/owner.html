@@ -216,13 +216,13 @@
                 window.location.href = 'login.html';
                 return;
             }
-            
-            if (currentUser.userType !== 'OWNER') {
-                alert('权限不足，无法访问业主页面');
+
+                if (currentUser.userType !== 'OWNER') {
+                    alert('权限不足，无法访问业主页面');
                 localStorage.removeItem('currentUser');
-                window.location.href = 'login.html';
-                return;
-            }
+                    window.location.href = 'login.html';
+                    return;
+                }
             
             // 自动加载profile模块
             setTimeout(() => {
@@ -619,13 +619,12 @@
                                         <th>收费金额</th>
                                         <th>收费说明</th>
                                         <th>缴费状态</th>
-                                        <th>缴费时间</th>
                                         <th>操作</th>
                                     </tr>
                                 </thead>
                                 <tbody id="ownerChargeTableBody">
                                     <tr>
-                                        <td colspan="7" class="text-center">
+                                        <td colspan="6" class="text-center">
                                             <div class="loading">
                                                 <div class="spinner"></div>
                                                 <span class="ms-2">加载缴费信息中...</span>
@@ -1091,8 +1090,8 @@
                                     ${new Date(announcement.publishTime).toLocaleDateString()}
                                 </small>
                             </div>
-                            <button class="btn btn-primary btn-sm" onclick="showAnnouncementDetail(${announcement.id}, '${announcement.title}', '${announcement.content}', '${announcement.publishTime}')">
-                                <i class="fas fa-eye"></i>
+                            <button class="btn btn-primary btn-sm" onclick="showAnnouncementDetail(${announcement.id}, '${announcement.title.replace(/'/g, "\\'")}', '${announcement.content.replace(/'/g, "\\'").replace(/\n/g, "\\n")}', '${announcement.publishTime}')" title="查看完整内容">
+                                <i class="fas fa-eye me-1"></i>
                                 查看
                             </button>
                         </div>
@@ -1102,19 +1101,17 @@
         }
 
         function showAnnouncementSimple(title, content, publishTime) {
-            // 简单的窗口显示完整内容
+            // 使用alert显示公告详细内容
             const formattedTime = new Date(publishTime).toLocaleString('zh-CN');
-            const message = `标题：${title}\n\n内容：\n${content}\n\n发布时间：${formattedTime}`;
+            const message = `📢 公告详情\n\n📋 标题：${title}\n\n📝 内容：\n${content}\n\n📅 发布时间：${formattedTime}`;
             alert(message);
         }
 
         function showAnnouncementDetail(id, title, content, publishTime) {
-            document.getElementById('announcementTitle').textContent = title;
-            document.getElementById('announcementContent').textContent = content;
-            document.getElementById('announcementPublishTime').textContent = '发布时间：' + new Date(publishTime).toLocaleString();
-            
-            const modal = new bootstrap.Modal(document.getElementById('announcementDetailModal'));
-            modal.show();
+            // 使用alert显示公告详细内容
+            const formattedTime = new Date(publishTime).toLocaleString('zh-CN');
+            const message = `📢 公告详情\n\n📋 标题：${title}\n\n📝 内容：\n${content}\n\n📅 发布时间：${formattedTime}`;
+            alert(message);
         }
 
         // === 投诉与建议相关函数 ===
@@ -1426,8 +1423,7 @@
                             车位编号：${parking.parkingId}
                         </h5>
                         <p class="card-text">
-                            <strong>业主：</strong>${parking.owner ? (parking.owner.name || parking.owner.username) : '-'}<br>
-                            <strong>分配时间：</strong>近期分配
+                            <strong>业主：</strong>${parking.owner ? (parking.owner.name || parking.owner.username) : '-'}
                         </p>
                     </div>
                 </div>
@@ -1509,7 +1505,7 @@
             if (filteredCharges.length === 0) {
                 tbody.innerHTML = `
                     <tr>
-                        <td colspan="7" class="text-center text-muted">
+                        <td colspan="6" class="text-center text-muted">
                             <i class="fas fa-inbox"></i>
                             暂无缴费记录
                         </td>
@@ -1529,15 +1525,6 @@
                             ${charge.paymentStatus === 'PAID' ? '已缴费' : '未缴费'}
                         </span>
                     </td>
-                    <td>${charge.paymentTime ? (() => {
-                        const paymentDate = new Date(charge.paymentTime);
-                        return paymentDate.getFullYear() + '/' + 
-                               (paymentDate.getMonth() + 1).toString().padStart(2, '0') + '/' + 
-                               paymentDate.getDate().toString().padStart(2, '0') + ' ' + 
-                               paymentDate.getHours().toString().padStart(2, '0') + ':' + 
-                               paymentDate.getMinutes().toString().padStart(2, '0') + ':' + 
-                               paymentDate.getSeconds().toString().padStart(2, '0');
-                    })() : '-'}</td>
                     <td>
                         ${charge.paymentStatus === 'UNPAID' ? 
                             `<button class="btn btn-sm btn-primary" onclick="goToPayCharge(${charge.id})">
