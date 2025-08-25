@@ -400,6 +400,9 @@
                         'Content-Type': 'application/json'
                     },
                     body: JSON.stringify({
+                        chargeItem: chargeData.chargeItem,
+                        amount: chargeData.amount,
+                        description: chargeData.description,
                         paymentStatus: 'PAID',
                         paymentTime: new Date().toISOString()
                     })

@@ -19,8 +19,10 @@ public class ChargeServiceImpl implements ChargeService {
 
     @Override
     public Charge saveCharge(Charge charge) {
-        // 设置发布时间为当前时间
-        charge.setPublishTime(LocalDateTime.now());
+        // 如果是新记录且发布时间为空，则设置发布时间为当前时间
+        if (charge.getId() == null && charge.getPublishTime() == null) {
+            charge.setPublishTime(LocalDateTime.now());
+        }
         return chargeRepository.save(charge);
     }
 

@@ -55,9 +55,17 @@ public class ChargeController {
         Optional<Charge> existingChargeOptional = chargeService.getChargeById(id);
         if (existingChargeOptional.isPresent()) {
             Charge existingCharge = existingChargeOptional.get();
-            existingCharge.setChargeItem(charge.getChargeItem());
-            existingCharge.setAmount(charge.getAmount());
-            existingCharge.setDescription(charge.getDescription());
+            
+            // 只更新非null的字段，避免覆盖现有数据
+            if (charge.getChargeItem() != null) {
+                existingCharge.setChargeItem(charge.getChargeItem());
+            }
+            if (charge.getAmount() != null) {
+                existingCharge.setAmount(charge.getAmount());
+            }
+            if (charge.getDescription() != null) {
+                existingCharge.setDescription(charge.getDescription());
+            }
 
             // Only allow changing payment status if it's from UNPAID to PAID and handle payment logic
             if (charge.getPaymentStatus() == Charge.PaymentStatus.PAID && existingCharge.getPaymentStatus() == Charge.PaymentStatus.UNPAID) {
